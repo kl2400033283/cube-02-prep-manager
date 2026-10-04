@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prep Manager · Visual Compliance Agent (Agent 02)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Top Navigation & Status Beacon -->
+  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <div class="h-10 w-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20">
+        <i class="fa-solid fa-boxes-packing"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-lg font-bold tracking-tight text-white">PREP MANAGER</h1>
+          <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded font-mono font-semibold">AGENT 02</span>
+          <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">v1.2.0</span>
+        </div>
+        <p class="text-xs text-slate-400">Step 2 of 5 · Inbound Prep Compliance & Tamper-Evident Proof</p>
+      </div>
+    </div>
+
+    <!-- Live Physical Station Beacon -->
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono">
+        <span class="text-slate-400">Station Beacon:</span>
+        <div id="beacon-light" class="h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse"></div>
+        <span id="beacon-text" class="font-bold text-emerald-400">PASS (DISPATCH)</span>
+      </div>
+
+      <!-- Tenant Switcher (Rule 1 Tenancy Isolation) -->
+      <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono">
+        <i class="fa-solid fa-building-user text-indigo-400"></i>
+        <label for="tenant-select" class="text-slate-400">Tenant:</label>
+        <select id="tenant-select" onchange="onTenantChanged()" class="bg-slate-900 border border-slate-700 text-indigo-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-indigo-500">
+          <option value="org_demo_alpha" selected>org_demo_alpha (Apex Prep)</option>
+          <option value="org_demo_bravo">org_demo_bravo (Bravo Logistics)</option>
+        </select>
+      </div>
+
+      <!-- Latency & Cost Indicators (Rule 2 Batching) -->
+      <div class="hidden md:flex items-center gap-4 text-xs font-mono text-slate-400">
+        <div>Cost/Unit: <span class="text-emerald-400 font-semibold">$0.0028</span></div>
+        <div>P50 Latency: <span class="text-indigo-400 font-semibold">185ms</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto w-full">
+    
+    <!-- LEFT: Prep Queue & Unit Selector (3 Cols) -->
+    <section class="lg:col-span-3 flex flex-col gap-4">
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm">
+        <h2 class="text-sm font-semibold text-slate-200 mb-3 flex items-center justify-between">
+          <span><i class="fa-solid fa-list-check text-indigo-400 mr-2"></i>Prep Inspection Queue</span>
+          <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded mono" id="queue-count">41 Units</span>
+        </h2>
+        
+        <!-- Quick Presets -->
+        <div class="space-y-1.5 mb-4">
+          <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 px-1">Test Scenarios</div>
+          <button onclick="loadScenario('pass_normal')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
+            <span class="font-medium text-slate-200">UNIT-0005 (Correct Prep)</span>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">PASS</span>
+          </button>
+          <button onclick="loadScenario('fail_barcode')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
+            <span class="font-medium text-slate-200">UNIT-0004 (Exposed UPC)</span>
+            <span class="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">FAIL</span>
+          </button>
+          <button onclick="loadScenario('fail_seam')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
+            <span class="font-medium text-slate-200">UNIT-0002 (FNSKU on Seam)</span>
+            <span class="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">FAIL</span>
+          </button>
+          <button onclick="loadScenario('fail_unsealed')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
+            <span class="font-medium text-slate-200">UNIT-0003 (Bag Unsealed)</span>
+            <span class="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">FAIL</span>
+          </button>
+          <button onclick="loadScenario('uncertain_glare')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
+            <span class="font-medium text-slate-200">UNIT-0012 (Severe Glare)</span>
+            <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">UNCERTAIN</span>
+          </button>
+        </div>
+
+        <div class="border-t border-slate-800 pt-3">
+          <label class="text-xs text-slate-400 block mb-1">Custom Unit Inspection</label>
+          <div class="flex gap-2">
+            <input type="text" id="custom-unit-id" value="UNIT-0004" class="bg-slate-950 border border-slate-700 text-xs px-2.5 py-1.5 rounded-lg w-full mono focus:outline-none focus:border-indigo-500">
+            <button onclick="fetchCurrentUnit()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
+              Inspect
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tenancy & Safety Status Widget -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs space-y-3">
+        <h3 class="font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+          <span>Engineering Guarantees</span>
+        </h3>
+        <div class="space-y-2 mono text-[11px]">
+          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+            <span class="text-slate-400">Tenancy Isolation:</span>
+            <span class="text-emerald-400 font-semibold" id="tenancy-status">ENFORCED (0 Leaks)</span>
+          </div>
+          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+            <span class="text-slate-400">Batch Strategy:</span>
+            <span class="text-indigo-400 font-semibold">1 Call / Unit (All Checks)</span>
+          </div>
+          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+            <span class="text-slate-400">Fail-Open Circuit:</span>
+            <span class="text-emerald-400 font-semibold">ACTIVE (1500ms max)</span>
+          </div>
+          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
+            <span class="text-slate-400">Dispute Consumer:</span>
+            <span class="text-sky-400 font-semibold">Agent 05 Recovery</span>
+          </div>
+        </div>
+        <button onclick="runTenancyAudit()" class="w-full text-center py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded text-xs transition">
+          Run Isolation Audit Test
+        </button>
+      </div>
+    </section>
+
+    <!-- CENTER: Camera Feed & 6 Visual Checks (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
+      
+      <!-- Simulated Camera Gantry Feed with Bounding Box Overlay -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-2.5 w-2.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="text-xs font-semibold text-slate-300">Overhead Vision Gantry · Station #2</span>
+          </div>
+          <span class="text-[11px] mono text-slate-500" id="current-work-order">WO-3000 · FBA-DUMMY-100</span>
+        </div>
+
+        <div class="relative bg-slate-950 rounded-lg overflow-hidden border border-slate-800 aspect-video flex items-center justify-center">
+          <!-- Synthetic Physical Package SVG with Overlays -->
+          <svg class="w-full h-full" viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background Conveyor Texture -->
+            <rect width="600" height="340" fill="#090d16" />
+            <line x1="0" y1="170" x2="600" y2="170" stroke="#172033" stroke-width="2" stroke-dasharray="10 10"/>
+            
+            <!-- Box Body / Polybag -->
+            <rect id="svg-polybag" x="120" y="50" width="360" height="240" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 4"/>
+            <text x="135" y="75" fill="#38bdf8" font-size="11" font-family="monospace">POLYBAG BOUNDARY [HEAT-SEALED]</text>
+            
+            <!-- Suffocation Warning Region -->
+            <rect id="svg-warning" x="140" y="90" width="320" height="42" rx="4" fill="#334155" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="150" y="110" fill="#fbbf24" font-size="10" font-family="monospace">WARNING: KEEP BAG AWAY FROM CHILDREN (14pt)</text>
+            <text x="150" y="124" fill="#94a3b8" font-size="8" font-family="monospace">Fold Clearance: 100% OK · Meets Amazon Spec</text>
+
+            <!-- Original Manufacturer Barcode -->
+            <rect id="svg-upc" x="140" y="160" width="130" height="75" rx="4" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="146" y="180" fill="#ef4444" font-size="9" font-family="monospace">ORIGINAL UPC (COVERED)</text>
+            <rect id="svg-upc-mask" x="142" y="188" width="126" height="43" fill="#1e293b" opacity="0.95"/>
+            <text x="152" y="212" fill="#10b981" font-size="10" font-family="monospace">[100% OPAQUE MASK]</text>
+
+            <!-- FNSKU Label Placement -->
+            <rect id="svg-fnsku" x="310" y="160" width="150" height="85" rx="4" fill="#f8fafc" stroke="#10b981" stroke-width="2.5"/>
+            <text x="320" y="180" fill="#0f172a" font-size="10" font-weight="bold" font-family="monospace">FNSKU: X00DUMMY004</text>
+            <!-- Barcode stripes -->
+            <path d="M320 188 h4 v32 h-4 z M328 188 h2 v32 h-2 z M334 188 h6 v32 h-6 z M344 188 h2 v32 h-2 z M350 188 h8 v32 h-8 z M362 188 h3 v32 h-3 z M370 188 h6 v32 h-6 z M380 188 h2 v32 h-2 z M386 188 h7 v32 h-7 z M398 188 h4 v32 h-4 z M406 188 h2 v32 h-2 z M414 188 h5 v32 h-5 z M424 188 h8 v32 h-8 z M436 188 h4 v32 h-4 z M444 188 h2 v32 h-2 z" fill="#0f172a"/>
+            <text x="320" y="235" fill="#475569" font-size="8" font-family="monospace">PLANAR SURFACE · NO SEAMS</text>
+
+            <!-- Expiry Stamp -->
+            <rect x="140" y="250" width="150" height="28" rx="4" fill="#0f172a" stroke="#6366f1" stroke-width="1.5"/>
+            <text x="148" y="268" fill="#a5b4fc" font-size="11" font-family="monospace">EXP: 2027-11-30</text>
+          </svg>
+
+          <div class="absolute bottom-2 left-2 bg-slate-900/90 border border-slate-700 px-2 py-1 rounded text-[10px] mono text-slate-300">
+            Unit: <span id="img-unit-label" class="text-white font-bold">UNIT-0004</span>
+          </div>
+          <div class="absolute bottom-2 right-2 bg-slate-900/90 border border-slate-700 px-2 py-1 rounded text-[10px] mono text-emerald-400" id="img-integrity-label">
+            <i class="fa-solid fa-lock text-emerald-400 mr-1"></i>SHA-256 SIGNED
+          </div>
+        </div>
+      </div>
+
+      <!-- The 6 Authoritative Compliance Checks -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex-1">
+        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Authoritative Amazon FBA Checkpoints</h3>
+        <div id="checks-container" class="space-y-2.5">
+          <!-- Dynamically populated check cards -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT: Evidence Record, Cryptographic Hash & Overrides (4 Cols) -->
+    <section class="lg:col-span-4 flex flex-col gap-4">
+      
+      <!-- Summary & Decision Card -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Compliance Decision</span>
+          <span id="decision-badge" class="px-2.5 py-1 rounded text-xs font-bold font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            PASS
+          </span>
+        </div>
+        <p id="decision-summary" class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-2.5 rounded-lg border border-slate-800 mb-3">
+          Compliance PASS: All applicable Amazon FBA prep and labeling checks satisfied.
+        </p>
+
+        <!-- Cryptographic Proof Panel -->
+        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400 flex items-center gap-1.5 font-semibold">
+              <i class="fa-solid fa-fingerprint text-indigo-400"></i>
+              <span>Content Hash (SHA-256)</span>
+            </span>
+            <span id="hash-status-badge" class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">VALID</span>
+          </div>
+          <p id="content-hash-text" class="text-[10px] mono break-all text-slate-400 bg-slate-900 p-2 rounded border border-slate-800/80">
+            ba03d2a91aa600498e03c9558bcc422d70381fb3a2a038abaf6585f9840d8523
+          </p>
+          <div class="flex gap-2 pt-1">
+            <button onclick="verifyCurrentHash()" class="flex-1 text-center py-1.5 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 rounded text-xs transition font-semibold">
+              <i class="fa-solid fa-check-double mr-1"></i>Verify Digest
+            </button>
+            <button onclick="copyEvidenceJson()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs transition">
+              <i class="fa-solid fa-copy"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Evidence JSON Inspector -->
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Evidence Contract Payload</span>
+          <span class="text-[10px] mono text-slate-500">CUBE Schema v2026.1</span>
+        </div>
+        <pre id="json-viewer" class="mono text-[10px] text-indigo-300 bg-slate-950 p-3 rounded-lg border border-slate-800 overflow-y-auto flex-1 max-h-[360px]"></pre>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Override Modal Dialog -->
+  <div id="override-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="font-bold text-white text-sm flex items-center gap-2">
+          <i class="fa-solid fa-user-pen text-indigo-400"></i>
+          <span>Record Operator Override</span>
+        </h3>
+        <button onclick="closeOverrideModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+      <p class="text-xs text-slate-400">
+        In accordance with CUBE Engineering Honesty Rules, overrides append an immutable audit log and do not delete previous machine judgments.
+      </p>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Check Item:</label>
+          <input type="text" id="modal-check-key" readonly class="w-full bg-slate-950 border border-slate-800 p-2 rounded mono text-slate-300">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">New Verdict:</label>
+          <select id="modal-new-verdict" class="w-full bg-slate-950 border border-slate-700 p-2 rounded text-slate-200">
+            <option value="PASS">PASS</option>
+            <option value="FAIL">FAIL</option>
+            <option value="UNCERTAIN">UNCERTAIN</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Mandatory Justification Reason:</label>
+          <input type="text" id="modal-reason" placeholder="e.g. MANUALLY_COVERED_WITH_BLACKOUT_TAPE" class="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Operator Badge ID:</label>
+          <input type="text" id="modal-operator-id" value="op_dana" class="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white">
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2 border-t border-slate-800">
+        <button onclick="closeOverrideModal()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs">Cancel</button>
+        <button onclick="submitOverrideModal()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-semibold">Submit Override</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentRecord = null;
+    let selectedCheckKey = null;
+
+    const CHECK_TITLES = {
+      polybag_present_sealed: "Polybag Presence & Seal",
+      suffocation_warning: "Suffocation Warning & Font",
+      fnsku_label_placement: "FNSKU Label Geometry",
+      original_barcode_covered: "Original Barcode Occlusion",
+      expiry_date: "Expiry Date Visibility",
+      handling_marks: "Mandatory Handling Marks"
+    };
+
+    const CHECK_ICONS = {
+      polybag_present_sealed: "fa-bag-shopping",
+      suffocation_warning: "fa-triangle-exclamation",
+      fnsku_label_placement: "fa-barcode",
+      original_barcode_covered: "fa-eye-slash",
+      expiry_date: "fa-calendar-check",
+      handling_marks: "fa-wine-glass"
+    };
+
+    function getTenant() {
+      return document.getElementById("tenant-select").value;
+    }
+
+    function onTenantChanged() {
+      fetchCurrentUnit();
+    }
+
+    async function fetchCurrentUnit() {
+      const unitId = document.getElementById("custom-unit-id").value.trim();
+      const recId = "PRP-" + unitId.replace("UNIT-", "");
+      const tenant = getTenant();
+
+      try {
+        const res = await fetch(`/api/records/${recId}`, {
+          headers: { "x-org-id": tenant }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          renderRecord(data.record, data.integrity_verified);
+        } else {
+          // If not found in this tenant, run inspect call on the fly
+          const inspectRes = await fetch("/api/inspect", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-org-id": tenant
+            },
+            body: JSON.stringify({
+              unit_id: unitId,
+              org_id: tenant,
+              work_order_id: "WO-3000",
+              fba_shipment_id: "FBA-100",
+              sku: "SKU-PROT-1KG",
+              asin: "B0DUMMY357",
+              fnsku: "X00DUMMY004",
+              operator_id: "op_web",
+              wo_polybag: true,
+              wo_suffocation_warning: true,
+              wo_expiry_date: true
+            })
+          });
+          const inspData = await inspectRes.json();
+          renderRecord(inspData.record, inspData.integrity_verified);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function loadScenario(type) {
+      if (type === "pass_normal") {
+        document.getElementById("custom-unit-id").value = "UNIT-0005";
+      } else if (type === "fail_barcode") {
+        document.getElementById("custom-unit-id").value = "UNIT-0004";
+      } else if (type === "fail_seam") {
+        document.getElementById("custom-unit-id").value = "UNIT-0002";
+      } else if (type === "fail_unsealed") {
+        document.getElementById("custom-unit-id").value = "UNIT-0003";
+      } else if (type === "uncertain_glare") {
+        document.getElementById("custom-unit-id").value = "UNIT-0012";
+      }
+      fetchCurrentUnit();
+    }
+
+    function renderRecord(rec, integrityVerified) {
+      currentRecord = rec;
+      document.getElementById("img-unit-label").innerText = rec.subject.unit_id;
+      document.getElementById("current-work-order").innerText = `${rec.subject.work_order_id} · ${rec.subject.fba_shipment_id}`;
+      document.getElementById("content-hash-text").innerText = rec.content_hash;
+
+      const decBadge = document.getElementById("decision-badge");
+      const beaconLight = document.getElementById("beacon-light");
+      const beaconText = document.getElementById("beacon-text");
+
+      const dec = rec.outcome.decision;
+      decBadge.innerText = dec;
+      document.getElementById("decision-summary").innerText = rec.outcome.summary;
+
+      if (dec === "PASS") {
+        decBadge.className = "px-2.5 py-1 rounded text-xs font-bold font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+        beaconLight.className = "h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse";
+        beaconText.className = "font-bold text-emerald-400";
+        beaconText.innerText = "PASS (DISPATCH)";
+      } else if (dec === "FAIL") {
+        decBadge.className = "px-2.5 py-1 rounded text-xs font-bold font-mono bg-rose-500/20 text-rose-400 border border-rose-500/30";
+        beaconLight.className = "h-3.5 w-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 animate-pulse";
+        beaconText.className = "font-bold text-rose-400";
+        beaconText.innerText = "FAIL (REWORK)";
+      } else {
+        decBadge.className = "px-2.5 py-1 rounded text-xs font-bold font-mono bg-amber-500/20 text-amber-400 border border-amber-500/30";
+        beaconLight.className = "h-3.5 w-3.5 rounded-full bg-amber-500 shadow-lg shadow-amber-500/50 animate-pulse";
+        beaconText.className = "font-bold text-amber-400";
+        beaconText.innerText = "UNCERTAIN (AUDIT)";
+      }
+
+      // Render Check Cards
+      const container = document.getElementById("checks-container");
+      container.innerHTML = "";
+
+      rec.checks.forEach(c => {
+        let vColor = "emerald";
+        let vText = "PASS";
+        if (c.verdict === "FAIL") { vColor = "rose"; vText = "FAIL"; }
+        else if (c.verdict === "UNCERTAIN") { vColor = "amber"; vText = "UNCERTAIN"; }
+        else if (c.verdict === "NOT_REQUIRED") { vColor = "slate"; vText = "N/A"; }
+
+        const card = document.createElement("div");
+        card.className = "bg-slate-950 border border-slate-800 p-3 rounded-lg flex items-center justify-between text-xs";
+        card.innerHTML = `
+          <div class="flex items-center gap-3 flex-1 pr-3">
+            <div class="h-8 w-8 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-${vColor}-400">
+              <i class="fa-solid ${CHECK_ICONS[c.check_key] || 'fa-check'}"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-semibold text-slate-200">${CHECK_TITLES[c.check_key] || c.check_key}</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-${vColor}-500/20 text-${vColor}-400 border border-${vColor}-500/30">${vText}</span>
+                <span class="text-[10px] text-slate-500 font-mono">conf: ${(c.confidence * 100).toFixed(0)}%</span>
+              </div>
+              <div class="text-[11px] text-slate-400 mt-0.5">${c.detail}</div>
+            </div>
+          </div>
+          <button onclick="openOverrideModal('${c.check_key}')" class="px-2 py-1 text-[11px] bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded transition font-mono whitespace-nowrap">
+            Override
+          </button>
+        `;
+        container.appendChild(card);
+      });
+
+      // Render JSON
+      document.getElementById("json-viewer").innerText = JSON.stringify(rec, null, 2);
+    }
+
+    function openOverrideModal(checkKey) {
+      selectedCheckKey = checkKey;
+      document.getElementById("modal-check-key").value = checkKey;
+      document.getElementById("modal-reason").value = "";
+      document.getElementById("override-modal").classList.remove("hidden");
+    }
+
+    function closeOverrideModal() {
+      document.getElementById("override-modal").classList.add("hidden");
+    }
+
+    async function submitOverrideModal() {
+      const reason = document.getElementById("modal-reason").value.trim();
+      const newVerdict = document.getElementById("modal-new-verdict").value;
+      const opId = document.getElementById("modal-operator-id").value.trim();
+
+      if (!reason) {
+        alert("A mandatory reason code is required for compliance audit trails.");
+        return;
+      }
+
+      const res = await fetch("/api/override", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-org-id": getTenant()
+        },
+        body: JSON.stringify({
+          record_id: currentRecord.record_id,
+          check_key: selectedCheckKey,
+          new_verdict: newVerdict,
+          reason: reason,
+          operator_id: opId
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        closeOverrideModal();
+        renderRecord(data.record, data.integrity_verified);
+      } else {
+        alert("Failed to save override");
+      }
+    }
+
+    async function verifyCurrentHash() {
+      if (!currentRecord) return;
+      const res = await fetch(`/api/records/${currentRecord.record_id}`, {
+        headers: { "x-org-id": getTenant() }
+      });
+      const data = await res.json();
+      if (data.integrity_verified) {
+        alert("CRYPTOGRAPHIC PROOF VERIFIED: SHA-256 digest perfectly matches all canonical record fields and image digests.");
+      } else {
+        alert("INTEGRITY MISMATCH: Calculated digest does not match stored content hash!");
+      }
+    }
+
+    async function runTenancyAudit() {
+      const res = await fetch("/api/tenancy/test");
+      const data = await res.json();
+      alert(`TENANT ISOLATION AUDIT:\n${data.detail}\nVerified Zero Leakage: ${data.isolation_verified}`);
+    }
+
+    function copyEvidenceJson() {
+      if (!currentRecord) return;
+      navigator.clipboard.writeText(JSON.stringify(currentRecord, null, 2));
+      alert("Evidence Record JSON copied to clipboard!");
+    }
+
+    // Initialize with UNIT-0004
+    window.addEventListener("DOMContentLoaded", () => {
+      fetchCurrentUnit();
+    });
+  </script>
+</body>
+</html>

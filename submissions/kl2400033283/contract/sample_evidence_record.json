@@ -1,0 +1,107 @@
+{
+  "record_id": "PRP-0004",
+  "schema_version": "2026.1",
+  "organization_id": "org_demo_alpha",
+  "client_id": "seller_nexus_commerce",
+  "agent": {
+    "agent_id": "agent_02_prep",
+    "agent_name": "Prep Manager",
+    "version": "1.2.0",
+    "stage": 2
+  },
+  "subject": {
+    "unit_id": "UNIT-0004",
+    "sku": "SKU-PROT-1KG",
+    "asin": "B0DUMMY357",
+    "fnsku": "X00DUMMY004",
+    "work_order_id": "WO-3000",
+    "fba_shipment_id": "FBA-DUMMY-100"
+  },
+  "captured_at": "2026-06-06T12:58:00Z",
+  "operator_label": "op_dana",
+  "images": [
+    {
+      "view": "front",
+      "file_path": "fixtures/prep/UNIT-0004_front.jpg",
+      "sha256_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "dimensions": { "width": 1920, "height": 1080 }
+    },
+    {
+      "view": "back",
+      "file_path": "fixtures/prep/UNIT-0004_back.jpg",
+      "sha256_digest": "4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a",
+      "dimensions": { "width": 1920, "height": 1080 }
+    },
+    {
+      "view": "label_detail",
+      "file_path": "fixtures/prep/UNIT-0004_label.jpg",
+      "sha256_digest": "ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d",
+      "dimensions": { "width": 1280, "height": 720 }
+    }
+  ],
+  "checks": [
+    {
+      "check_key": "polybag_present_sealed",
+      "verdict": "NOT_REQUIRED",
+      "confidence": 0.99,
+      "detail": "Work order specifies rigid tub packaging; polybagging not mandated.",
+      "evidence_metadata": { "wo_rule": "wo_polybag=False" },
+      "model_version": "prep-vision-v2",
+      "latency_ms": 140
+    },
+    {
+      "check_key": "suffocation_warning",
+      "verdict": "NOT_REQUIRED",
+      "confidence": 0.99,
+      "detail": "Not polybagged; suffocation warning not applicable.",
+      "evidence_metadata": { "wo_rule": "wo_suffocation_warning=False" },
+      "model_version": "prep-vision-v2",
+      "latency_ms": 110
+    },
+    {
+      "check_key": "fnsku_label_placement",
+      "verdict": "PASS",
+      "confidence": 0.98,
+      "detail": "FNSKU X00DUMMY004 positioned flat on main cylindrical face away from lid seam.",
+      "evidence_metadata": { "bounding_box": [320, 450, 680, 590], "surface_curvature": "planar_region" },
+      "model_version": "prep-vision-v2",
+      "latency_ms": 185
+    },
+    {
+      "check_key": "original_barcode_covered",
+      "verdict": "FAIL",
+      "confidence": 0.96,
+      "detail": "Original manufacturer UPC (07935731892) is partially exposed on bottom edge; dual-barcode defect hazard.",
+      "evidence_metadata": { "upc_detected": "07935731892", "occlusion_percentage": 34.2 },
+      "model_version": "prep-vision-v2",
+      "latency_ms": 190
+    },
+    {
+      "check_key": "expiry_date",
+      "verdict": "PASS",
+      "confidence": 0.95,
+      "detail": "Expiry date 2027-11-30 clearly visible and verified by OCR.",
+      "evidence_metadata": { "ocr_date_text": "EXP: 2027-11-30", "standardized_date": "2027-11-30" },
+      "model_version": "prep-vision-v2",
+      "latency_ms": 125
+    },
+    {
+      "check_key": "handling_marks",
+      "verdict": "NOT_REQUIRED",
+      "confidence": 0.99,
+      "detail": "Standard dry consumable goods; no fragile or liquid handling marks mandated.",
+      "evidence_metadata": { "wo_rule": "wo_handling_marks=None" },
+      "model_version": "prep-vision-v2",
+      "latency_ms": 95
+    }
+  ],
+  "outcome": {
+    "decision": "FAIL",
+    "decided_by": "agent_02_prep",
+    "decided_at": "2026-06-06T12:58:01.850Z",
+    "summary": "Compliance rejected: Original manufacturer barcode is exposed (34.2% covered). Rework required before packaging."
+  },
+  "overrides": [],
+  "status": "completed",
+  "content_hash": "a18ef782046db91a27e7f82b7cf5e408d66df5f8a02375836881c953549219c4"
+}
