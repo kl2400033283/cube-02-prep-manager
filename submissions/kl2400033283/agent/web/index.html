@@ -1,322 +1,640 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prep Manager · Visual Compliance Agent (Agent 02)</title>
+  <title>Prep Manager · AI Visual Compliance Terminal (Agent 02)</title>
+  <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Fira Code"', 'monospace'],
+          },
+          colors: {
+            obsidian: '#070A12',
+            surface: '#0E1424',
+            surfaceCard: '#131B30',
+            surfaceBorder: '#1F2B48',
+            neonCyan: '#06B6D4',
+            neonEmerald: '#10B981',
+            neonAmber: '#F59E0B',
+            neonRose: '#F43F5E',
+            neonIndigo: '#6366F1'
+          },
+          animation: {
+            'laser-sweep': 'laserSweep 3s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'glow-subtle': 'glowSubtle 2s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            laserSweep: {
+              '0%, 100%': { transform: 'translateY(15px)', opacity: '0.4' },
+              '50%': { transform: 'translateY(280px)', opacity: '0.95' },
+            },
+            glowSubtle: {
+              '0%': { filter: 'drop-shadow(0 0 5px rgba(6, 182, 212, 0.3))' },
+              '100%': { filter: 'drop-shadow(0 0 16px rgba(6, 182, 212, 0.7))' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070A12; }
+    ::-webkit-scrollbar-thumb { background: #1F2B48; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
+
+    /* Scanline Screen Effect */
+    .scanline-overlay {
+      background: linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    /* Glassmorphism */
+    .glass-panel {
+      background: rgba(14, 20, 36, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(31, 43, 72, 0.7);
+    }
+    
+    .glass-card-glow {
+      box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.08);
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-obsidian text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
 
-  <!-- Top Navigation & Status Beacon -->
-  <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50">
+  <!-- TOP INDUSTRIAL COMMAND NAVBAR -->
+  <header class="glass-panel border-b border-surfaceBorder px-6 py-3 sticky top-0 z-50 flex items-center justify-between gap-4">
+    <!-- Brand & System Stage -->
     <div class="flex items-center gap-3">
-      <div class="h-10 w-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20">
-        <i class="fa-solid fa-boxes-packing"></i>
+      <div class="relative flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 p-[1px] shadow-lg shadow-cyan-500/20">
+        <div class="h-full w-full bg-surface rounded-[11px] flex items-center justify-center">
+          <i class="fa-solid fa-cube text-cyan-400 text-lg"></i>
+        </div>
       </div>
       <div>
-        <div class="flex items-center gap-2">
-          <h1 class="text-lg font-bold tracking-tight text-white">PREP MANAGER</h1>
-          <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded font-mono font-semibold">AGENT 02</span>
-          <span class="text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">v1.2.0</span>
+        <div class="flex items-center gap-2.5">
+          <h1 class="text-base font-extrabold tracking-wide text-white uppercase flex items-center gap-1.5">
+            <span>PREP</span><span class="text-cyan-400">MANAGER</span>
+          </h1>
+          <span class="text-[10px] bg-cyan-950/80 text-cyan-300 border border-cyan-800/80 px-2 py-0.5 rounded-full font-mono font-bold tracking-wider">
+            AGENT 02
+          </span>
+          <span class="text-[10px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full font-mono">
+            STATION 2 · INBOUND FBA
+          </span>
         </div>
-        <p class="text-xs text-slate-400">Step 2 of 5 · Inbound Prep Compliance & Tamper-Evident Proof</p>
+        <p class="text-[11px] text-slate-400 font-mono flex items-center gap-2 mt-0.5">
+          <span>Sydon Symphony Context Stream</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-indigo-400">Join: UNIT-XXXX</span>
+          <span class="text-slate-600">|</span>
+          <span class="text-slate-400">Downstream: Agent 05 Recovery</span>
+        </p>
       </div>
     </div>
 
-    <!-- Live Physical Station Beacon -->
-    <div class="flex items-center gap-6">
-      <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono">
-        <span class="text-slate-400">Station Beacon:</span>
-        <div id="beacon-light" class="h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse"></div>
-        <span id="beacon-text" class="font-bold text-emerald-400">PASS (DISPATCH)</span>
+    <!-- Central Live Industrial Stack Light -->
+    <div class="flex items-center gap-4 bg-surface/80 border border-surfaceBorder px-4 py-2 rounded-xl shadow-inner">
+      <span class="text-xs font-mono text-slate-400 uppercase tracking-wider hidden sm:inline">Station Light:</span>
+      <!-- 3-Tier Physical Beacon Emulation -->
+      <div class="flex items-center gap-2 bg-black/60 p-1.5 rounded-lg border border-slate-800">
+        <div id="stack-red" class="h-3.5 w-3.5 rounded-full bg-rose-950 border border-rose-800/50 transition-all duration-300"></div>
+        <div id="stack-amber" class="h-3.5 w-3.5 rounded-full bg-amber-950 border border-amber-800/50 transition-all duration-300"></div>
+        <div id="stack-green" class="h-3.5 w-3.5 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_12px_#10B981] transition-all duration-300"></div>
       </div>
+      <div class="flex flex-col">
+        <span id="beacon-verdict-title" class="text-xs font-bold text-emerald-400 font-mono tracking-wide">PASS (DISPATCH)</span>
+        <span id="beacon-subtext" class="text-[10px] text-slate-400">Conveyor Moving · Line Clear</span>
+      </div>
+    </div>
 
-      <!-- Tenant Switcher (Rule 1 Tenancy Isolation) -->
-      <div class="flex items-center gap-2 bg-slate-950/80 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-mono">
-        <i class="fa-solid fa-building-user text-indigo-400"></i>
-        <label for="tenant-select" class="text-slate-400">Tenant:</label>
-        <select id="tenant-select" onchange="onTenantChanged()" class="bg-slate-900 border border-slate-700 text-indigo-300 rounded px-2 py-1 text-xs focus:outline-none focus:border-indigo-500">
-          <option value="org_demo_alpha" selected>org_demo_alpha (Apex Prep)</option>
-          <option value="org_demo_bravo">org_demo_bravo (Bravo Logistics)</option>
+    <!-- Tenant Context Selector & Real-Time Security -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 bg-surface/90 border border-surfaceBorder px-3 py-1.5 rounded-xl text-xs font-mono">
+        <i class="fa-solid fa-building-shield text-indigo-400"></i>
+        <label for="tenant-select" class="text-slate-400 text-[11px]">Tenant:</label>
+        <select id="tenant-select" onchange="onTenantChanged()" class="bg-obsidian border border-slate-700/80 text-cyan-300 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-cyan-500 font-mono font-medium">
+          <option value="org_demo_alpha" selected>org_demo_alpha (Apex Prep OH)</option>
+          <option value="org_demo_bravo">org_demo_bravo (Bravo 3PL IN)</option>
         </select>
       </div>
 
-      <!-- Latency & Cost Indicators (Rule 2 Batching) -->
-      <div class="hidden md:flex items-center gap-4 text-xs font-mono text-slate-400">
-        <div>Cost/Unit: <span class="text-emerald-400 font-semibold">$0.0028</span></div>
-        <div>P50 Latency: <span class="text-indigo-400 font-semibold">185ms</span></div>
-      </div>
+      <button onclick="runTenancyAuditModal()" class="hidden md:flex items-center gap-1.5 bg-indigo-950/60 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-700/60 text-xs px-3 py-1.5 rounded-xl font-mono transition">
+        <i class="fa-solid fa-shield-check text-indigo-400"></i>
+        <span>Audit RLS</span>
+      </button>
     </div>
   </header>
 
-  <!-- Main Content Layout -->
-  <main class="flex-1 p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto w-full">
-    
-    <!-- LEFT: Prep Queue & Unit Selector (3 Cols) -->
-    <section class="lg:col-span-3 flex flex-col gap-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm">
-        <h2 class="text-sm font-semibold text-slate-200 mb-3 flex items-center justify-between">
-          <span><i class="fa-solid fa-list-check text-indigo-400 mr-2"></i>Prep Inspection Queue</span>
-          <span class="text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded mono" id="queue-count">41 Units</span>
-        </h2>
-        
-        <!-- Quick Presets -->
-        <div class="space-y-1.5 mb-4">
-          <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 px-1">Test Scenarios</div>
-          <button onclick="loadScenario('pass_normal')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
-            <span class="font-medium text-slate-200">UNIT-0005 (Correct Prep)</span>
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded">PASS</span>
+  <!-- TELEMETRY & FINANCIAL DEFENSE BANNER -->
+  <section class="max-w-7xl mx-auto w-full px-6 pt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <!-- Card 1: P50 Latency -->
+    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-cyan-500">
+      <div>
+        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">P50 INFERENCE SPEED</div>
+        <div class="text-xl font-extrabold text-white font-mono mt-0.5 flex items-baseline gap-1">
+          <span id="metric-latency">36.0</span><span class="text-xs text-cyan-400 font-normal">ms</span>
+        </div>
+        <div class="text-[10px] text-emerald-400 font-mono mt-0.5">⚡ < 650ms SLA Target</div>
+      </div>
+      <div class="h-10 w-10 rounded-xl bg-cyan-950/60 border border-cyan-800/40 flex items-center justify-center text-cyan-400 text-base">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+    </div>
+
+    <!-- Card 2: Inference Cost -->
+    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-emerald-500">
+      <div>
+        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">UNIT INFERENCE COST</div>
+        <div class="text-xl font-extrabold text-emerald-400 font-mono mt-0.5">
+          $0.0028 <span class="text-xs text-slate-400 font-normal">/ unit</span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono mt-0.5">Protected $0.50 prep fee</div>
+      </div>
+      <div class="h-10 w-10 rounded-xl bg-emerald-950/60 border border-emerald-800/40 flex items-center justify-center text-emerald-400 text-base">
+        <i class="fa-solid fa-coins"></i>
+      </div>
+    </div>
+
+    <!-- Card 3: Chargebacks Prevented -->
+    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-indigo-500">
+      <div>
+        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">CHARGEBACKS DEFENDED</div>
+        <div class="text-xl font-extrabold text-indigo-300 font-mono mt-0.5">
+          $4,850.00
+        </div>
+        <div class="text-[10px] text-indigo-400 font-mono mt-0.5">14 Defect Claims Disputed</div>
+      </div>
+      <div class="h-10 w-10 rounded-xl bg-indigo-950/60 border border-indigo-800/40 flex items-center justify-center text-indigo-400 text-base">
+        <i class="fa-solid fa-shield-virus"></i>
+      </div>
+    </div>
+
+    <!-- Card 4: Single Call Batching Status -->
+    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-amber-500">
+      <div>
+        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">BATCH ARCHITECTURE</div>
+        <div class="text-xl font-extrabold text-amber-300 font-mono mt-0.5">
+          1-PASS <span class="text-xs text-slate-400 font-normal">Active</span>
+        </div>
+        <div class="text-[10px] text-amber-400 font-mono mt-0.5">Rule 2 Compliant (6 Checks)</div>
+      </div>
+      <div class="h-10 w-10 rounded-xl bg-amber-950/60 border border-amber-800/40 flex items-center justify-center text-amber-400 text-base">
+        <i class="fa-solid fa-layer-group"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN OPERATIONAL INTERFACE (3-COLUMN LAYOUT) -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- LEFT COLUMN: Live Feed Presets & Unit Search (3 Cols) -->
+    <aside class="lg:col-span-3 flex flex-col gap-4">
+      
+      <!-- Interactive Preset Selector -->
+      <div class="glass-panel p-4 rounded-2xl">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xs font-bold font-mono uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-sliders text-cyan-400"></i>
+            <span>Inspection Scenarios</span>
+          </h2>
+          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Real-Time</span>
+        </div>
+
+        <div class="space-y-2">
+          <!-- Preset 1: Pass -->
+          <button onclick="loadScenario('pass_normal')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-emerald-500/50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2.5">
+              <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10B981]"></span>
+              <div>
+                <div class="text-xs font-semibold text-slate-200 group-hover:text-emerald-300">UNIT-0005 (Flawless)</div>
+                <div class="text-[10px] text-slate-400">Polybag sealed, warning, UPC 100%</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded font-mono font-bold">PASS</span>
           </button>
-          <button onclick="loadScenario('fail_barcode')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
-            <span class="font-medium text-slate-200">UNIT-0004 (Exposed UPC)</span>
-            <span class="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">FAIL</span>
+
+          <!-- Preset 2: Fail Exposed UPC -->
+          <button onclick="loadScenario('fail_barcode')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-rose-500/50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2.5">
+              <span class="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_#F43F5E]"></span>
+              <div>
+                <div class="text-xs font-semibold text-slate-200 group-hover:text-rose-300">UNIT-0004 (Exposed UPC)</div>
+                <div class="text-[10px] text-slate-400">Original barcode exposed 34.2%</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">FAIL</span>
           </button>
-          <button onclick="loadScenario('fail_seam')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
-            <span class="font-medium text-slate-200">UNIT-0002 (FNSKU on Seam)</span>
-            <span class="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">FAIL</span>
+
+          <!-- Preset 3: Fail Seam -->
+          <button onclick="loadScenario('fail_seam')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-rose-500/50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2.5">
+              <span class="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_#F43F5E]"></span>
+              <div>
+                <div class="text-xs font-semibold text-slate-200 group-hover:text-rose-300">UNIT-0002 (Label on Seam)</div>
+                <div class="text-[10px] text-slate-400">FNSKU folds over box joint</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">FAIL</span>
           </button>
-          <button onclick="loadScenario('fail_unsealed')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
-            <span class="font-medium text-slate-200">UNIT-0003 (Bag Unsealed)</span>
-            <span class="text-[10px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded">FAIL</span>
+
+          <!-- Preset 4: Fail Unsealed -->
+          <button onclick="loadScenario('fail_unsealed')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-rose-500/50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2.5">
+              <span class="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_#F43F5E]"></span>
+              <div>
+                <div class="text-xs font-semibold text-slate-200 group-hover:text-rose-300">UNIT-0003 (Bag Open)</div>
+                <div class="text-[10px] text-slate-400">No heat crimp; open edge > 1"</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">FAIL</span>
           </button>
-          <button onclick="loadScenario('uncertain_glare')" class="w-full text-left text-xs bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 px-3 py-2 rounded-lg transition flex items-center justify-between">
-            <span class="font-medium text-slate-200">UNIT-0012 (Severe Glare)</span>
-            <span class="text-[10px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded">UNCERTAIN</span>
+
+          <!-- Preset 5: Uncertain Glare -->
+          <button onclick="loadScenario('uncertain_glare')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-amber-500/50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2.5">
+              <span class="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_#F59E0B]"></span>
+              <div>
+                <div class="text-xs font-semibold text-slate-200 group-hover:text-amber-300">UNIT-0012 (Severe Glare)</div>
+                <div class="text-[10px] text-slate-400">Glare index 38.4% > 35% cutoff</div>
+              </div>
+            </div>
+            <span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-1.5 py-0.5 rounded font-mono font-bold">UNCERTAIN</span>
           </button>
         </div>
 
-        <div class="border-t border-slate-800 pt-3">
-          <label class="text-xs text-slate-400 block mb-1">Custom Unit Inspection</label>
+        <!-- Custom Search & Trigger -->
+        <div class="mt-4 pt-3 border-t border-surfaceBorder">
+          <label class="text-[11px] font-mono text-slate-400 block mb-1.5">Universal Unit Identifier:</label>
           <div class="flex gap-2">
-            <input type="text" id="custom-unit-id" value="UNIT-0004" class="bg-slate-950 border border-slate-700 text-xs px-2.5 py-1.5 rounded-lg w-full mono focus:outline-none focus:border-indigo-500">
-            <button onclick="fetchCurrentUnit()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg font-semibold transition">
-              Inspect
+            <input type="text" id="custom-unit-id" value="UNIT-0004" class="w-full bg-obsidian border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
+            <button onclick="fetchCurrentUnit()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-cyan-600/30">
+              <i class="fa-solid fa-play"></i>
+              <span>Run</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Tenancy & Safety Status Widget -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-xs space-y-3">
-        <h3 class="font-semibold text-slate-200 flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-emerald-400"></i>
-          <span>Engineering Guarantees</span>
-        </h3>
-        <div class="space-y-2 mono text-[11px]">
-          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
-            <span class="text-slate-400">Tenancy Isolation:</span>
-            <span class="text-emerald-400 font-semibold" id="tenancy-status">ENFORCED (0 Leaks)</span>
-          </div>
-          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
-            <span class="text-slate-400">Batch Strategy:</span>
-            <span class="text-indigo-400 font-semibold">1 Call / Unit (All Checks)</span>
-          </div>
-          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
-            <span class="text-slate-400">Fail-Open Circuit:</span>
-            <span class="text-emerald-400 font-semibold">ACTIVE (1500ms max)</span>
-          </div>
-          <div class="flex justify-between items-center bg-slate-950 p-2 rounded border border-slate-800">
-            <span class="text-slate-400">Dispute Consumer:</span>
-            <span class="text-sky-400 font-semibold">Agent 05 Recovery</span>
-          </div>
+      <!-- Real Photo Drag-and-Drop Upload Section -->
+      <div class="glass-panel p-4 rounded-2xl border-dashed border-2 border-slate-700/80 hover:border-cyan-500/80 transition text-center cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
+        <input type="file" id="file-upload-input" class="hidden" accept="image/*" onchange="handleFileUpload(event)">
+        <div class="h-10 w-10 mx-auto rounded-xl bg-surface flex items-center justify-center text-slate-400 group-hover:text-cyan-400 transition mb-2">
+          <i class="fa-solid fa-camera-viewfinder text-lg"></i>
         </div>
-        <button onclick="runTenancyAudit()" class="w-full text-center py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded text-xs transition">
-          Run Isolation Audit Test
+        <div class="text-xs font-bold text-slate-200 group-hover:text-cyan-300">Drop or Select Photo</div>
+        <p class="text-[10px] text-slate-400 mt-1">Upload actual station camera photograph or mobile snap for live compliance analysis</p>
+      </div>
+
+      <!-- Fail-Open Simulation Tester (Rule 3) -->
+      <div class="glass-panel p-3.5 rounded-2xl bg-amber-950/20 border border-amber-800/40">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-amber-300 font-mono">Fail-Open Simulator</span>
+          <span class="text-[9px] bg-amber-900/60 text-amber-300 px-1.5 py-0.5 rounded font-mono">Rule 3</span>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">Simulate network drop or 1500ms timeout to verify physical line does not stop.</p>
+        <button onclick="triggerFailOpenSimulation()" class="w-full mt-2.5 py-1.5 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/50 text-amber-200 rounded-xl text-xs font-mono font-semibold transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Simulate Model Outage</span>
         </button>
       </div>
-    </section>
 
-    <!-- CENTER: Camera Feed & 6 Visual Checks (5 Cols) -->
-    <section class="lg:col-span-5 flex flex-col gap-4">
-      
-      <!-- Simulated Camera Gantry Feed with Bounding Box Overlay -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm">
-        <div class="flex items-center justify-between mb-2">
+    </aside>
+
+    <!-- CENTER COLUMN: Interactive Gantry Viewport & The 6 Compliance Cards (5 Cols) -->
+    <main class="lg:col-span-5 flex flex-col gap-4">
+
+      <!-- CYBER-INDUSTRIAL VISION HUD GANTRY -->
+      <div class="glass-panel p-4 rounded-2xl glass-card-glow relative overflow-hidden">
+        <!-- Header Controls -->
+        <div class="flex items-center justify-between mb-3 text-xs font-mono">
           <div class="flex items-center gap-2">
-            <span class="relative flex h-2.5 w-2.5">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            <span class="text-xs font-semibold text-slate-300">Overhead Vision Gantry · Station #2</span>
+            <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span class="font-bold text-slate-200">GANTRY CAM // FEED: OVERHEAD-01</span>
           </div>
-          <span class="text-[11px] mono text-slate-500" id="current-work-order">WO-3000 · FBA-DUMMY-100</span>
+          <!-- View Angle Switcher -->
+          <div class="flex gap-1 bg-obsidian p-1 rounded-lg border border-slate-800 text-[10px]">
+            <button id="view-front" onclick="switchCameraView('front')" class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60">Front</button>
+            <button id="view-macro" onclick="switchCameraView('macro')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">Macro</button>
+            <button id="view-seam" onclick="switchCameraView('seam')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">Seam</button>
+          </div>
         </div>
 
-        <div class="relative bg-slate-950 rounded-lg overflow-hidden border border-slate-800 aspect-video flex items-center justify-center">
-          <!-- Synthetic Physical Package SVG with Overlays -->
-          <svg class="w-full h-full" viewBox="0 0 600 340" xmlns="http://www.w3.org/2000/svg">
-            <!-- Background Conveyor Texture -->
-            <rect width="600" height="340" fill="#090d16" />
-            <line x1="0" y1="170" x2="600" y2="170" stroke="#172033" stroke-width="2" stroke-dasharray="10 10"/>
+        <!-- Camera Viewport Box with SVG Overlays -->
+        <div class="relative bg-obsidian rounded-xl overflow-hidden border border-slate-800/90 aspect-[16/10] flex items-center justify-center">
+          
+          <!-- Scanline CRT Effect -->
+          <div class="absolute inset-0 scanline-overlay z-10"></div>
+
+          <!-- Animated Sweeping Laser Line -->
+          <div id="laser-line" class="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_#06B6D4] animate-laser-sweep z-20 pointer-events-none"></div>
+
+          <!-- Tactical HUD Reticles & Corner Brackets -->
+          <div class="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-cyan-500 z-20"></div>
+          <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-cyan-500 z-20"></div>
+          <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-cyan-500 z-20"></div>
+          <div class="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-cyan-500 z-20"></div>
+
+          <!-- Live Optical Coordinates Overlay -->
+          <div class="absolute top-3 left-8 text-[9px] font-mono text-cyan-400/80 z-20">
+            ZOOM: 1.0X · RES: 1920x1080 · FPS: 60 · SHARPNESS: 88.4
+          </div>
+
+          <!-- High-Tech Physical Package SVG Vector -->
+          <svg id="gantry-svg" class="w-full h-full relative z-0" viewBox="0 0 600 375" xmlns="http://www.w3.org/2000/svg">
+            <!-- Conveyor Rollers -->
+            <rect width="600" height="375" fill="#070A12" />
+            <g stroke="#141E33" stroke-width="2" stroke-dasharray="12 12">
+              <line x1="0" y1="80" x2="600" y2="80" />
+              <line x1="0" y1="180" x2="600" y2="180" />
+              <line x1="0" y1="280" x2="600" y2="280" />
+            </g>
+
+            <!-- Physical Box / Polybag Body -->
+            <rect id="svg-box" x="110" y="45" width="380" height="280" rx="14" fill="#0E1626" stroke="#1E2B48" stroke-width="3" />
             
-            <!-- Box Body / Polybag -->
-            <rect id="svg-polybag" x="120" y="50" width="360" height="240" rx="12" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 4"/>
-            <text x="135" y="75" fill="#38bdf8" font-size="11" font-family="monospace">POLYBAG BOUNDARY [HEAT-SEALED]</text>
-            
-            <!-- Suffocation Warning Region -->
-            <rect id="svg-warning" x="140" y="90" width="320" height="42" rx="4" fill="#334155" stroke="#f59e0b" stroke-width="1.5"/>
-            <text x="150" y="110" fill="#fbbf24" font-size="10" font-family="monospace">WARNING: KEEP BAG AWAY FROM CHILDREN (14pt)</text>
-            <text x="150" y="124" fill="#94a3b8" font-size="8" font-family="monospace">Fold Clearance: 100% OK · Meets Amazon Spec</text>
+            <!-- Polybag Heat Crimp Boundary Overlay -->
+            <rect id="svg-polybag" x="100" y="35" width="400" height="300" rx="18" fill="none" stroke="#06B6D4" stroke-width="2" stroke-dasharray="8 6" opacity="0.8" />
+            <text id="svg-polybag-label" x="115" y="60" fill="#06B6D4" font-size="10" font-family="'Fira Code', monospace" font-weight="bold">POLYBAG HEAT-CRIMP [CONFIRMED SEALED]</text>
 
-            <!-- Original Manufacturer Barcode -->
-            <rect id="svg-upc" x="140" y="160" width="130" height="75" rx="4" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
-            <text x="146" y="180" fill="#ef4444" font-size="9" font-family="monospace">ORIGINAL UPC (COVERED)</text>
-            <rect id="svg-upc-mask" x="142" y="188" width="126" height="43" fill="#1e293b" opacity="0.95"/>
-            <text x="152" y="212" fill="#10b981" font-size="10" font-family="monospace">[100% OPAQUE MASK]</text>
+            <!-- Suffocation Warning Zone -->
+            <g id="svg-warning-group">
+              <rect id="svg-warning-box" x="125" y="75" width="350" height="48" rx="6" fill="#1A1F16" stroke="#F59E0B" stroke-width="1.8" />
+              <text x="135" y="96" fill="#FBBF24" font-size="10" font-family="'Fira Code', monospace" font-weight="bold">WARNING: KEEP AWAY FROM BABIES & CHILDREN</text>
+              <text x="135" y="112" fill="#94A3B8" font-size="8.5" font-family="'Fira Code', monospace">AMZ SPEC: 14pt Verified · Unwrinkled Planar Surface</text>
+            </g>
 
-            <!-- FNSKU Label Placement -->
-            <rect id="svg-fnsku" x="310" y="160" width="150" height="85" rx="4" fill="#f8fafc" stroke="#10b981" stroke-width="2.5"/>
-            <text x="320" y="180" fill="#0f172a" font-size="10" font-weight="bold" font-family="monospace">FNSKU: X00DUMMY004</text>
-            <!-- Barcode stripes -->
-            <path d="M320 188 h4 v32 h-4 z M328 188 h2 v32 h-2 z M334 188 h6 v32 h-6 z M344 188 h2 v32 h-2 z M350 188 h8 v32 h-8 z M362 188 h3 v32 h-3 z M370 188 h6 v32 h-6 z M380 188 h2 v32 h-2 z M386 188 h7 v32 h-7 z M398 188 h4 v32 h-4 z M406 188 h2 v32 h-2 z M414 188 h5 v32 h-5 z M424 188 h8 v32 h-8 z M436 188 h4 v32 h-4 z M444 188 h2 v32 h-2 z" fill="#0f172a"/>
-            <text x="320" y="235" fill="#475569" font-size="8" font-family="monospace">PLANAR SURFACE · NO SEAMS</text>
+            <!-- Original Manufacturer Barcode Zone -->
+            <g id="svg-upc-group">
+              <rect id="svg-upc-box" x="125" y="145" width="165" height="95" rx="6" fill="#090D16" stroke="#F43F5E" stroke-width="2" />
+              <text x="135" y="165" fill="#F43F5E" font-size="9" font-family="'Fira Code', monospace" font-weight="bold">ORIGINAL UPC (COVERED)</text>
+              <!-- Mask Layer -->
+              <rect id="svg-upc-mask" x="130" y="172" width="155" height="60" rx="4" fill="#131B30" stroke="#10B981" stroke-width="1.5" />
+              <text id="svg-upc-mask-text" x="142" y="206" fill="#10B981" font-size="11" font-family="'Fira Code', monospace" font-weight="bold">[100% OPAQUE MASK]</text>
+            </g>
 
-            <!-- Expiry Stamp -->
-            <rect x="140" y="250" width="150" height="28" rx="4" fill="#0f172a" stroke="#6366f1" stroke-width="1.5"/>
-            <text x="148" y="268" fill="#a5b4fc" font-size="11" font-family="monospace">EXP: 2027-11-30</text>
+            <!-- FNSKU Amazon Label Zone -->
+            <g id="svg-fnsku-group">
+              <rect id="svg-fnsku-box" x="310" y="145" width="165" height="110" rx="6" fill="#FFFFFF" stroke="#10B981" stroke-width="3" />
+              <text x="320" y="166" fill="#070A12" font-size="10" font-weight="bold" font-family="'Fira Code', monospace">FNSKU: X00DUMMY004</text>
+              <!-- Barcode Stripes -->
+              <path d="M322 174 h4 v40 h-4 z M330 174 h2 v40 h-2 z M336 174 h6 v40 h-6 z M346 174 h2 v40 h-2 z M352 174 h8 v40 h-8 z M364 174 h3 v40 h-3 z M372 174 h6 v40 h-6 z M382 174 h2 v40 h-2 z M388 174 h7 v40 h-7 z M400 174 h4 v40 h-4 z M408 174 h2 v40 h-2 z M416 174 h5 v40 h-5 z M426 174 h8 v40 h-8 z M438 174 h4 v40 h-4 z M446 174 h3 v40 h-3 z M454 174 h2 v40 h-2 z M460 174 h4 v40 h-4 z" fill="#070A12"/>
+              <text x="320" y="242" fill="#475569" font-size="8" font-family="'Fira Code', monospace">PLANAR EXTERIOR · NO CURVES</text>
+            </g>
+
+            <!-- Expiry Stamp Zone -->
+            <g id="svg-expiry-group">
+              <rect id="svg-expiry-box" x="125" y="255" width="165" height="38" rx="6" fill="#090D16" stroke="#6366F1" stroke-width="1.8" />
+              <text x="135" y="278" fill="#A5B4FC" font-size="11" font-weight="bold" font-family="'Fira Code', monospace">EXP: 2027-11-30</text>
+            </g>
+
+            <!-- Specular Glare Overlay Layer (Toggled in Uncertain Scenario) -->
+            <g id="svg-glare-overlay" opacity="0" class="transition-opacity duration-500">
+              <polygon points="260,30 420,10 520,320 340,340" fill="url(#glare-gradient)" />
+              <text x="320" y="190" fill="#EF4444" font-size="16" font-family="'Fira Code', monospace" font-weight="bold">[SPECULAR GLARE 38.4%]</text>
+            </g>
+
+            <defs>
+              <linearGradient id="glare-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+                <stop offset="50%" stop-color="#38BDF8" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+              </linearGradient>
+            </defs>
           </svg>
 
-          <div class="absolute bottom-2 left-2 bg-slate-900/90 border border-slate-700 px-2 py-1 rounded text-[10px] mono text-slate-300">
-            Unit: <span id="img-unit-label" class="text-white font-bold">UNIT-0004</span>
+          <!-- Bottom Telemetry Badges -->
+          <div class="absolute bottom-3 left-3 bg-surface/90 border border-slate-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono text-slate-300 z-20 flex items-center gap-1.5">
+            <span class="text-slate-400">Unit:</span>
+            <span id="canvas-unit-id" class="text-white font-bold">UNIT-0004</span>
           </div>
-          <div class="absolute bottom-2 right-2 bg-slate-900/90 border border-slate-700 px-2 py-1 rounded text-[10px] mono text-emerald-400" id="img-integrity-label">
-            <i class="fa-solid fa-lock text-emerald-400 mr-1"></i>SHA-256 SIGNED
+
+          <div class="absolute bottom-3 right-3 bg-surface/90 border border-emerald-500/40 px-2.5 py-1 rounded-lg text-[10px] font-mono text-emerald-400 z-20 flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+            <i class="fa-solid fa-lock text-emerald-400"></i>
+            <span>SHA-256 LOCKED</span>
           </div>
         </div>
       </div>
 
-      <!-- The 6 Authoritative Compliance Checks -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex-1">
-        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Authoritative Amazon FBA Checkpoints</h3>
-        <div id="checks-container" class="space-y-2.5">
-          <!-- Dynamically populated check cards -->
+      <!-- THE 6 AUTHORITATIVE COMPLIANCE CHECK CARDS -->
+      <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-bold font-mono uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check text-cyan-400"></i>
+            <span>Amazon Inbound Compliance Verification</span>
+          </h3>
+          <span class="text-[10px] text-slate-400 font-mono">6 Checks Evaluated</span>
+        </div>
+
+        <div id="check-cards-list" class="space-y-2.5 flex-1">
+          <!-- Dynamically populated via renderRecord -->
         </div>
       </div>
 
-    </section>
+    </main>
 
-    <!-- RIGHT: Evidence Record, Cryptographic Hash & Overrides (4 Cols) -->
-    <section class="lg:col-span-4 flex flex-col gap-4">
-      
-      <!-- Summary & Decision Card -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm">
+    <!-- RIGHT COLUMN: Cryptographic Proof, Decisions & Dispute Packager (4 Cols) -->
+    <aside class="lg:col-span-4 flex flex-col gap-4">
+
+      <!-- Overall Decision Badge & Summary -->
+      <div class="glass-panel p-4 rounded-2xl">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Compliance Decision</span>
-          <span id="decision-badge" class="px-2.5 py-1 rounded text-xs font-bold font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+          <span class="text-xs font-bold font-mono uppercase tracking-wider text-slate-400">PREP VERDICT</span>
+          <span id="overall-decision-badge" class="px-3 py-1 rounded-xl text-xs font-extrabold font-mono border">
             PASS
           </span>
         </div>
-        <p id="decision-summary" class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-2.5 rounded-lg border border-slate-800 mb-3">
-          Compliance PASS: All applicable Amazon FBA prep and labeling checks satisfied.
+        <p id="overall-summary-text" class="text-xs text-slate-300 leading-relaxed bg-obsidian p-3 rounded-xl border border-surfaceBorder mb-3 font-medium">
+          Loading verification state...
         </p>
 
-        <!-- Cryptographic Proof Panel -->
-        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2">
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400 flex items-center gap-1.5 font-semibold">
+        <!-- Cryptographic Content Hash Display -->
+        <div class="bg-obsidian p-3 rounded-xl border border-surfaceBorder space-y-2">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span class="text-slate-400 flex items-center gap-1.5 font-bold">
               <i class="fa-solid fa-fingerprint text-indigo-400"></i>
               <span>Content Hash (SHA-256)</span>
             </span>
-            <span id="hash-status-badge" class="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded">VALID</span>
+            <span id="proof-status-tag" class="text-[10px] text-emerald-400 font-bold bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+              VERIFIED
+            </span>
           </div>
-          <p id="content-hash-text" class="text-[10px] mono break-all text-slate-400 bg-slate-900 p-2 rounded border border-slate-800/80">
-            ba03d2a91aa600498e03c9558bcc422d70381fb3a2a038abaf6585f9840d8523
-          </p>
-          <div class="flex gap-2 pt-1">
-            <button onclick="verifyCurrentHash()" class="flex-1 text-center py-1.5 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 rounded text-xs transition font-semibold">
-              <i class="fa-solid fa-check-double mr-1"></i>Verify Digest
+          <div id="proof-hash-string" class="text-[10.5px] font-mono text-cyan-300 break-all bg-surface/80 p-2.5 rounded-lg border border-slate-800">
+            e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 pt-1 font-mono text-xs">
+            <button onclick="triggerCryptographicVerification()" class="py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-shield-check"></i>
+              <span>Verify Proof</span>
             </button>
-            <button onclick="copyEvidenceJson()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs transition">
-              <i class="fa-solid fa-copy"></i>
+            <button onclick="exportAmazonDisputePacket()" class="py-2 bg-surface hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl transition flex items-center justify-center gap-1.5 font-semibold">
+              <i class="fa-solid fa-file-shield text-indigo-400"></i>
+              <span>Dispute Doc</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Evidence JSON Inspector -->
-      <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-sm flex-1 flex flex-col">
+      <!-- JSON Contract Inspector & Dispute Payload -->
+      <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Evidence Contract Payload</span>
-          <span class="text-[10px] mono text-slate-500">CUBE Schema v2026.1</span>
+          <span class="text-xs font-bold font-mono uppercase tracking-wider text-slate-400">Evidence Record Contract</span>
+          <button onclick="copyContractJson()" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copy JSON</span>
+          </button>
         </div>
-        <pre id="json-viewer" class="mono text-[10px] text-indigo-300 bg-slate-950 p-3 rounded-lg border border-slate-800 overflow-y-auto flex-1 max-h-[360px]"></pre>
+        <div class="relative flex-1 bg-obsidian rounded-xl border border-surfaceBorder overflow-hidden">
+          <pre id="contract-json-viewer" class="text-[10px] font-mono text-indigo-300 p-3 h-full overflow-y-auto max-h-[380px] leading-relaxed"></pre>
+        </div>
       </div>
 
-    </section>
+    </aside>
 
   </main>
 
-  <!-- Override Modal Dialog -->
-  <div id="override-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-sm flex items-center gap-2">
-          <i class="fa-solid fa-user-pen text-indigo-400"></i>
-          <span>Record Operator Override</span>
-        </h3>
-        <button onclick="closeOverrideModal()" class="text-slate-400 hover:text-white">&times;</button>
+  <!-- OVERRIDE MODAL DIALOG -->
+  <div id="override-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-2xl max-w-md w-full p-6 shadow-2xl border border-indigo-500/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-surfaceBorder pb-3">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-lg bg-indigo-900/60 border border-indigo-500 flex items-center justify-center text-indigo-400">
+            <i class="fa-solid fa-user-pen"></i>
+          </div>
+          <h3 class="font-bold text-white text-sm font-mono">Operator Override Submission</h3>
+        </div>
+        <button onclick="closeOverrideModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
       </div>
+
       <p class="text-xs text-slate-400">
-        In accordance with CUBE Engineering Honesty Rules, overrides append an immutable audit log and do not delete previous machine judgments.
+        Per CUBE Honesty Rules, overrides append an immutable audit log with mandatory operator justification. The original agent verdict is preserved.
       </p>
-      
+
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-400 mb-1">Check Item:</label>
-          <input type="text" id="modal-check-key" readonly class="w-full bg-slate-950 border border-slate-800 p-2 rounded mono text-slate-300">
+          <label class="block text-slate-400 font-mono mb-1 text-[11px]">Check Item:</label>
+          <input type="text" id="modal-check-key" readonly class="w-full bg-obsidian border border-surfaceBorder p-2.5 rounded-xl font-mono text-cyan-300">
         </div>
         <div>
-          <label class="block text-slate-400 mb-1">New Verdict:</label>
-          <select id="modal-new-verdict" class="w-full bg-slate-950 border border-slate-700 p-2 rounded text-slate-200">
-            <option value="PASS">PASS</option>
-            <option value="FAIL">FAIL</option>
-            <option value="UNCERTAIN">UNCERTAIN</option>
+          <label class="block text-slate-400 font-mono mb-1 text-[11px]">New Operator Verdict:</label>
+          <select id="modal-new-verdict" class="w-full bg-obsidian border border-slate-700 p-2.5 rounded-xl text-white font-mono">
+            <option value="PASS">PASS (Discharged & Approved)</option>
+            <option value="FAIL">FAIL (Rejected for Rework)</option>
+            <option value="UNCERTAIN">UNCERTAIN (Escalate to Supervisor)</option>
           </select>
         </div>
         <div>
-          <label class="block text-slate-400 mb-1">Mandatory Justification Reason:</label>
-          <input type="text" id="modal-reason" placeholder="e.g. MANUALLY_COVERED_WITH_BLACKOUT_TAPE" class="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white focus:outline-none focus:border-indigo-500">
+          <label class="block text-slate-400 font-mono mb-1 text-[11px]">Justification Reason Code:</label>
+          <input type="text" id="modal-reason" placeholder="e.g. MANUALLY_COVERED_WITH_BLACKOUT_TAPE" class="w-full bg-obsidian border border-slate-700 p-2.5 rounded-xl text-white focus:outline-none focus:border-cyan-500 font-mono">
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <button onclick="setPresetReason('MANUALLY_COVERED_WITH_BLACKOUT_TAPE')" class="text-[9.5px] bg-surface hover:bg-slate-800 text-slate-300 px-2 py-1 rounded-md border border-slate-700 font-mono">Tape applied over UPC</button>
+            <button onclick="setPresetReason('GLARE_CLEARED_ON_MANUAL_TILT')" class="text-[9.5px] bg-surface hover:bg-slate-800 text-slate-300 px-2 py-1 rounded-md border border-slate-700 font-mono">Glare cleared on tilt</button>
+            <button onclick="setPresetReason('RE-SEALED_WITH_HEAT_SEALER')" class="text-[9.5px] bg-surface hover:bg-slate-800 text-slate-300 px-2 py-1 rounded-md border border-slate-700 font-mono">Re-sealed on line</button>
+          </div>
         </div>
         <div>
-          <label class="block text-slate-400 mb-1">Operator Badge ID:</label>
-          <input type="text" id="modal-operator-id" value="op_dana" class="w-full bg-slate-950 border border-slate-700 p-2 rounded text-white">
+          <label class="block text-slate-400 font-mono mb-1 text-[11px]">Operator Badge ID:</label>
+          <input type="text" id="modal-operator-id" value="op_elena_qc" class="w-full bg-obsidian border border-slate-700 p-2 rounded-xl text-slate-300 font-mono">
         </div>
       </div>
 
-      <div class="flex gap-2 pt-2 border-t border-slate-800">
-        <button onclick="closeOverrideModal()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs">Cancel</button>
-        <button onclick="submitOverrideModal()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-semibold">Submit Override</button>
+      <div class="flex gap-2 pt-2 border-t border-surfaceBorder font-mono">
+        <button onclick="closeOverrideModal()" class="flex-1 py-2 bg-surface hover:bg-slate-800 text-slate-300 rounded-xl text-xs transition">Cancel</button>
+        <button onclick="submitOverrideModal()" class="flex-1 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-600/30">Submit Override</button>
       </div>
     </div>
   </div>
 
+  <!-- DISPUTE PACKET EXPORT MODAL -->
+  <div id="dispute-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-cyan-500/40 space-y-4">
+      <div class="flex items-center justify-between border-b border-surfaceBorder pb-3">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-lg bg-emerald-950 border border-emerald-500 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-file-signature"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white text-sm font-mono">Amazon Inbound Defect Dispute Packet</h3>
+            <p class="text-[10px] text-slate-400">Formatted for Recovery Manager (Agent 05) automated filing</p>
+          </div>
+        </div>
+        <button onclick="closeDisputeModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+      </div>
+
+      <pre id="dispute-json-view" class="text-[10.5px] font-mono text-emerald-300 bg-obsidian p-4 rounded-xl border border-surfaceBorder max-h-[380px] overflow-y-auto leading-relaxed"></pre>
+
+      <div class="flex justify-end gap-2 pt-2 border-t border-surfaceBorder font-mono text-xs">
+        <button onclick="closeDisputeModal()" class="px-4 py-2 bg-surface hover:bg-slate-800 text-slate-300 rounded-xl transition">Close</button>
+        <button onclick="downloadDisputePacket()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-black font-bold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
+          <i class="fa-solid fa-download"></i>
+          <span>Download Dispute JSON</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE FRONTEND APPLICATION LOGIC -->
   <script>
     let currentRecord = null;
     let selectedCheckKey = null;
+    let currentDisputeData = null;
 
-    const CHECK_TITLES = {
-      polybag_present_sealed: "Polybag Presence & Seal",
-      suffocation_warning: "Suffocation Warning & Font",
-      fnsku_label_placement: "FNSKU Label Geometry",
-      original_barcode_covered: "Original Barcode Occlusion",
-      expiry_date: "Expiry Date Visibility",
-      handling_marks: "Mandatory Handling Marks"
-    };
-
-    const CHECK_ICONS = {
-      polybag_present_sealed: "fa-bag-shopping",
-      suffocation_warning: "fa-triangle-exclamation",
-      fnsku_label_placement: "fa-barcode",
-      original_barcode_covered: "fa-eye-slash",
-      expiry_date: "fa-calendar-check",
-      handling_marks: "fa-wine-glass"
+    const CHECK_METADATA = {
+      polybag_present_sealed: {
+        title: "Polybag Presence & Perimeter Seal",
+        icon: "fa-bag-shopping",
+        rule: "AMZ-FBA-§3.1: Transparent 1.5 mil polybag fully heat-sealed without apertures > 1 inch.",
+        svgTarget: "svg-polybag"
+      },
+      suffocation_warning: {
+        title: "Suffocation Warning & Font Sizing",
+        icon: "fa-triangle-exclamation",
+        rule: "AMZ-FBA-§4.2: Mandated if aperture >= 5''. Font 14pt (30-39'') or 18pt (40-59''). Unobscured by folds.",
+        svgTarget: "svg-warning-group"
+      },
+      fnsku_label_placement: {
+        title: "FNSKU Label Planar Surface Geometry",
+        icon: "fa-barcode",
+        rule: "AMZ-FBA-§2.4: Code 128 barcode flat on exterior planar face. Reject seams, corners, or cylinder curvature.",
+        svgTarget: "svg-fnsku-group"
+      },
+      original_barcode_covered: {
+        title: "Original Manufacturer UPC Occlusion",
+        icon: "fa-eye-slash",
+        rule: "AMZ-FBA-§1.8: 100% of manufacturer UPC/EAN must be covered by opaque overlay to prevent scanner splits.",
+        svgTarget: "svg-upc-group"
+      },
+      expiry_date: {
+        title: "Expiration Date Visibility After Wrapping",
+        icon: "fa-calendar-check",
+        rule: "AMZ-FBA-§5.3: Consumables must display clear expiration date in YYYY-MM-DD or MM-DD-YYYY on outer polybag.",
+        svgTarget: "svg-expiry-group"
+      },
+      handling_marks: {
+        title: "Mandatory Handling & Orientation Marks",
+        icon: "fa-wine-glass",
+        rule: "AMZ-FBA-§6.1: Fragile glassware, liquids > 4oz (This Way Up), and multipacks (Sold as Set) required.",
+        svgTarget: "svg-box"
+      }
     };
 
     function getTenant() {
@@ -340,8 +658,8 @@
           const data = await res.json();
           renderRecord(data.record, data.integrity_verified);
         } else {
-          // If not found in this tenant, run inspect call on the fly
-          const inspectRes = await fetch("/api/inspect", {
+          // Trigger inspection on the fly
+          const inspRes = await fetch("/api/inspect", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -355,17 +673,17 @@
               sku: "SKU-PROT-1KG",
               asin: "B0DUMMY357",
               fnsku: "X00DUMMY004",
-              operator_id: "op_web",
+              operator_id: "op_elena_qc",
               wo_polybag: true,
               wo_suffocation_warning: true,
               wo_expiry_date: true
             })
           });
-          const inspData = await inspectRes.json();
+          const inspData = await inspRes.json();
           renderRecord(inspData.record, inspData.integrity_verified);
         }
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
       }
     }
 
@@ -386,71 +704,172 @@
 
     function renderRecord(rec, integrityVerified) {
       currentRecord = rec;
-      document.getElementById("img-unit-label").innerText = rec.subject.unit_id;
-      document.getElementById("current-work-order").innerText = `${rec.subject.work_order_id} · ${rec.subject.fba_shipment_id}`;
-      document.getElementById("content-hash-text").innerText = rec.content_hash;
-
-      const decBadge = document.getElementById("decision-badge");
-      const beaconLight = document.getElementById("beacon-light");
-      const beaconText = document.getElementById("beacon-text");
+      document.getElementById("canvas-unit-id").innerText = rec.subject.unit_id;
+      document.getElementById("proof-hash-string").innerText = rec.content_hash;
 
       const dec = rec.outcome.decision;
-      decBadge.innerText = dec;
-      document.getElementById("decision-summary").innerText = rec.outcome.summary;
+      const decBadge = document.getElementById("overall-decision-badge");
+      const summaryText = document.getElementById("overall-summary-text");
+      const beaconTitle = document.getElementById("beacon-verdict-title");
+      const beaconSub = document.getElementById("beacon-subtext");
+      
+      const sRed = document.getElementById("stack-red");
+      const sAmber = document.getElementById("stack-amber");
+      const sGreen = document.getElementById("stack-green");
+
+      // Reset Stack Light
+      sRed.className = "h-3.5 w-3.5 rounded-full bg-rose-950 border border-rose-800/50 transition-all duration-300";
+      sAmber.className = "h-3.5 w-3.5 rounded-full bg-amber-950 border border-amber-800/50 transition-all duration-300";
+      sGreen.className = "h-3.5 w-3.5 rounded-full bg-emerald-950 border border-emerald-800/50 transition-all duration-300";
 
       if (dec === "PASS") {
-        decBadge.className = "px-2.5 py-1 rounded text-xs font-bold font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-        beaconLight.className = "h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50 animate-pulse";
-        beaconText.className = "font-bold text-emerald-400";
-        beaconText.innerText = "PASS (DISPATCH)";
+        decBadge.className = "px-3 py-1 rounded-xl text-xs font-extrabold font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)]";
+        decBadge.innerText = "PASS";
+        summaryText.innerText = rec.outcome.summary;
+        beaconTitle.className = "text-xs font-bold text-emerald-400 font-mono tracking-wide";
+        beaconTitle.innerText = "PASS (DISPATCH)";
+        beaconSub.innerText = "Conveyor Moving · Package Cleared";
+        sGreen.className = "h-3.5 w-3.5 rounded-full bg-emerald-500 border border-emerald-300 shadow-[0_0_14px_#10B981]";
       } else if (dec === "FAIL") {
-        decBadge.className = "px-2.5 py-1 rounded text-xs font-bold font-mono bg-rose-500/20 text-rose-400 border border-rose-500/30";
-        beaconLight.className = "h-3.5 w-3.5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 animate-pulse";
-        beaconText.className = "font-bold text-rose-400";
-        beaconText.innerText = "FAIL (REWORK)";
+        decBadge.className = "px-3 py-1 rounded-xl text-xs font-extrabold font-mono bg-rose-950/80 text-rose-400 border border-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.3)]";
+        decBadge.innerText = "FAIL";
+        summaryText.innerText = rec.outcome.summary;
+        beaconTitle.className = "text-xs font-bold text-rose-400 font-mono tracking-wide";
+        beaconTitle.innerText = "FAIL (REWORK)";
+        beaconSub.innerText = "Diverter Active · Rework Bin";
+        sRed.className = "h-3.5 w-3.5 rounded-full bg-rose-500 border border-rose-300 shadow-[0_0_14px_#F43F5E]";
       } else {
-        decBadge.className = "px-2.5 py-1 rounded text-xs font-bold font-mono bg-amber-500/20 text-amber-400 border border-amber-500/30";
-        beaconLight.className = "h-3.5 w-3.5 rounded-full bg-amber-500 shadow-lg shadow-amber-500/50 animate-pulse";
-        beaconText.className = "font-bold text-amber-400";
-        beaconText.innerText = "UNCERTAIN (AUDIT)";
+        decBadge.className = "px-3 py-1 rounded-xl text-xs font-extrabold font-mono bg-amber-950/80 text-amber-400 border border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]";
+        decBadge.innerText = dec;
+        summaryText.innerText = rec.outcome.summary;
+        beaconTitle.className = "text-xs font-bold text-amber-400 font-mono tracking-wide";
+        beaconTitle.innerText = "UNCERTAIN / AUDIT";
+        beaconSub.innerText = "Manual Station Inspection";
+        sAmber.className = "h-3.5 w-3.5 rounded-full bg-amber-500 border border-amber-300 shadow-[0_0_14px_#F59E0B]";
       }
 
-      // Render Check Cards
-      const container = document.getElementById("checks-container");
+      // Update SVG HUD Visuals dynamically based on findings
+      updateSvgVisuals(rec);
+
+      // Render the 6 Check Cards
+      const container = document.getElementById("check-cards-list");
       container.innerHTML = "";
 
       rec.checks.forEach(c => {
-        let vColor = "emerald";
-        let vText = "PASS";
-        if (c.verdict === "FAIL") { vColor = "rose"; vText = "FAIL"; }
-        else if (c.verdict === "UNCERTAIN") { vColor = "amber"; vText = "UNCERTAIN"; }
-        else if (c.verdict === "NOT_REQUIRED") { vColor = "slate"; vText = "N/A"; }
+        const meta = CHECK_METADATA[c.check_key] || { title: c.check_key, icon: "fa-check", rule: "Amazon Inbound Standard", svgTarget: "svg-box" };
+        let statusBadge = "";
+        let borderHighlight = "border-surfaceBorder";
+
+        if (c.verdict === "PASS") {
+          statusBadge = '<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-md font-mono font-bold">PASS</span>';
+          borderHighlight = "hover:border-emerald-500/50";
+        } else if (c.verdict === "FAIL") {
+          statusBadge = '<span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded-md font-mono font-bold">FAIL</span>';
+          borderHighlight = "border-rose-900/60 hover:border-rose-500/80";
+        } else if (c.verdict === "UNCERTAIN") {
+          statusBadge = '<span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-md font-mono font-bold">UNCERTAIN</span>';
+          borderHighlight = "border-amber-900/60 hover:border-amber-500/80";
+        } else {
+          statusBadge = '<span class="text-[10px] bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded-md font-mono">N/A</span>';
+        }
 
         const card = document.createElement("div");
-        card.className = "bg-slate-950 border border-slate-800 p-3 rounded-lg flex items-center justify-between text-xs";
+        card.className = `p-3 rounded-xl bg-surface/80 border ${borderHighlight} transition flex flex-col gap-2 group cursor-pointer`;
+        card.onclick = () => highlightSvgElement(meta.svgTarget);
+
         card.innerHTML = `
-          <div class="flex items-center gap-3 flex-1 pr-3">
-            <div class="h-8 w-8 rounded bg-slate-900 border border-slate-800 flex items-center justify-center text-${vColor}-400">
-              <i class="fa-solid ${CHECK_ICONS[c.check_key] || 'fa-check'}"></i>
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-semibold text-slate-200">${CHECK_TITLES[c.check_key] || c.check_key}</span>
-                <span class="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold bg-${vColor}-500/20 text-${vColor}-400 border border-${vColor}-500/30">${vText}</span>
-                <span class="text-[10px] text-slate-500 font-mono">conf: ${(c.confidence * 100).toFixed(0)}%</span>
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="h-7 w-7 rounded-lg bg-obsidian border border-slate-800 flex items-center justify-center text-cyan-400 text-xs">
+                <i class="fa-solid ${meta.icon}"></i>
               </div>
-              <div class="text-[11px] text-slate-400 mt-0.5">${c.detail}</div>
+              <div>
+                <div class="text-xs font-bold text-slate-200 group-hover:text-cyan-300 transition">${meta.title}</div>
+                <div class="text-[10px] text-slate-400 mt-0.5">${c.detail}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              ${statusBadge}
+              <button onclick="event.stopPropagation(); openOverrideModal('${c.check_key}')" class="text-[10px] bg-obsidian hover:bg-slate-800 border border-slate-700/80 text-slate-300 px-2 py-1 rounded font-mono transition">
+                Override
+              </button>
             </div>
           </div>
-          <button onclick="openOverrideModal('${c.check_key}')" class="px-2 py-1 text-[11px] bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 rounded transition font-mono whitespace-nowrap">
-            Override
-          </button>
+          <!-- Amazon Authoritative Rule Citation -->
+          <div class="text-[9.5px] font-mono text-indigo-300/80 bg-obsidian/60 px-2 py-1 rounded border border-slate-800/80 flex items-center gap-1.5">
+            <i class="fa-solid fa-book-bookmark text-indigo-400"></i>
+            <span>${meta.rule}</span>
+          </div>
         `;
         container.appendChild(card);
       });
 
-      // Render JSON
-      document.getElementById("json-viewer").innerText = JSON.stringify(rec, null, 2);
+      // Render JSON contract
+      document.getElementById("contract-json-viewer").innerText = JSON.stringify(rec, null, 2);
+    }
+
+    function updateSvgVisuals(rec) {
+      const upcMask = document.getElementById("svg-upc-mask");
+      const upcText = document.getElementById("svg-upc-mask-text");
+      const fnskuBox = document.getElementById("svg-fnsku-box");
+      const glareOverlay = document.getElementById("svg-glare-overlay");
+      const polybagLabel = document.getElementById("svg-polybag-label");
+
+      // Check original barcode
+      const bcCheck = rec.checks.find(c => c.check_key === "original_barcode_covered");
+      if (bcCheck && bcCheck.verdict === "FAIL") {
+        upcMask.setAttribute("fill", "#F43F5E");
+        upcMask.setAttribute("opacity", "0.25");
+        upcText.setAttribute("fill", "#F43F5E");
+        upcText.textContent = "[UPC EXPOSED: DEFECT]";
+      } else {
+        upcMask.setAttribute("fill", "#131B30");
+        upcMask.setAttribute("opacity", "0.95");
+        upcText.setAttribute("fill", "#10B981");
+        upcText.textContent = "[100% OPAQUE MASK]";
+      }
+
+      // Check FNSKU on seam
+      const fnCheck = rec.checks.find(c => c.check_key === "fnsku_label_placement");
+      if (fnCheck && fnCheck.verdict === "FAIL") {
+        fnskuBox.setAttribute("stroke", "#F43F5E");
+        fnskuBox.setAttribute("transform", "rotate(-6 310 145)");
+      } else {
+        fnskuBox.setAttribute("stroke", "#10B981");
+        fnskuBox.removeAttribute("transform");
+      }
+
+      // Check Glare
+      const isUncertain = rec.outcome.decision === "UNCERTAIN";
+      glareOverlay.setAttribute("opacity", isUncertain ? "0.85" : "0");
+    }
+
+    function highlightSvgElement(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.classList.add("animate-pulse");
+      setTimeout(() => el.classList.remove("animate-pulse"), 1800);
+    }
+
+    function switchCameraView(view) {
+      const btnFront = document.getElementById("view-front");
+      const btnMacro = document.getElementById("view-macro");
+      const btnSeam = document.getElementById("view-seam");
+
+      btnFront.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+      btnMacro.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+      btnSeam.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+
+      if (view === "front") {
+        btnFront.className = "px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60";
+        document.getElementById("gantry-svg").setAttribute("viewBox", "0 0 600 375");
+      } else if (view === "macro") {
+        btnMacro.className = "px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60";
+        document.getElementById("gantry-svg").setAttribute("viewBox", "280 120 220 160");
+      } else if (view === "seam") {
+        btnSeam.className = "px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60";
+        document.getElementById("gantry-svg").setAttribute("viewBox", "100 130 220 140");
+      }
     }
 
     function openOverrideModal(checkKey) {
@@ -464,13 +883,17 @@
       document.getElementById("override-modal").classList.add("hidden");
     }
 
+    function setPresetReason(text) {
+      document.getElementById("modal-reason").value = text;
+    }
+
     async function submitOverrideModal() {
       const reason = document.getElementById("modal-reason").value.trim();
       const newVerdict = document.getElementById("modal-new-verdict").value;
       const opId = document.getElementById("modal-operator-id").value.trim();
 
       if (!reason) {
-        alert("A mandatory reason code is required for compliance audit trails.");
+        alert("Mandatory reason code is required per CUBE Engineering Honesty Rules.");
         return;
       }
 
@@ -498,32 +921,86 @@
       }
     }
 
-    async function verifyCurrentHash() {
+    async function triggerCryptographicVerification() {
       if (!currentRecord) return;
       const res = await fetch(`/api/records/${currentRecord.record_id}`, {
         headers: { "x-org-id": getTenant() }
       });
       const data = await res.json();
       if (data.integrity_verified) {
-        alert("CRYPTOGRAPHIC PROOF VERIFIED: SHA-256 digest perfectly matches all canonical record fields and image digests.");
+        alert(`CRYPTOGRAPHIC PROOF CERTIFIED:\n\nCanonical SHA-256 Digest: ${data.calculated_hash}\n\n✓ Payload Fields Integrity: LOCKED\n✓ Image Digests: MATCHED\n✓ Tenant Scoping: ENFORCED\n✓ Audit Trail: UNTAMPERED`);
       } else {
-        alert("INTEGRITY MISMATCH: Calculated digest does not match stored content hash!");
+        alert("WARNING: Content hash mismatch detected!");
       }
     }
 
-    async function runTenancyAudit() {
+    async function exportAmazonDisputePacket() {
+      if (!currentRecord) return;
+      const res = await fetch(`/api/dispute-packet/${currentRecord.record_id}`, {
+        headers: { "x-org-id": getTenant() }
+      });
+      if (res.ok) {
+        currentDisputeData = await res.json();
+        document.getElementById("dispute-json-view").innerText = JSON.stringify(currentDisputeData, null, 2);
+        document.getElementById("dispute-modal").classList.remove("hidden");
+      }
+    }
+
+    function closeDisputeModal() {
+      document.getElementById("dispute-modal").classList.add("hidden");
+    }
+
+    function downloadDisputePacket() {
+      if (!currentDisputeData) return;
+      const blob = new Blob([JSON.stringify(currentDisputeData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `AMAZON_DISPUTE_PACKET_${currentRecord.record_id}.json`;
+      a.click();
+    }
+
+    async function triggerFailOpenSimulation() {
+      const res = await fetch("/api/simulate-fail-open", {
+        method: "POST",
+        headers: { "x-org-id": getTenant() }
+      });
+      const data = await res.json();
+      renderRecord(data.record, true);
+    }
+
+    async function runTenancyAuditModal() {
       const res = await fetch("/api/tenancy/test");
       const data = await res.json();
-      alert(`TENANT ISOLATION AUDIT:\n${data.detail}\nVerified Zero Leakage: ${data.isolation_verified}`);
+      alert(`AUTOMATED TENANCY LEAKAGE TEST:\n\n• Tenant Alpha: ${data.org_alpha}\n• Tenant Bravo: ${data.org_bravo}\n• Cross-Tenant Leakage: ${data.cross_tenant_leakage_rows} rows\n• Status: ${data.isolation_verified ? '100% SECURE & ISOLATED' : 'LEAK DETECTED'}\n\n${data.detail}`);
     }
 
-    function copyEvidenceJson() {
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: { "x-org-id": getTenant() },
+        body: formData
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        alert(`Photo Uploaded Successfully!\nSHA-256: ${data.sha256_digest}\nStored in tenant fixture bucket.`);
+        fetchCurrentUnit();
+      }
+    }
+
+    function copyContractJson() {
       if (!currentRecord) return;
       navigator.clipboard.writeText(JSON.stringify(currentRecord, null, 2));
-      alert("Evidence Record JSON copied to clipboard!");
+      alert("Evidence Contract JSON copied to clipboard!");
     }
 
-    // Initialize with UNIT-0004
     window.addEventListener("DOMContentLoaded", () => {
       fetchCurrentUnit();
     });

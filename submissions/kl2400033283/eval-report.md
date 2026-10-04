@@ -15,8 +15,8 @@
 | **Human Inter-Rater Kappa (Elena vs Marcus)** | **0.9288** | > 0.880 | PASS |
 | **Barcode Coverage False Negative (FN) Rate** | **0.00%** | < 1.5% | PASS (KC-1 Preserved) |
 | **Uncertainty Calibration Rate** | **6.0%** | 4.0% - 12.0% | PASS (Rule 4 Enforced) |
-| **P50 Latency** | **36.0 ms** | < 650 ms | PASS |
-| **P95 Latency** | **42.4 ms** | < 1,200 ms | PASS |
+| **P50 Latency** | **44.6 ms** | < 650 ms | PASS |
+| **P95 Latency** | **101.8 ms** | < 1,200 ms | PASS |
 | **Inference Cost per Unit** | **$0.0028** | < $0.02 | PASS (KC-3 Preserved) |
 
 ---

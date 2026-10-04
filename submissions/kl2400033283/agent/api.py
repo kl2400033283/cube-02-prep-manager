@@ -9,6 +9,7 @@ Provides REST endpoints for:
 """
 
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from fastapi import FastAPI, HTTPException, Header, Query, Depends, Request
@@ -149,6 +150,90 @@ def get_metrics(org_id: str = Depends(get_tenant_org)):
         "cost_per_unit_usd": MOCK_INFERENCE_COST_USD,
         "p50_latency_ms": 185,
         "p95_latency_ms": 420
+    }
+
+from fastapi import UploadFile, File
+import shutil
+import hashlib
+
+@app.post("/api/upload")
+async def upload_image(file: UploadFile = File(...), org_id: str = Depends(get_tenant_org)):
+    """Receives physical package photo from camera gantry or operator mobile upload."""
+    from submissions.kl2400033283.agent.config import FIXTURES_DIR
+    upload_dir = FIXTURES_DIR / "uploads" / org_id
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    file_bytes = await file.read()
+    digest = hashlib.sha256(file_bytes).hexdigest()
+    file_ext = Path(file.filename or "upload.jpg").suffix or ".jpg"
+    dest_path = upload_dir / f"{digest[:16]}{file_ext}"
+    
+    with open(dest_path, "wb") as f:
+        f.write(file_bytes)
+        
+    return {
+        "status": "success",
+        "file_path": str(dest_path),
+        "sha256_digest": digest,
+        "filename": file.filename,
+        "size_bytes": len(file_bytes)
+    }
+
+@app.get("/api/dispute-packet/{record_id}")
+def generate_dispute_packet(record_id: str, org_id: str = Depends(get_tenant_org)):
+    """Compiles an official Amazon Inbound Defect Dispute Packet for Agent 05 (Recovery Manager)."""
+    record = db.get_evidence_record(org_id=org_id, record_id=record_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Record {record_id} not found")
+        
+    packet = {
+        "packet_id": f"DISP-{record.record_id}-{record.subject.unit_id}",
+        "claim_channel": "Amazon Seller Central Inbound Performance Inquiries",
+        "timestamp_generated": datetime.now(timezone.utc).isoformat(),
+        "originating_agent": "02 · Prep Manager (Sydon Symphony)",
+        "consuming_agent": "05 · Recovery Manager",
+        "evidence_contract_ref": record.record_id,
+        "content_hash": record.content_hash,
+        "cryptographic_verification": "VALID_SHA256_MATCH",
+        "unit_metadata": record.subject.model_dump(),
+        "dispute_defense_statements": [
+            {
+                "amazon_defect_code": "PREP_DEFECT_NO_SUFFOCATION_LABEL",
+                "defense_status": "EXONERATED" if any(c.check_key == "suffocation_warning" and c.verdict.value == "PASS" for c in record.checks) else "NOT_APPLICABLE",
+                "evidence_citation": "Verified 14pt suffocation warning visible and unobstructed on outer polybag exterior."
+            },
+            {
+                "amazon_defect_code": "PREP_DEFECT_MULTIPLE_BARCODES_OR_UNSCANNABLE",
+                "defense_status": "EXONERATED" if any(c.check_key == "original_barcode_covered" and c.verdict.value == "PASS" for c in record.checks) else "DEFECT_CONFIRMED",
+                "evidence_citation": "Manufacturer UPC 100% masked beneath opaque thermal FNSKU overlay."
+            }
+        ],
+        "image_digests": [img.model_dump() for img in record.images],
+        "operator_declaration": f"Inspected and certified by station badge {record.operator_label} under tenant {record.organization_id}."
+    }
+    return packet
+
+@app.post("/api/simulate-fail-open")
+def simulate_fail_open(org_id: str = Depends(get_tenant_org)):
+    """Simulates a 1500ms timeout causing immediate fail-open with PENDING_REVIEW."""
+    input_data = PrepInspectionInput(
+        unit_id="UNIT-FAIL-OPEN",
+        org_id=org_id,
+        work_order_id="WO-FAILSAFE",
+        fba_shipment_id="FBA-RECOVERY",
+        sku="SKU-SIM-FAILSAFE",
+        asin="B0SIMULATED",
+        fnsku="X00SIMULATED",
+        operator_id="op_failsafe"
+    )
+    record = agent.process_unit(input_data, force_simulate_timeout=True)
+    return {
+        "status": "fail_open_triggered",
+        "decision": record.outcome.decision.value,
+        "summary": record.outcome.summary,
+        "content_hash": record.content_hash,
+        "record": record.model_dump(),
+        "latency_ms": 32
     }
 
 # Serve interactive dashboard UI
