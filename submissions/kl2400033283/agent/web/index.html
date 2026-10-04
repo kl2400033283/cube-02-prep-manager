@@ -1,49 +1,31 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prep Manager · AI Visual Compliance Terminal (Agent 02)</title>
+  <title>Prep Manager · Inbound Prep Compliance Station (Agent 02)</title>
   <!-- Tailwind CSS & Font Awesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            sans: ['"Inter"', 'sans-serif'],
             mono: ['"Fira Code"', 'monospace'],
           },
           colors: {
-            obsidian: '#070A12',
-            surface: '#0E1424',
-            surfaceCard: '#131B30',
-            surfaceBorder: '#1F2B48',
-            neonCyan: '#06B6D4',
-            neonEmerald: '#10B981',
-            neonAmber: '#F59E0B',
-            neonRose: '#F43F5E',
-            neonIndigo: '#6366F1'
-          },
-          animation: {
-            'laser-sweep': 'laserSweep 3s ease-in-out infinite',
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'glow-subtle': 'glowSubtle 2s ease-in-out infinite alternate',
-          },
-          keyframes: {
-            laserSweep: {
-              '0%, 100%': { transform: 'translateY(15px)', opacity: '0.4' },
-              '50%': { transform: 'translateY(280px)', opacity: '0.95' },
-            },
-            glowSubtle: {
-              '0%': { filter: 'drop-shadow(0 0 5px rgba(6, 182, 212, 0.3))' },
-              '100%': { filter: 'drop-shadow(0 0 16px rgba(6, 182, 212, 0.7))' },
+            brand: {
+              50: '#EEF2FF',
+              100: '#E0E7FF',
+              500: '#6366F1',
+              600: '#4F46E5',
+              700: '#4338CA',
             }
           }
         }
@@ -52,459 +34,458 @@
   </script>
 
   <style>
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #070A12; }
-    ::-webkit-scrollbar-thumb { background: #1F2B48; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
-
-    /* Scanline Screen Effect */
-    .scanline-overlay {
-      background: linear-gradient(rgba(18, 24, 38, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      background-size: 100% 4px;
-      pointer-events: none;
-    }
-
-    /* Glassmorphism */
-    .glass-panel {
-      background: rgba(14, 20, 36, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(31, 43, 72, 0.7);
+    body {
+      background-color: #F8FAFC;
+      color: #0F172A;
+      font-family: 'Inter', sans-serif;
     }
     
-    .glass-card-glow {
-      box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.08);
+    /* Clean custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+    /* Industrial Inspection Camera Frame */
+    .camera-viewport {
+      background-color: #F1F5F9;
+      background-image: 
+        radial-gradient(#CBD5E1 1px, transparent 1px),
+        linear-gradient(to right, rgba(226, 232, 240, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.4) 1px, transparent 1px);
+      background-size: 20px 20px, 40px 40px, 40px 40px;
+    }
+
+    /* Subtle Card Elevation */
+    .panel-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
     }
   </style>
 </head>
-<body class="bg-obsidian text-slate-100 min-h-screen flex flex-col font-sans selection:bg-cyan-500 selection:text-black">
+<body class="min-h-screen flex flex-col antialiased">
 
-  <!-- TOP INDUSTRIAL COMMAND NAVBAR -->
-  <header class="glass-panel border-b border-surfaceBorder px-6 py-3 sticky top-0 z-50 flex items-center justify-between gap-4">
-    <!-- Brand & System Stage -->
+  <!-- TOP ENTERPRISE HEADER -->
+  <header class="bg-white border-b border-slate-200 px-6 py-3.5 sticky top-0 z-50 flex items-center justify-between gap-4">
+    <!-- Brand & Facility Station Identity -->
     <div class="flex items-center gap-3">
-      <div class="relative flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 p-[1px] shadow-lg shadow-cyan-500/20">
-        <div class="h-full w-full bg-surface rounded-[11px] flex items-center justify-center">
-          <i class="fa-solid fa-cube text-cyan-400 text-lg"></i>
-        </div>
+      <div class="h-10 w-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+        <i class="fa-solid fa-boxes-packing text-lg"></i>
       </div>
       <div>
         <div class="flex items-center gap-2.5">
-          <h1 class="text-base font-extrabold tracking-wide text-white uppercase flex items-center gap-1.5">
-            <span>PREP</span><span class="text-cyan-400">MANAGER</span>
-          </h1>
-          <span class="text-[10px] bg-cyan-950/80 text-cyan-300 border border-cyan-800/80 px-2 py-0.5 rounded-full font-mono font-bold tracking-wider">
-            AGENT 02
+          <span class="text-base font-bold text-slate-900 tracking-tight">Prep Manager</span>
+          <span class="text-[11px] bg-indigo-50 text-indigo-700 border border-indigo-200 px-2 py-0.5 rounded font-mono font-semibold">
+            Agent 02 · Inbound FBA
           </span>
-          <span class="text-[10px] bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 px-2 py-0.5 rounded-full font-mono">
-            STATION 2 · INBOUND FBA
+          <span class="text-[11px] bg-slate-100 text-slate-600 border border-slate-200 px-2 py-0.5 rounded font-mono">
+            Station #2
           </span>
         </div>
-        <p class="text-[11px] text-slate-400 font-mono flex items-center gap-2 mt-0.5">
-          <span>Sydon Symphony Context Stream</span>
-          <span class="text-slate-600">|</span>
-          <span class="text-indigo-400">Join: UNIT-XXXX</span>
-          <span class="text-slate-600">|</span>
-          <span class="text-slate-400">Downstream: Agent 05 Recovery</span>
+        <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-2">
+          <span>Amazon FBA Visual Prep Verification</span>
+          <span class="text-slate-300">•</span>
+          <span>Sydon Commerce Context v2026.1</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500">Downstream: <strong class="text-slate-700">Agent 05 Recovery</strong></span>
         </p>
       </div>
     </div>
 
-    <!-- Central Live Industrial Stack Light -->
-    <div class="flex items-center gap-4 bg-surface/80 border border-surfaceBorder px-4 py-2 rounded-xl shadow-inner">
-      <span class="text-xs font-mono text-slate-400 uppercase tracking-wider hidden sm:inline">Station Light:</span>
-      <!-- 3-Tier Physical Beacon Emulation -->
-      <div class="flex items-center gap-2 bg-black/60 p-1.5 rounded-lg border border-slate-800">
-        <div id="stack-red" class="h-3.5 w-3.5 rounded-full bg-rose-950 border border-rose-800/50 transition-all duration-300"></div>
-        <div id="stack-amber" class="h-3.5 w-3.5 rounded-full bg-amber-950 border border-amber-800/50 transition-all duration-300"></div>
-        <div id="stack-green" class="h-3.5 w-3.5 rounded-full bg-emerald-500 border border-emerald-400 shadow-[0_0_12px_#10B981] transition-all duration-300"></div>
+    <!-- Center: Physical Industrial Stack Light Emulation -->
+    <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl">
+      <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider hidden sm:inline text-[11px]">Line Beacon:</span>
+      <!-- Realistic 3-tier Stack Light Housing -->
+      <div class="flex items-center gap-1.5 bg-slate-200 p-1 rounded-lg border border-slate-300 shadow-inner">
+        <div id="stack-red" class="h-3.5 w-3.5 rounded-full bg-slate-300 transition-all duration-200"></div>
+        <div id="stack-amber" class="h-3.5 w-3.5 rounded-full bg-slate-300 transition-all duration-200"></div>
+        <div id="stack-green" class="h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981] transition-all duration-200"></div>
       </div>
       <div class="flex flex-col">
-        <span id="beacon-verdict-title" class="text-xs font-bold text-emerald-400 font-mono tracking-wide">PASS (DISPATCH)</span>
-        <span id="beacon-subtext" class="text-[10px] text-slate-400">Conveyor Moving · Line Clear</span>
+        <span id="beacon-verdict-title" class="text-xs font-bold text-emerald-700 tracking-wide">PASS (DISPATCH)</span>
+        <span id="beacon-subtext" class="text-[11px] text-slate-500">Conveyor Moving · Line Clear</span>
       </div>
     </div>
 
-    <!-- Tenant Context Selector & Real-Time Security -->
+    <!-- Tenant Context & Isolation Selector (Rule 1) -->
     <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2 bg-surface/90 border border-surfaceBorder px-3 py-1.5 rounded-xl text-xs font-mono">
-        <i class="fa-solid fa-building-shield text-indigo-400"></i>
-        <label for="tenant-select" class="text-slate-400 text-[11px]">Tenant:</label>
-        <select id="tenant-select" onchange="onTenantChanged()" class="bg-obsidian border border-slate-700/80 text-cyan-300 rounded-lg px-2.5 py-1 text-xs focus:outline-none focus:border-cyan-500 font-mono font-medium">
+      <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg text-xs">
+        <i class="fa-solid fa-building text-slate-400"></i>
+        <label for="tenant-select" class="text-slate-500 font-medium">Tenant:</label>
+        <select id="tenant-select" onchange="onTenantChanged()" class="bg-white border border-slate-300 text-slate-800 rounded px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 font-medium">
           <option value="org_demo_alpha" selected>org_demo_alpha (Apex Prep OH)</option>
           <option value="org_demo_bravo">org_demo_bravo (Bravo 3PL IN)</option>
         </select>
       </div>
 
-      <button onclick="runTenancyAuditModal()" class="hidden md:flex items-center gap-1.5 bg-indigo-950/60 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-700/60 text-xs px-3 py-1.5 rounded-xl font-mono transition">
-        <i class="fa-solid fa-shield-check text-indigo-400"></i>
-        <span>Audit RLS</span>
+      <button onclick="runTenancyAuditModal()" class="hidden md:flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs px-3 py-2 rounded-lg font-medium shadow-sm transition">
+        <i class="fa-solid fa-shield-halved text-indigo-600"></i>
+        <span>Audit Isolation</span>
       </button>
     </div>
   </header>
 
-  <!-- TELEMETRY & FINANCIAL DEFENSE BANNER -->
+  <!-- OPERATIONAL TELEMETRY METRIC CARDS -->
   <section class="max-w-7xl mx-auto w-full px-6 pt-5 grid grid-cols-2 md:grid-cols-4 gap-4">
-    <!-- Card 1: P50 Latency -->
-    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-cyan-500">
+    <!-- Metric 1: Latency -->
+    <div class="panel-card p-3.5 rounded-xl flex items-center justify-between border-t-2 border-t-indigo-600">
       <div>
-        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">P50 INFERENCE SPEED</div>
-        <div class="text-xl font-extrabold text-white font-mono mt-0.5 flex items-baseline gap-1">
-          <span id="metric-latency">36.0</span><span class="text-xs text-cyan-400 font-normal">ms</span>
+        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">P50 INFERENCE SPEED</div>
+        <div class="text-xl font-bold text-slate-900 font-mono mt-0.5">
+          <span id="metric-latency">36.0</span> <span class="text-xs font-normal text-slate-500">ms</span>
         </div>
-        <div class="text-[10px] text-emerald-400 font-mono mt-0.5">⚡ < 650ms SLA Target</div>
+        <div class="text-[11px] text-emerald-600 font-medium mt-0.5">✓ Target &lt; 650 ms</div>
       </div>
-      <div class="h-10 w-10 rounded-xl bg-cyan-950/60 border border-cyan-800/40 flex items-center justify-center text-cyan-400 text-base">
-        <i class="fa-solid fa-bolt"></i>
+      <div class="h-9 w-9 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+        <i class="fa-solid fa-gauge-high"></i>
       </div>
     </div>
 
-    <!-- Card 2: Inference Cost -->
-    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-emerald-500">
+    <!-- Metric 2: Unit Cost -->
+    <div class="panel-card p-3.5 rounded-xl flex items-center justify-between border-t-2 border-t-emerald-600">
       <div>
-        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">UNIT INFERENCE COST</div>
-        <div class="text-xl font-extrabold text-emerald-400 font-mono mt-0.5">
-          $0.0028 <span class="text-xs text-slate-400 font-normal">/ unit</span>
+        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">UNIT COMPUTE COST</div>
+        <div class="text-xl font-bold text-slate-900 font-mono mt-0.5">
+          $0.0028 <span class="text-xs font-normal text-slate-500">/ unit</span>
         </div>
-        <div class="text-[10px] text-slate-400 font-mono mt-0.5">Protected $0.50 prep fee</div>
+        <div class="text-[11px] text-slate-500 font-medium mt-0.5">Margin on $0.50 prep fee</div>
       </div>
-      <div class="h-10 w-10 rounded-xl bg-emerald-950/60 border border-emerald-800/40 flex items-center justify-center text-emerald-400 text-base">
-        <i class="fa-solid fa-coins"></i>
+      <div class="h-9 w-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+        <i class="fa-solid fa-circle-dollar-to-slot"></i>
       </div>
     </div>
 
-    <!-- Card 3: Chargebacks Prevented -->
-    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-indigo-500">
+    <!-- Metric 3: Chargebacks Prevented -->
+    <div class="panel-card p-3.5 rounded-xl flex items-center justify-between border-t-2 border-t-blue-600">
       <div>
-        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">CHARGEBACKS DEFENDED</div>
-        <div class="text-xl font-extrabold text-indigo-300 font-mono mt-0.5">
+        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">CHARGEBACKS DEFENDED</div>
+        <div class="text-xl font-bold text-slate-900 font-mono mt-0.5">
           $4,850.00
         </div>
-        <div class="text-[10px] text-indigo-400 font-mono mt-0.5">14 Defect Claims Disputed</div>
+        <div class="text-[11px] text-blue-600 font-medium mt-0.5">14 Automated Claims Disputed</div>
       </div>
-      <div class="h-10 w-10 rounded-xl bg-indigo-950/60 border border-indigo-800/40 flex items-center justify-center text-indigo-400 text-base">
-        <i class="fa-solid fa-shield-virus"></i>
+      <div class="h-9 w-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+        <i class="fa-solid fa-shield-check"></i>
       </div>
     </div>
 
-    <!-- Card 4: Single Call Batching Status -->
-    <div class="glass-panel p-3.5 rounded-2xl flex items-center justify-between border-l-4 border-l-amber-500">
+    <!-- Metric 4: Batch Call Strategy -->
+    <div class="panel-card p-3.5 rounded-xl flex items-center justify-between border-t-2 border-t-amber-500">
       <div>
-        <div class="text-[11px] font-mono text-slate-400 uppercase tracking-wider">BATCH ARCHITECTURE</div>
-        <div class="text-xl font-extrabold text-amber-300 font-mono mt-0.5">
-          1-PASS <span class="text-xs text-slate-400 font-normal">Active</span>
+        <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">BATCH ARCHITECTURE</div>
+        <div class="text-xl font-bold text-slate-900 font-mono mt-0.5">
+          1-Pass <span class="text-xs font-normal text-slate-500">Active</span>
         </div>
-        <div class="text-[10px] text-amber-400 font-mono mt-0.5">Rule 2 Compliant (6 Checks)</div>
+        <div class="text-[11px] text-slate-500 font-medium mt-0.5">Rule 2: All 6 checks in 1 call</div>
       </div>
-      <div class="h-10 w-10 rounded-xl bg-amber-950/60 border border-amber-800/40 flex items-center justify-center text-amber-400 text-base">
+      <div class="h-9 w-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
         <i class="fa-solid fa-layer-group"></i>
       </div>
     </div>
   </section>
 
-  <!-- MAIN OPERATIONAL INTERFACE (3-COLUMN LAYOUT) -->
+  <!-- MAIN OPERATIONAL 3-COLUMN WORKSPACE -->
   <main class="flex-1 max-w-7xl mx-auto w-full px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-    <!-- LEFT COLUMN: Live Feed Presets & Unit Search (3 Cols) -->
+    <!-- LEFT COLUMN: Scenarios, Unit Selector & Upload (3 Cols) -->
     <aside class="lg:col-span-3 flex flex-col gap-4">
       
-      <!-- Interactive Preset Selector -->
-      <div class="glass-panel p-4 rounded-2xl">
+      <!-- Preset Scenarios -->
+      <div class="panel-card p-4 rounded-xl">
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-xs font-bold font-mono uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-cyan-400"></i>
-            <span>Inspection Scenarios</span>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-400"></i>
+            <span>Inspection Presets</span>
           </h2>
-          <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded font-mono">Real-Time</span>
+          <span class="text-[10px] text-slate-400 font-mono">Live Units</span>
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-1.5">
           <!-- Preset 1: Pass -->
-          <button onclick="loadScenario('pass_normal')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-emerald-500/50 transition flex items-center justify-between group">
-            <div class="flex items-center gap-2.5">
-              <span class="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#10B981]"></span>
+          <button onclick="loadScenario('pass_normal')" class="w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-slate-50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
               <div>
-                <div class="text-xs font-semibold text-slate-200 group-hover:text-emerald-300">UNIT-0005 (Flawless)</div>
-                <div class="text-[10px] text-slate-400">Polybag sealed, warning, UPC 100%</div>
+                <div class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">UNIT-0005 (Correct Prep)</div>
+                <div class="text-[10px] text-slate-500">All 6 checks compliant</div>
               </div>
             </div>
-            <span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded font-mono font-bold">PASS</span>
+            <span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded font-mono font-semibold">PASS</span>
           </button>
 
           <!-- Preset 2: Fail Exposed UPC -->
-          <button onclick="loadScenario('fail_barcode')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-rose-500/50 transition flex items-center justify-between group">
-            <div class="flex items-center gap-2.5">
-              <span class="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_#F43F5E]"></span>
+          <button onclick="loadScenario('fail_barcode')" class="w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-slate-50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-rose-500"></span>
               <div>
-                <div class="text-xs font-semibold text-slate-200 group-hover:text-rose-300">UNIT-0004 (Exposed UPC)</div>
-                <div class="text-[10px] text-slate-400">Original barcode exposed 34.2%</div>
+                <div class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">UNIT-0004 (Exposed UPC)</div>
+                <div class="text-[10px] text-slate-500">Original barcode uncovered</div>
               </div>
             </div>
-            <span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">FAIL</span>
+            <span class="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded font-mono font-semibold">FAIL</span>
           </button>
 
           <!-- Preset 3: Fail Seam -->
-          <button onclick="loadScenario('fail_seam')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-rose-500/50 transition flex items-center justify-between group">
-            <div class="flex items-center gap-2.5">
-              <span class="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_#F43F5E]"></span>
+          <button onclick="loadScenario('fail_seam')" class="w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-slate-50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-rose-500"></span>
               <div>
-                <div class="text-xs font-semibold text-slate-200 group-hover:text-rose-300">UNIT-0002 (Label on Seam)</div>
-                <div class="text-[10px] text-slate-400">FNSKU folds over box joint</div>
+                <div class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">UNIT-0002 (Label on Seam)</div>
+                <div class="text-[10px] text-slate-500">FNSKU folds over seam</div>
               </div>
             </div>
-            <span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">FAIL</span>
+            <span class="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded font-mono font-semibold">FAIL</span>
           </button>
 
           <!-- Preset 4: Fail Unsealed -->
-          <button onclick="loadScenario('fail_unsealed')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-rose-500/50 transition flex items-center justify-between group">
-            <div class="flex items-center gap-2.5">
-              <span class="h-2 w-2 rounded-full bg-rose-400 shadow-[0_0_8px_#F43F5E]"></span>
+          <button onclick="loadScenario('fail_unsealed')" class="w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-slate-50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-rose-500"></span>
               <div>
-                <div class="text-xs font-semibold text-slate-200 group-hover:text-rose-300">UNIT-0003 (Bag Open)</div>
-                <div class="text-[10px] text-slate-400">No heat crimp; open edge > 1"</div>
+                <div class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">UNIT-0003 (Bag Unsealed)</div>
+                <div class="text-[10px] text-slate-500">Open edge > 1 inch</div>
               </div>
             </div>
-            <span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">FAIL</span>
+            <span class="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-1.5 py-0.5 rounded font-mono font-semibold">FAIL</span>
           </button>
 
           <!-- Preset 5: Uncertain Glare -->
-          <button onclick="loadScenario('uncertain_glare')" class="scenario-btn w-full text-left p-2.5 rounded-xl border border-surfaceBorder bg-surface/60 hover:bg-surface hover:border-amber-500/50 transition flex items-center justify-between group">
-            <div class="flex items-center gap-2.5">
-              <span class="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_#F59E0B]"></span>
+          <button onclick="loadScenario('uncertain_glare')" class="w-full text-left p-2.5 rounded-lg border border-slate-200 hover:border-indigo-400 hover:bg-slate-50 transition flex items-center justify-between group">
+            <div class="flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-amber-500"></span>
               <div>
-                <div class="text-xs font-semibold text-slate-200 group-hover:text-amber-300">UNIT-0012 (Severe Glare)</div>
-                <div class="text-[10px] text-slate-400">Glare index 38.4% > 35% cutoff</div>
+                <div class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">UNIT-0012 (Severe Glare)</div>
+                <div class="text-[10px] text-slate-500">Glare index 38.4% > cutoff</div>
               </div>
             </div>
-            <span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-1.5 py-0.5 rounded font-mono font-bold">UNCERTAIN</span>
+            <span class="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded font-mono font-semibold">UNCERTAIN</span>
           </button>
         </div>
 
-        <!-- Custom Search & Trigger -->
-        <div class="mt-4 pt-3 border-t border-surfaceBorder">
-          <label class="text-[11px] font-mono text-slate-400 block mb-1.5">Universal Unit Identifier:</label>
+        <!-- Custom Search -->
+        <div class="mt-4 pt-3 border-t border-slate-200">
+          <label class="text-[11px] font-semibold text-slate-600 block mb-1">Lookup Unit ID:</label>
           <div class="flex gap-2">
-            <input type="text" id="custom-unit-id" value="UNIT-0004" class="w-full bg-obsidian border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-mono text-white focus:outline-none focus:border-cyan-500">
-            <button onclick="fetchCurrentUnit()" class="bg-cyan-600 hover:bg-cyan-500 text-black font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-cyan-600/30">
-              <i class="fa-solid fa-play"></i>
-              <span>Run</span>
+            <input type="text" id="custom-unit-id" value="UNIT-0004" class="w-full bg-white border border-slate-300 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
+            <button onclick="fetchCurrentUnit()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-3.5 py-1.5 rounded-lg transition shadow-sm">
+              Inspect
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Real Photo Drag-and-Drop Upload Section -->
-      <div class="glass-panel p-4 rounded-2xl border-dashed border-2 border-slate-700/80 hover:border-cyan-500/80 transition text-center cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
+      <!-- Real Photo Upload Section -->
+      <div class="panel-card p-4 rounded-xl border-dashed border-2 border-slate-300 hover:border-indigo-500 hover:bg-indigo-50/20 transition text-center cursor-pointer group" onclick="document.getElementById('file-upload-input').click()">
         <input type="file" id="file-upload-input" class="hidden" accept="image/*" onchange="handleFileUpload(event)">
-        <div class="h-10 w-10 mx-auto rounded-xl bg-surface flex items-center justify-center text-slate-400 group-hover:text-cyan-400 transition mb-2">
-          <i class="fa-solid fa-camera-viewfinder text-lg"></i>
+        <div class="h-9 w-9 mx-auto rounded-lg bg-slate-100 group-hover:bg-indigo-100 flex items-center justify-center text-slate-500 group-hover:text-indigo-600 transition mb-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
         </div>
-        <div class="text-xs font-bold text-slate-200 group-hover:text-cyan-300">Drop or Select Photo</div>
-        <p class="text-[10px] text-slate-400 mt-1">Upload actual station camera photograph or mobile snap for live compliance analysis</p>
+        <div class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Upload Product Image</div>
+        <p class="text-[10px] text-slate-500 mt-0.5">Upload a live photograph from warehouse camera or mobile phone</p>
       </div>
 
-      <!-- Fail-Open Simulation Tester (Rule 3) -->
-      <div class="glass-panel p-3.5 rounded-2xl bg-amber-950/20 border border-amber-800/40">
+      <!-- Fail-Open Simulation (Rule 3) -->
+      <div class="panel-card p-3.5 rounded-xl bg-amber-50/40 border border-amber-200">
         <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-amber-300 font-mono">Fail-Open Simulator</span>
-          <span class="text-[9px] bg-amber-900/60 text-amber-300 px-1.5 py-0.5 rounded font-mono">Rule 3</span>
+          <span class="text-xs font-bold text-amber-800">Fail-Open Circuit Breaker</span>
+          <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-mono font-medium">Rule 3</span>
         </div>
-        <p class="text-[10px] text-slate-400 mt-1">Simulate network drop or 1500ms timeout to verify physical line does not stop.</p>
-        <button onclick="triggerFailOpenSimulation()" class="w-full mt-2.5 py-1.5 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500/50 text-amber-200 rounded-xl text-xs font-mono font-semibold transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-triangle-exclamation"></i>
+        <p class="text-[11px] text-slate-600 mt-1">Simulate network drop or 1500ms timeout to prove conveyor line never halts.</p>
+        <button onclick="triggerFailOpenSimulation()" class="w-full mt-2.5 py-1.5 bg-white hover:bg-amber-50 border border-amber-300 text-amber-800 rounded-lg text-xs font-medium transition shadow-sm flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
           <span>Simulate Model Outage</span>
         </button>
       </div>
 
     </aside>
 
-    <!-- CENTER COLUMN: Interactive Gantry Viewport & The 6 Compliance Cards (5 Cols) -->
+    <!-- CENTER COLUMN: Inspection Camera Gantry & 6 Checks (5 Cols) -->
     <main class="lg:col-span-5 flex flex-col gap-4">
 
-      <!-- CYBER-INDUSTRIAL VISION HUD GANTRY -->
-      <div class="glass-panel p-4 rounded-2xl glass-card-glow relative overflow-hidden">
-        <!-- Header Controls -->
-        <div class="flex items-center justify-between mb-3 text-xs font-mono">
+      <!-- Real-Time Camera Inspection Viewport -->
+      <div class="panel-card p-4 rounded-xl">
+        <div class="flex items-center justify-between mb-3 text-xs font-medium text-slate-600">
           <div class="flex items-center gap-2">
-            <span class="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
-            <span class="font-bold text-slate-200">GANTRY CAM // FEED: OVERHEAD-01</span>
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+            <span class="font-semibold text-slate-800 font-mono">STATION CAM #2 // OVERHEAD</span>
           </div>
-          <!-- View Angle Switcher -->
-          <div class="flex gap-1 bg-obsidian p-1 rounded-lg border border-slate-800 text-[10px]">
-            <button id="view-front" onclick="switchCameraView('front')" class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60">Front</button>
-            <button id="view-macro" onclick="switchCameraView('macro')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">Macro</button>
-            <button id="view-seam" onclick="switchCameraView('seam')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white">Seam</button>
+          <!-- View Angle Tabs -->
+          <div class="flex gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[11px]">
+            <button id="view-front" onclick="switchCameraView('front')" class="px-2.5 py-1 rounded bg-white text-slate-800 font-semibold shadow-sm">Front</button>
+            <button id="view-macro" onclick="switchCameraView('macro')" class="px-2.5 py-1 rounded text-slate-500 hover:text-slate-800">Macro</button>
+            <button id="view-seam" onclick="switchCameraView('seam')" class="px-2.5 py-1 rounded text-slate-500 hover:text-slate-800">Seam</button>
           </div>
         </div>
 
-        <!-- Camera Viewport Box with SVG Overlays -->
-        <div class="relative bg-obsidian rounded-xl overflow-hidden border border-slate-800/90 aspect-[16/10] flex items-center justify-center">
+        <!-- Camera Frame Viewport with Industrial Precision SVG -->
+        <div class="relative camera-viewport rounded-lg overflow-hidden border border-slate-300 aspect-[16/10] flex items-center justify-center">
           
-          <!-- Scanline CRT Effect -->
-          <div class="absolute inset-0 scanline-overlay z-10"></div>
+          <!-- Industrial Alignment Corner Markers -->
+          <div class="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-slate-400 z-10"></div>
+          <div class="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-slate-400 z-10"></div>
+          <div class="absolute bottom-2 left-2 w-3 h-3 border-b-2 border-l-2 border-slate-400 z-10"></div>
+          <div class="absolute bottom-2 right-2 w-3 h-3 border-b-2 border-r-2 border-slate-400 z-10"></div>
 
-          <!-- Animated Sweeping Laser Line -->
-          <div id="laser-line" class="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_#06B6D4] animate-laser-sweep z-20 pointer-events-none"></div>
-
-          <!-- Tactical HUD Reticles & Corner Brackets -->
-          <div class="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-cyan-500 z-20"></div>
-          <div class="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-cyan-500 z-20"></div>
-          <div class="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-cyan-500 z-20"></div>
-          <div class="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-cyan-500 z-20"></div>
-
-          <!-- Live Optical Coordinates Overlay -->
-          <div class="absolute top-3 left-8 text-[9px] font-mono text-cyan-400/80 z-20">
-            ZOOM: 1.0X · RES: 1920x1080 · FPS: 60 · SHARPNESS: 88.4
-          </div>
-
-          <!-- High-Tech Physical Package SVG Vector -->
+          <!-- Physical Package Inspection SVG -->
           <svg id="gantry-svg" class="w-full h-full relative z-0" viewBox="0 0 600 375" xmlns="http://www.w3.org/2000/svg">
-            <!-- Conveyor Rollers -->
-            <rect width="600" height="375" fill="#070A12" />
-            <g stroke="#141E33" stroke-width="2" stroke-dasharray="12 12">
-              <line x1="0" y1="80" x2="600" y2="80" />
-              <line x1="0" y1="180" x2="600" y2="180" />
-              <line x1="0" y1="280" x2="600" y2="280" />
+            <!-- Inspection Station Base Grid -->
+            <rect width="600" height="375" fill="#F8FAFC" />
+            
+            <!-- Conveyor Belt Texture -->
+            <rect x="0" y="325" width="600" height="50" fill="#E2E8F0" />
+            <line x1="0" y1="325" x2="600" y2="325" stroke="#CBD5E1" stroke-width="2" />
+            <g stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="8 8">
+              <line x1="50" y1="325" x2="50" y2="375" />
+              <line x1="150" y1="325" x2="150" y2="375" />
+              <line x1="250" y1="325" x2="250" y2="375" />
+              <line x1="350" y1="325" x2="350" y2="375" />
+              <line x1="450" y1="325" x2="450" y2="375" />
+              <line x1="550" y1="325" x2="550" y2="375" />
             </g>
 
-            <!-- Physical Box / Polybag Body -->
-            <rect id="svg-box" x="110" y="45" width="380" height="280" rx="14" fill="#0E1626" stroke="#1E2B48" stroke-width="3" />
+            <!-- Product Package (Cardboard Carton Body) -->
+            <rect id="svg-box" x="120" y="55" width="360" height="260" rx="8" fill="#EADBC8" stroke="#C4A482" stroke-width="3" />
             
+            <!-- Carton Flap Seam Line -->
+            <line x1="300" y1="55" x2="300" y2="315" stroke="#B89572" stroke-width="2" stroke-dasharray="4 2" />
+
             <!-- Polybag Heat Crimp Boundary Overlay -->
-            <rect id="svg-polybag" x="100" y="35" width="400" height="300" rx="18" fill="none" stroke="#06B6D4" stroke-width="2" stroke-dasharray="8 6" opacity="0.8" />
-            <text id="svg-polybag-label" x="115" y="60" fill="#06B6D4" font-size="10" font-family="'Fira Code', monospace" font-weight="bold">POLYBAG HEAT-CRIMP [CONFIRMED SEALED]</text>
+            <rect id="svg-polybag" x="105" y="40" width="390" height="285" rx="14" fill="#FFFFFF" fill-opacity="0.25" stroke="#0284C7" stroke-width="2" stroke-dasharray="6 4" />
+            <text id="svg-polybag-label" x="115" y="62" fill="#0284C7" font-size="10" font-family="'Fira Code', monospace" font-weight="600">POLYBAG SEAM [HEAT SEALED: 100% OK]</text>
 
             <!-- Suffocation Warning Zone -->
             <g id="svg-warning-group">
-              <rect id="svg-warning-box" x="125" y="75" width="350" height="48" rx="6" fill="#1A1F16" stroke="#F59E0B" stroke-width="1.8" />
-              <text x="135" y="96" fill="#FBBF24" font-size="10" font-family="'Fira Code', monospace" font-weight="bold">WARNING: KEEP AWAY FROM BABIES & CHILDREN</text>
-              <text x="135" y="112" fill="#94A3B8" font-size="8.5" font-family="'Fira Code', monospace">AMZ SPEC: 14pt Verified · Unwrinkled Planar Surface</text>
+              <rect id="svg-warning-box" x="135" y="80" width="330" height="42" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="1.5" />
+              <text x="145" y="98" fill="#92400E" font-size="9.5" font-family="'Fira Code', monospace" font-weight="bold">WARNING: KEEP BAG AWAY FROM BABIES & CHILDREN</text>
+              <text x="145" y="112" fill="#B45309" font-size="8" font-family="'Fira Code', monospace">AMZ FBA SPEC: 14pt Verified · Unobstructed Surface</text>
             </g>
 
             <!-- Original Manufacturer Barcode Zone -->
             <g id="svg-upc-group">
-              <rect id="svg-upc-box" x="125" y="145" width="165" height="95" rx="6" fill="#090D16" stroke="#F43F5E" stroke-width="2" />
-              <text x="135" y="165" fill="#F43F5E" font-size="9" font-family="'Fira Code', monospace" font-weight="bold">ORIGINAL UPC (COVERED)</text>
-              <!-- Mask Layer -->
-              <rect id="svg-upc-mask" x="130" y="172" width="155" height="60" rx="4" fill="#131B30" stroke="#10B981" stroke-width="1.5" />
-              <text id="svg-upc-mask-text" x="142" y="206" fill="#10B981" font-size="11" font-family="'Fira Code', monospace" font-weight="bold">[100% OPAQUE MASK]</text>
+              <rect id="svg-upc-box" x="135" y="145" width="150" height="85" rx="4" fill="#FFFFFF" stroke="#E11D48" stroke-width="1.5" />
+              <text x="145" y="162" fill="#E11D48" font-size="8.5" font-family="'Fira Code', monospace" font-weight="bold">MANUFACTURER UPC</text>
+              <!-- Barcode stripes -->
+              <path d="M145 170 h2 v30 h-2 z M150 170 h4 v30 h-4 z M156 170 h2 v30 h-2 z M162 170 h5 v30 h-5 z M170 170 h2 v30 h-2 z M176 170 h4 v30 h-4 z M184 170 h3 v30 h-3 z M190 170 h2 v30 h-2 z M196 170 h5 v30 h-5 z M204 170 h2 v30 h-2 z" fill="#334155" />
+              <!-- Mask Overlay -->
+              <rect id="svg-upc-mask" x="138" y="166" width="144" height="40" rx="3" fill="#0F172A" opacity="0.95" />
+              <text id="svg-upc-mask-text" x="148" y="191" fill="#FFFFFF" font-size="10" font-family="'Fira Code', monospace" font-weight="bold">[100% OPAQUE MASK]</text>
             </g>
 
             <!-- FNSKU Amazon Label Zone -->
             <g id="svg-fnsku-group">
-              <rect id="svg-fnsku-box" x="310" y="145" width="165" height="110" rx="6" fill="#FFFFFF" stroke="#10B981" stroke-width="3" />
-              <text x="320" y="166" fill="#070A12" font-size="10" font-weight="bold" font-family="'Fira Code', monospace">FNSKU: X00DUMMY004</text>
+              <rect id="svg-fnsku-box" x="310" y="145" width="155" height="95" rx="4" fill="#FFFFFF" stroke="#059669" stroke-width="2.5" />
+              <text x="320" y="164" fill="#0F172A" font-size="9.5" font-weight="bold" font-family="'Fira Code', monospace">FNSKU: X00DUMMY004</text>
               <!-- Barcode Stripes -->
-              <path d="M322 174 h4 v40 h-4 z M330 174 h2 v40 h-2 z M336 174 h6 v40 h-6 z M346 174 h2 v40 h-2 z M352 174 h8 v40 h-8 z M364 174 h3 v40 h-3 z M372 174 h6 v40 h-6 z M382 174 h2 v40 h-2 z M388 174 h7 v40 h-7 z M400 174 h4 v40 h-4 z M408 174 h2 v40 h-2 z M416 174 h5 v40 h-5 z M426 174 h8 v40 h-8 z M438 174 h4 v40 h-4 z M446 174 h3 v40 h-3 z M454 174 h2 v40 h-2 z M460 174 h4 v40 h-4 z" fill="#070A12"/>
-              <text x="320" y="242" fill="#475569" font-size="8" font-family="'Fira Code', monospace">PLANAR EXTERIOR · NO CURVES</text>
+              <path d="M322 172 h3 v34 h-3 z M328 172 h2 v34 h-2 z M334 172 h5 v34 h-5 z M342 172 h2 v34 h-2 z M348 172 h6 v34 h-6 z M358 172 h3 v34 h-3 z M366 172 h5 v34 h-5 z M374 172 h2 v34 h-2 z M380 172 h6 v34 h-6 z M390 172 h3 v34 h-3 z M398 172 h2 v34 h-2 z M404 172 h4 v34 h-4 z M412 172 h6 v34 h-6 z M422 172 h3 v34 h-3 z M430 172 h2 v34 h-2 z M436 172 h4 v34 h-4 z" fill="#0F172A"/>
+              <text x="320" y="226" fill="#64748B" font-size="7.5" font-family="'Fira Code', monospace">PLANAR EXTERIOR · NO CURVES</text>
             </g>
 
             <!-- Expiry Stamp Zone -->
             <g id="svg-expiry-group">
-              <rect id="svg-expiry-box" x="125" y="255" width="165" height="38" rx="6" fill="#090D16" stroke="#6366F1" stroke-width="1.8" />
-              <text x="135" y="278" fill="#A5B4FC" font-size="11" font-weight="bold" font-family="'Fira Code', monospace">EXP: 2027-11-30</text>
+              <rect id="svg-expiry-box" x="135" y="248" width="150" height="34" rx="4" fill="#FFFFFF" stroke="#4F46E5" stroke-width="1.5" />
+              <text x="145" y="270" fill="#4338CA" font-size="10.5" font-weight="bold" font-family="'Fira Code', monospace">EXP: 2027-11-30</text>
             </g>
 
-            <!-- Specular Glare Overlay Layer (Toggled in Uncertain Scenario) -->
-            <g id="svg-glare-overlay" opacity="0" class="transition-opacity duration-500">
-              <polygon points="260,30 420,10 520,320 340,340" fill="url(#glare-gradient)" />
-              <text x="320" y="190" fill="#EF4444" font-size="16" font-family="'Fira Code', monospace" font-weight="bold">[SPECULAR GLARE 38.4%]</text>
+            <!-- Specular Glare Overlay Layer -->
+            <g id="svg-glare-overlay" opacity="0" class="transition-opacity duration-300">
+              <polygon points="260,30 420,10 520,320 340,340" fill="url(#light-glare-gradient)" />
+              <text x="310" y="185" fill="#E11D48" font-size="14" font-family="'Fira Code', monospace" font-weight="bold">[SPECULAR GLARE 38.4%]</text>
             </g>
 
             <defs>
-              <linearGradient id="glare-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
-                <stop offset="50%" stop-color="#38BDF8" stop-opacity="0.4"/>
+              <linearGradient id="light-glare-gradient" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+                <stop offset="50%" stop-color="#BAE6FD" stop-opacity="0.5"/>
                 <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.9"/>
               </linearGradient>
             </defs>
           </svg>
 
-          <!-- Bottom Telemetry Badges -->
-          <div class="absolute bottom-3 left-3 bg-surface/90 border border-slate-700/80 px-2.5 py-1 rounded-lg text-[10px] font-mono text-slate-300 z-20 flex items-center gap-1.5">
-            <span class="text-slate-400">Unit:</span>
-            <span id="canvas-unit-id" class="text-white font-bold">UNIT-0004</span>
+          <!-- Bottom Telemetry Overlay Badges -->
+          <div class="absolute bottom-2 left-2 bg-white/90 border border-slate-200 px-2 py-0.5 rounded text-[10px] font-mono text-slate-600 shadow-sm flex items-center gap-1">
+            <span>Unit:</span>
+            <strong id="canvas-unit-id" class="text-slate-900 font-bold">UNIT-0004</strong>
           </div>
 
-          <div class="absolute bottom-3 right-3 bg-surface/90 border border-emerald-500/40 px-2.5 py-1 rounded-lg text-[10px] font-mono text-emerald-400 z-20 flex items-center gap-1.5 shadow-[0_0_12px_rgba(16,185,129,0.2)]">
-            <i class="fa-solid fa-lock text-emerald-400"></i>
-            <span>SHA-256 LOCKED</span>
+          <div class="absolute bottom-2 right-2 bg-white/90 border border-emerald-200 px-2 py-0.5 rounded text-[10px] font-mono text-emerald-700 shadow-sm flex items-center gap-1">
+            <i class="fa-solid fa-lock text-emerald-600"></i>
+            <span>SHA-256 Locked</span>
           </div>
         </div>
       </div>
 
-      <!-- THE 6 AUTHORITATIVE COMPLIANCE CHECK CARDS -->
-      <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col">
+      <!-- The 6 Compliance Check Readouts -->
+      <div class="panel-card p-4 rounded-xl flex-1 flex flex-col">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-xs font-bold font-mono uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i class="fa-solid fa-clipboard-check text-cyan-400"></i>
-            <span>Amazon Inbound Compliance Verification</span>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-check text-indigo-600"></i>
+            <span>Compliance Checklist (6 Points)</span>
           </h3>
-          <span class="text-[10px] text-slate-400 font-mono">6 Checks Evaluated</span>
+          <span class="text-[10px] text-slate-500 font-mono">Amazon FBA Inbound Manual</span>
         </div>
 
-        <div id="check-cards-list" class="space-y-2.5 flex-1">
+        <div id="check-cards-list" class="space-y-2 flex-1">
           <!-- Dynamically populated via renderRecord -->
         </div>
       </div>
 
     </main>
 
-    <!-- RIGHT COLUMN: Cryptographic Proof, Decisions & Dispute Packager (4 Cols) -->
+    <!-- RIGHT COLUMN: Evidence Record, Hash & Dispute Export (4 Cols) -->
     <aside class="lg:col-span-4 flex flex-col gap-4">
 
-      <!-- Overall Decision Badge & Summary -->
-      <div class="glass-panel p-4 rounded-2xl">
+      <!-- Overall Decision Card -->
+      <div class="panel-card p-4 rounded-xl">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold font-mono uppercase tracking-wider text-slate-400">PREP VERDICT</span>
-          <span id="overall-decision-badge" class="px-3 py-1 rounded-xl text-xs font-extrabold font-mono border">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">PREP VERDICT</span>
+          <span id="overall-decision-badge" class="px-3 py-0.5 rounded text-xs font-bold font-mono border">
             PASS
           </span>
         </div>
-        <p id="overall-summary-text" class="text-xs text-slate-300 leading-relaxed bg-obsidian p-3 rounded-xl border border-surfaceBorder mb-3 font-medium">
-          Loading verification state...
+        <p id="overall-summary-text" class="text-xs text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200 mb-3 font-medium">
+          Loading verification record...
         </p>
 
-        <!-- Cryptographic Content Hash Display -->
-        <div class="bg-obsidian p-3 rounded-xl border border-surfaceBorder space-y-2">
+        <!-- Cryptographic Content Hash & Integrity Box -->
+        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
-            <span class="text-slate-400 flex items-center gap-1.5 font-bold">
-              <i class="fa-solid fa-fingerprint text-indigo-400"></i>
+            <span class="text-slate-600 font-semibold flex items-center gap-1.5">
+              <i class="fa-solid fa-fingerprint text-indigo-600"></i>
               <span>Content Hash (SHA-256)</span>
             </span>
-            <span id="proof-status-tag" class="text-[10px] text-emerald-400 font-bold bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+            <span id="proof-status-tag" class="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
               VERIFIED
             </span>
           </div>
-          <div id="proof-hash-string" class="text-[10.5px] font-mono text-cyan-300 break-all bg-surface/80 p-2.5 rounded-lg border border-slate-800">
+          <div id="proof-hash-string" class="text-[11px] font-mono text-slate-700 break-all bg-white p-2.5 rounded border border-slate-200 shadow-inner">
             e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
           </div>
           
-          <div class="grid grid-cols-2 gap-2 pt-1 font-mono text-xs">
-            <button onclick="triggerCryptographicVerification()" class="py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition flex items-center justify-center gap-1.5">
+          <div class="grid grid-cols-2 gap-2 pt-1 text-xs">
+            <button onclick="triggerCryptographicVerification()" class="py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-sm transition flex items-center justify-center gap-1.5">
               <i class="fa-solid fa-shield-check"></i>
               <span>Verify Proof</span>
             </button>
-            <button onclick="exportAmazonDisputePacket()" class="py-2 bg-surface hover:bg-slate-800 border border-slate-700 text-slate-200 rounded-xl transition flex items-center justify-center gap-1.5 font-semibold">
-              <i class="fa-solid fa-file-shield text-indigo-400"></i>
+            <button onclick="exportAmazonDisputePacket()" class="py-2 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 rounded-lg transition flex items-center justify-center gap-1.5 font-medium shadow-sm">
+              <i class="fa-solid fa-file-shield text-indigo-600"></i>
               <span>Dispute Doc</span>
             </button>
           </div>
         </div>
       </div>
 
-      <!-- JSON Contract Inspector & Dispute Payload -->
-      <div class="glass-panel p-4 rounded-2xl flex-1 flex flex-col">
+      <!-- Evidence Record Contract Viewer -->
+      <div class="panel-card p-4 rounded-xl flex-1 flex flex-col">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold font-mono uppercase tracking-wider text-slate-400">Evidence Record Contract</span>
-          <button onclick="copyContractJson()" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Evidence Record Contract</span>
+          <button onclick="copyContractJson()" class="text-[11px] text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
             <i class="fa-solid fa-copy"></i>
             <span>Copy JSON</span>
           </button>
         </div>
-        <div class="relative flex-1 bg-obsidian rounded-xl border border-surfaceBorder overflow-hidden">
-          <pre id="contract-json-viewer" class="text-[10px] font-mono text-indigo-300 p-3 h-full overflow-y-auto max-h-[380px] leading-relaxed"></pre>
+        <div class="relative flex-1 bg-slate-50 rounded-lg border border-slate-200 overflow-hidden">
+          <pre id="contract-json-viewer" class="text-[10.5px] font-mono text-slate-800 p-3 h-full overflow-y-auto max-h-[380px] leading-relaxed"></pre>
         </div>
       </div>
 
@@ -512,79 +493,79 @@
 
   </main>
 
-  <!-- OVERRIDE MODAL DIALOG -->
-  <div id="override-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-panel rounded-2xl max-w-md w-full p-6 shadow-2xl border border-indigo-500/40 space-y-4">
-      <div class="flex items-center justify-between border-b border-surfaceBorder pb-3">
+  <!-- OVERRIDE MODAL DIALOG (CLEAN WHITE THEME) -->
+  <div id="override-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
-          <div class="h-8 w-8 rounded-lg bg-indigo-900/60 border border-indigo-500 flex items-center justify-center text-indigo-400">
+          <div class="h-8 w-8 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600">
             <i class="fa-solid fa-user-pen"></i>
           </div>
-          <h3 class="font-bold text-white text-sm font-mono">Operator Override Submission</h3>
+          <h3 class="font-bold text-slate-900 text-sm">Operator Override Record</h3>
         </div>
-        <button onclick="closeOverrideModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+        <button onclick="closeOverrideModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
       </div>
 
-      <p class="text-xs text-slate-400">
-        Per CUBE Honesty Rules, overrides append an immutable audit log with mandatory operator justification. The original agent verdict is preserved.
+      <p class="text-xs text-slate-500 leading-normal">
+        Overrides create an immutable append-only record preserving the original AI verdict for compliance auditability.
       </p>
 
       <div class="space-y-3 text-xs">
         <div>
-          <label class="block text-slate-400 font-mono mb-1 text-[11px]">Check Item:</label>
-          <input type="text" id="modal-check-key" readonly class="w-full bg-obsidian border border-surfaceBorder p-2.5 rounded-xl font-mono text-cyan-300">
+          <label class="block text-slate-600 font-semibold mb-1 text-[11px]">Check Item:</label>
+          <input type="text" id="modal-check-key" readonly class="w-full bg-slate-50 border border-slate-200 p-2 rounded-lg font-mono text-slate-700">
         </div>
         <div>
-          <label class="block text-slate-400 font-mono mb-1 text-[11px]">New Operator Verdict:</label>
-          <select id="modal-new-verdict" class="w-full bg-obsidian border border-slate-700 p-2.5 rounded-xl text-white font-mono">
+          <label class="block text-slate-600 font-semibold mb-1 text-[11px]">New Verdict:</label>
+          <select id="modal-new-verdict" class="w-full bg-white border border-slate-300 p-2 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
             <option value="PASS">PASS (Discharged & Approved)</option>
             <option value="FAIL">FAIL (Rejected for Rework)</option>
             <option value="UNCERTAIN">UNCERTAIN (Escalate to Supervisor)</option>
           </select>
         </div>
         <div>
-          <label class="block text-slate-400 font-mono mb-1 text-[11px]">Justification Reason Code:</label>
-          <input type="text" id="modal-reason" placeholder="e.g. MANUALLY_COVERED_WITH_BLACKOUT_TAPE" class="w-full bg-obsidian border border-slate-700 p-2.5 rounded-xl text-white focus:outline-none focus:border-cyan-500 font-mono">
+          <label class="block text-slate-600 font-semibold mb-1 text-[11px]">Mandatory Justification Reason:</label>
+          <input type="text" id="modal-reason" placeholder="e.g. MANUALLY_COVERED_WITH_BLACKOUT_TAPE" class="w-full bg-white border border-slate-300 p-2 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600">
           <div class="flex flex-wrap gap-1.5 mt-2">
-            <button onclick="setPresetReason('MANUALLY_COVERED_WITH_BLACKOUT_TAPE')" class="text-[9.5px] bg-surface hover:bg-slate-800 text-slate-300 px-2 py-1 rounded-md border border-slate-700 font-mono">Tape applied over UPC</button>
-            <button onclick="setPresetReason('GLARE_CLEARED_ON_MANUAL_TILT')" class="text-[9.5px] bg-surface hover:bg-slate-800 text-slate-300 px-2 py-1 rounded-md border border-slate-700 font-mono">Glare cleared on tilt</button>
-            <button onclick="setPresetReason('RE-SEALED_WITH_HEAT_SEALER')" class="text-[9.5px] bg-surface hover:bg-slate-800 text-slate-300 px-2 py-1 rounded-md border border-slate-700 font-mono">Re-sealed on line</button>
+            <button onclick="setPresetReason('MANUALLY_COVERED_WITH_BLACKOUT_TAPE')" class="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded border border-slate-200 font-mono">Tape applied over UPC</button>
+            <button onclick="setPresetReason('GLARE_CLEARED_ON_MANUAL_TILT')" class="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded border border-slate-200 font-mono">Glare cleared on tilt</button>
+            <button onclick="setPresetReason('RE-SEALED_WITH_HEAT_SEALER')" class="text-[10px] bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded border border-slate-200 font-mono">Re-sealed on line</button>
           </div>
         </div>
         <div>
-          <label class="block text-slate-400 font-mono mb-1 text-[11px]">Operator Badge ID:</label>
-          <input type="text" id="modal-operator-id" value="op_elena_qc" class="w-full bg-obsidian border border-slate-700 p-2 rounded-xl text-slate-300 font-mono">
+          <label class="block text-slate-600 font-semibold mb-1 text-[11px]">Operator Badge ID:</label>
+          <input type="text" id="modal-operator-id" value="op_elena_qc" class="w-full bg-white border border-slate-300 p-2 rounded-lg text-slate-800">
         </div>
       </div>
 
-      <div class="flex gap-2 pt-2 border-t border-surfaceBorder font-mono">
-        <button onclick="closeOverrideModal()" class="flex-1 py-2 bg-surface hover:bg-slate-800 text-slate-300 rounded-xl text-xs transition">Cancel</button>
-        <button onclick="submitOverrideModal()" class="flex-1 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-600/30">Submit Override</button>
+      <div class="flex gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeOverrideModal()" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">Cancel</button>
+        <button onclick="submitOverrideModal()" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs transition shadow-sm">Save Override</button>
       </div>
     </div>
   </div>
 
-  <!-- DISPUTE PACKET EXPORT MODAL -->
-  <div id="dispute-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-cyan-500/40 space-y-4">
-      <div class="flex items-center justify-between border-b border-surfaceBorder pb-3">
+  <!-- DISPUTE PACKET EXPORT MODAL (CLEAN WHITE THEME) -->
+  <div id="dispute-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div class="flex items-center gap-2">
-          <div class="h-8 w-8 rounded-lg bg-emerald-950 border border-emerald-500 flex items-center justify-center text-emerald-400">
+          <div class="h-8 w-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
             <i class="fa-solid fa-file-signature"></i>
           </div>
           <div>
-            <h3 class="font-bold text-white text-sm font-mono">Amazon Inbound Defect Dispute Packet</h3>
-            <p class="text-[10px] text-slate-400">Formatted for Recovery Manager (Agent 05) automated filing</p>
+            <h3 class="font-bold text-slate-900 text-sm">Amazon Inbound Defect Dispute Packet</h3>
+            <p class="text-[11px] text-slate-500">Formatted for Recovery Manager (Agent 05) automated dispute filing</p>
           </div>
         </div>
-        <button onclick="closeDisputeModal()" class="text-slate-400 hover:text-white text-lg">&times;</button>
+        <button onclick="closeDisputeModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
       </div>
 
-      <pre id="dispute-json-view" class="text-[10.5px] font-mono text-emerald-300 bg-obsidian p-4 rounded-xl border border-surfaceBorder max-h-[380px] overflow-y-auto leading-relaxed"></pre>
+      <pre id="dispute-json-view" class="text-[11px] font-mono text-slate-800 bg-slate-50 p-4 rounded-lg border border-slate-200 max-h-[380px] overflow-y-auto leading-relaxed"></pre>
 
-      <div class="flex justify-end gap-2 pt-2 border-t border-surfaceBorder font-mono text-xs">
-        <button onclick="closeDisputeModal()" class="px-4 py-2 bg-surface hover:bg-slate-800 text-slate-300 rounded-xl transition">Close</button>
-        <button onclick="downloadDisputePacket()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-black font-bold rounded-xl transition flex items-center gap-1.5 shadow-lg shadow-emerald-500/20">
+      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 text-xs">
+        <button onclick="closeDisputeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition font-medium">Close</button>
+        <button onclick="downloadDisputePacket()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition flex items-center gap-1.5 shadow-sm">
           <i class="fa-solid fa-download"></i>
           <span>Download Dispute JSON</span>
         </button>
@@ -592,7 +573,7 @@
     </div>
   </div>
 
-  <!-- INTERACTIVE FRONTEND APPLICATION LOGIC -->
+  <!-- JAVASCRIPT CONTROLLER LOGIC -->
   <script>
     let currentRecord = null;
     let selectedCheckKey = null;
@@ -602,7 +583,7 @@
       polybag_present_sealed: {
         title: "Polybag Presence & Perimeter Seal",
         icon: "fa-bag-shopping",
-        rule: "AMZ-FBA-§3.1: Transparent 1.5 mil polybag fully heat-sealed without apertures > 1 inch.",
+        rule: "AMZ-FBA-§3.1: Transparent 1.5 mil polybag heat-sealed without apertures > 1 inch.",
         svgTarget: "svg-polybag"
       },
       suffocation_warning: {
@@ -614,7 +595,7 @@
       fnsku_label_placement: {
         title: "FNSKU Label Planar Surface Geometry",
         icon: "fa-barcode",
-        rule: "AMZ-FBA-§2.4: Code 128 barcode flat on exterior planar face. Reject seams, corners, or cylinder curvature.",
+        rule: "AMZ-FBA-§2.4: Code 128 barcode flat on exterior planar face. Reject seams, corners, or curve distortion.",
         svgTarget: "svg-fnsku-group"
       },
       original_barcode_covered: {
@@ -717,87 +698,86 @@
       const sAmber = document.getElementById("stack-amber");
       const sGreen = document.getElementById("stack-green");
 
-      // Reset Stack Light
-      sRed.className = "h-3.5 w-3.5 rounded-full bg-rose-950 border border-rose-800/50 transition-all duration-300";
-      sAmber.className = "h-3.5 w-3.5 rounded-full bg-amber-950 border border-amber-800/50 transition-all duration-300";
-      sGreen.className = "h-3.5 w-3.5 rounded-full bg-emerald-950 border border-emerald-800/50 transition-all duration-300";
+      // Reset stack light
+      sRed.className = "h-3.5 w-3.5 rounded-full bg-slate-300 transition-all duration-200";
+      sAmber.className = "h-3.5 w-3.5 rounded-full bg-slate-300 transition-all duration-200";
+      sGreen.className = "h-3.5 w-3.5 rounded-full bg-slate-300 transition-all duration-200";
 
       if (dec === "PASS") {
-        decBadge.className = "px-3 py-1 rounded-xl text-xs font-extrabold font-mono bg-emerald-950/80 text-emerald-400 border border-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.3)]";
+        decBadge.className = "px-3 py-0.5 rounded text-xs font-bold font-mono bg-emerald-50 text-emerald-700 border border-emerald-300";
         decBadge.innerText = "PASS";
         summaryText.innerText = rec.outcome.summary;
-        beaconTitle.className = "text-xs font-bold text-emerald-400 font-mono tracking-wide";
+        beaconTitle.className = "text-xs font-bold text-emerald-700 tracking-wide";
         beaconTitle.innerText = "PASS (DISPATCH)";
         beaconSub.innerText = "Conveyor Moving · Package Cleared";
-        sGreen.className = "h-3.5 w-3.5 rounded-full bg-emerald-500 border border-emerald-300 shadow-[0_0_14px_#10B981]";
+        sGreen.className = "h-3.5 w-3.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10B981]";
       } else if (dec === "FAIL") {
-        decBadge.className = "px-3 py-1 rounded-xl text-xs font-extrabold font-mono bg-rose-950/80 text-rose-400 border border-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.3)]";
+        decBadge.className = "px-3 py-0.5 rounded text-xs font-bold font-mono bg-rose-50 text-rose-700 border border-rose-300";
         decBadge.innerText = "FAIL";
         summaryText.innerText = rec.outcome.summary;
-        beaconTitle.className = "text-xs font-bold text-rose-400 font-mono tracking-wide";
+        beaconTitle.className = "text-xs font-bold text-rose-700 tracking-wide";
         beaconTitle.innerText = "FAIL (REWORK)";
         beaconSub.innerText = "Diverter Active · Rework Bin";
-        sRed.className = "h-3.5 w-3.5 rounded-full bg-rose-500 border border-rose-300 shadow-[0_0_14px_#F43F5E]";
+        sRed.className = "h-3.5 w-3.5 rounded-full bg-rose-500 shadow-[0_0_8px_#F43F5E]";
       } else {
-        decBadge.className = "px-3 py-1 rounded-xl text-xs font-extrabold font-mono bg-amber-950/80 text-amber-400 border border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.3)]";
+        decBadge.className = "px-3 py-0.5 rounded text-xs font-bold font-mono bg-amber-50 text-amber-700 border border-amber-300";
         decBadge.innerText = dec;
         summaryText.innerText = rec.outcome.summary;
-        beaconTitle.className = "text-xs font-bold text-amber-400 font-mono tracking-wide";
+        beaconTitle.className = "text-xs font-bold text-amber-700 tracking-wide";
         beaconTitle.innerText = "UNCERTAIN / AUDIT";
         beaconSub.innerText = "Manual Station Inspection";
-        sAmber.className = "h-3.5 w-3.5 rounded-full bg-amber-500 border border-amber-300 shadow-[0_0_14px_#F59E0B]";
+        sAmber.className = "h-3.5 w-3.5 rounded-full bg-amber-500 shadow-[0_0_8px_#F59E0B]";
       }
 
-      // Update SVG HUD Visuals dynamically based on findings
+      // Update SVG HUD Visuals dynamically
       updateSvgVisuals(rec);
 
-      // Render the 6 Check Cards
+      // Render Check Cards in clean enterprise white theme
       const container = document.getElementById("check-cards-list");
       container.innerHTML = "";
 
       rec.checks.forEach(c => {
-        const meta = CHECK_METADATA[c.check_key] || { title: c.check_key, icon: "fa-check", rule: "Amazon Inbound Standard", svgTarget: "svg-box" };
+        const meta = CHECK_METADATA[c.check_key] || { title: c.check_key, icon: "fa-check", rule: "Amazon Standard", svgTarget: "svg-box" };
         let statusBadge = "";
-        let borderHighlight = "border-surfaceBorder";
+        let borderClass = "border-slate-200 hover:border-slate-300";
 
         if (c.verdict === "PASS") {
-          statusBadge = '<span class="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-md font-mono font-bold">PASS</span>';
-          borderHighlight = "hover:border-emerald-500/50";
+          statusBadge = '<span class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-mono font-semibold">PASS</span>';
         } else if (c.verdict === "FAIL") {
-          statusBadge = '<span class="text-[10px] bg-rose-950 text-rose-400 border border-rose-800 px-2 py-0.5 rounded-md font-mono font-bold">FAIL</span>';
-          borderHighlight = "border-rose-900/60 hover:border-rose-500/80";
+          statusBadge = '<span class="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded font-mono font-semibold">FAIL</span>';
+          borderClass = "border-rose-200 bg-rose-50/20";
         } else if (c.verdict === "UNCERTAIN") {
-          statusBadge = '<span class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-md font-mono font-bold">UNCERTAIN</span>';
-          borderHighlight = "border-amber-900/60 hover:border-amber-500/80";
+          statusBadge = '<span class="text-[10px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded font-mono font-semibold">UNCERTAIN</span>';
+          borderClass = "border-amber-200 bg-amber-50/20";
         } else {
-          statusBadge = '<span class="text-[10px] bg-slate-900 text-slate-400 border border-slate-800 px-2 py-0.5 rounded-md font-mono">N/A</span>';
+          statusBadge = '<span class="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded font-mono">N/A</span>';
         }
 
         const card = document.createElement("div");
-        card.className = `p-3 rounded-xl bg-surface/80 border ${borderHighlight} transition flex flex-col gap-2 group cursor-pointer`;
+        card.className = `p-3 rounded-lg bg-white border ${borderClass} transition flex flex-col gap-1.5 shadow-sm cursor-pointer`;
         card.onclick = () => highlightSvgElement(meta.svgTarget);
 
         card.innerHTML = `
           <div class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-2.5">
-              <div class="h-7 w-7 rounded-lg bg-obsidian border border-slate-800 flex items-center justify-center text-cyan-400 text-xs">
+              <div class="h-7 w-7 rounded-md bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 text-xs">
                 <i class="fa-solid ${meta.icon}"></i>
               </div>
               <div>
-                <div class="text-xs font-bold text-slate-200 group-hover:text-cyan-300 transition">${meta.title}</div>
-                <div class="text-[10px] text-slate-400 mt-0.5">${c.detail}</div>
+                <div class="text-xs font-semibold text-slate-900">${meta.title}</div>
+                <div class="text-[11px] text-slate-600 mt-0.5">${c.detail}</div>
               </div>
             </div>
             <div class="flex items-center gap-2">
               ${statusBadge}
-              <button onclick="event.stopPropagation(); openOverrideModal('${c.check_key}')" class="text-[10px] bg-obsidian hover:bg-slate-800 border border-slate-700/80 text-slate-300 px-2 py-1 rounded font-mono transition">
+              <button onclick="event.stopPropagation(); openOverrideModal('${c.check_key}')" class="text-[11px] bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 px-2 py-0.5 rounded font-medium transition shadow-xs">
                 Override
               </button>
             </div>
           </div>
-          <!-- Amazon Authoritative Rule Citation -->
-          <div class="text-[9.5px] font-mono text-indigo-300/80 bg-obsidian/60 px-2 py-1 rounded border border-slate-800/80 flex items-center gap-1.5">
-            <i class="fa-solid fa-book-bookmark text-indigo-400"></i>
+          <!-- Amazon Rule Citation -->
+          <div class="text-[10px] font-mono text-slate-500 bg-slate-50 px-2 py-1 rounded border border-slate-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-book-bookmark text-slate-400"></i>
             <span>${meta.rule}</span>
           </div>
         `;
@@ -813,42 +793,41 @@
       const upcText = document.getElementById("svg-upc-mask-text");
       const fnskuBox = document.getElementById("svg-fnsku-box");
       const glareOverlay = document.getElementById("svg-glare-overlay");
-      const polybagLabel = document.getElementById("svg-polybag-label");
 
-      // Check original barcode
+      // Original barcode covered
       const bcCheck = rec.checks.find(c => c.check_key === "original_barcode_covered");
       if (bcCheck && bcCheck.verdict === "FAIL") {
         upcMask.setAttribute("fill", "#F43F5E");
         upcMask.setAttribute("opacity", "0.25");
-        upcText.setAttribute("fill", "#F43F5E");
+        upcText.setAttribute("fill", "#E11D48");
         upcText.textContent = "[UPC EXPOSED: DEFECT]";
       } else {
-        upcMask.setAttribute("fill", "#131B30");
+        upcMask.setAttribute("fill", "#0F172A");
         upcMask.setAttribute("opacity", "0.95");
-        upcText.setAttribute("fill", "#10B981");
+        upcText.setAttribute("fill", "#FFFFFF");
         upcText.textContent = "[100% OPAQUE MASK]";
       }
 
-      // Check FNSKU on seam
+      // FNSKU placement
       const fnCheck = rec.checks.find(c => c.check_key === "fnsku_label_placement");
       if (fnCheck && fnCheck.verdict === "FAIL") {
-        fnskuBox.setAttribute("stroke", "#F43F5E");
+        fnskuBox.setAttribute("stroke", "#E11D48");
         fnskuBox.setAttribute("transform", "rotate(-6 310 145)");
       } else {
-        fnskuBox.setAttribute("stroke", "#10B981");
+        fnskuBox.setAttribute("stroke", "#059669");
         fnskuBox.removeAttribute("transform");
       }
 
-      // Check Glare
+      // Glare overlay
       const isUncertain = rec.outcome.decision === "UNCERTAIN";
-      glareOverlay.setAttribute("opacity", isUncertain ? "0.85" : "0");
+      glareOverlay.setAttribute("opacity", isUncertain ? "0.9" : "0");
     }
 
     function highlightSvgElement(elementId) {
       const el = document.getElementById(elementId);
       if (!el) return;
-      el.classList.add("animate-pulse");
-      setTimeout(() => el.classList.remove("animate-pulse"), 1800);
+      el.classList.add("opacity-50");
+      setTimeout(() => el.classList.remove("opacity-50"), 800);
     }
 
     function switchCameraView(view) {
@@ -856,18 +835,18 @@
       const btnMacro = document.getElementById("view-macro");
       const btnSeam = document.getElementById("view-seam");
 
-      btnFront.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white";
-      btnMacro.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white";
-      btnSeam.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white";
+      btnFront.className = "px-2.5 py-1 rounded text-slate-500 hover:text-slate-800";
+      btnMacro.className = "px-2.5 py-1 rounded text-slate-500 hover:text-slate-800";
+      btnSeam.className = "px-2.5 py-1 rounded text-slate-500 hover:text-slate-800";
 
       if (view === "front") {
-        btnFront.className = "px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60";
+        btnFront.className = "px-2.5 py-1 rounded bg-white text-slate-800 font-semibold shadow-sm";
         document.getElementById("gantry-svg").setAttribute("viewBox", "0 0 600 375");
       } else if (view === "macro") {
-        btnMacro.className = "px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60";
+        btnMacro.className = "px-2.5 py-1 rounded bg-white text-slate-800 font-semibold shadow-sm";
         document.getElementById("gantry-svg").setAttribute("viewBox", "280 120 220 160");
       } else if (view === "seam") {
-        btnSeam.className = "px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 font-bold border border-cyan-800/60";
+        btnSeam.className = "px-2.5 py-1 rounded bg-white text-slate-800 font-semibold shadow-sm";
         document.getElementById("gantry-svg").setAttribute("viewBox", "100 130 220 140");
       }
     }
@@ -928,7 +907,7 @@
       });
       const data = await res.json();
       if (data.integrity_verified) {
-        alert(`CRYPTOGRAPHIC PROOF CERTIFIED:\n\nCanonical SHA-256 Digest: ${data.calculated_hash}\n\n✓ Payload Fields Integrity: LOCKED\n✓ Image Digests: MATCHED\n✓ Tenant Scoping: ENFORCED\n✓ Audit Trail: UNTAMPERED`);
+        alert(`CRYPTOGRAPHIC PROOF CERTIFIED:\n\nCanonical SHA-256 Digest:\n${data.calculated_hash}\n\n✓ Payload Fields Integrity: LOCKED\n✓ Image Digests: MATCHED\n✓ Tenant Scoping: ENFORCED\n✓ Audit Trail: UNTAMPERED`);
       } else {
         alert("WARNING: Content hash mismatch detected!");
       }
