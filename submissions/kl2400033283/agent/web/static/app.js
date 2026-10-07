@@ -153,9 +153,6 @@ function renderSamples() {
   $$(".sample").forEach((b) => (b.onclick = () => selectScenario(state.scenarios.find((s) => s.scenario_id === b.dataset.id))));
 }
 
-function setSource(source) {
-  $$('input[name="capture_source"]').forEach((r) => (r.checked = r.value === source));
-}
 
 function selectScenario(s) {
   if (!s) return;
@@ -163,7 +160,6 @@ function selectScenario(s) {
   state.uploads = [];
   $("#uploadThumbs").innerHTML = "";
   $$(".sample").forEach((b) => b.classList.toggle("active", b.dataset.id === s.scenario_id));
-  setSource("station"); // samples are station-camera frames
   fillForm(s.unit);
   showImage(s.image_url);
   resetResult();
@@ -220,7 +216,6 @@ async function handleFiles(files) {
   state.uploads = [];
   $$(".sample").forEach((b) => b.classList.remove("active"));
   $("#uploadThumbs").innerHTML = "";
-  setSource("photo");
   for (const file of list) {
     try {
       const blob = await shrinkForUpload(file);

@@ -427,3 +427,4 @@ legend { font-size: 13px; font-weight: 600; color: var(--text-2); margin-bottom:
   .bar-row { grid-template-columns: 110px 1fr 30px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+.upload-tip { margin: 10px 0 0; }
