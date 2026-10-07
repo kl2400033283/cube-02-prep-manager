@@ -1,0 +1,2229 @@
+[
+ {
+  "unit": {
+   "unit_id": "EVAL-001",
+   "sku": "SKU-EVAL-001",
+   "asin": "B0001EV",
+   "fnsku": "X00001EV",
+   "work_order_id": "WO-EVAL-001",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "consumable_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-001",
+   "seed": 50001,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "soft",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "soft",
+  "image": "fixtures/eval/EVAL-001.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-002",
+   "sku": "SKU-EVAL-002",
+   "asin": "B0002EV",
+   "fnsku": "X00002EV",
+   "work_order_id": "WO-EVAL-002",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-002",
+   "seed": 50002,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-002.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-003",
+   "sku": "SKU-EVAL-003",
+   "asin": "B0003EV",
+   "fnsku": "X00003EV",
+   "work_order_id": "WO-EVAL-003",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "team_lift",
+    "this_way_up"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-003",
+   "seed": 50003,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "team_lift",
+    "this_way_up"
+   ],
+   "optics": "soft",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "soft",
+  "image": "fixtures/eval/EVAL-003.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-004",
+   "sku": "SKU-EVAL-004",
+   "asin": "B0004EV",
+   "fnsku": "X00004EV",
+   "work_order_id": "WO-EVAL-004",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-004",
+   "seed": 50004,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "ok",
+   "warning_font_pt": 18,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-004.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "PASS",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-005",
+   "sku": "SKU-EVAL-005",
+   "asin": "B0005EV",
+   "fnsku": "X00005EV",
+   "work_order_id": "WO-EVAL-005",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-005",
+   "seed": 50005,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-005.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-006",
+   "sku": "SKU-EVAL-006",
+   "asin": "B0006EV",
+   "fnsku": "X00006EV",
+   "work_order_id": "WO-EVAL-006",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-006",
+   "seed": 50006,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-006.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-007",
+   "sku": "SKU-EVAL-007",
+   "asin": "B0007EV",
+   "fnsku": "X00007EV",
+   "work_order_id": "WO-EVAL-007",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "consumable_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-007",
+   "seed": 50007,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-007.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-008",
+   "sku": "SKU-EVAL-008",
+   "asin": "B0008EV",
+   "fnsku": "X00008EV",
+   "work_order_id": "WO-EVAL-008",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-008",
+   "seed": 50008,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "blur",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "blur",
+  "image": "fixtures/eval/EVAL-008.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-009",
+   "sku": "SKU-EVAL-009",
+   "asin": "B0009EV",
+   "fnsku": "X00009EV",
+   "work_order_id": "WO-EVAL-009",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "consumable_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-009",
+   "seed": 50009,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-009.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-010",
+   "sku": "SKU-EVAL-010",
+   "asin": "B0010EV",
+   "fnsku": "X00010EV",
+   "work_order_id": "WO-EVAL-010",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-010",
+   "seed": 50010,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-010.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-011",
+   "sku": "SKU-EVAL-011",
+   "asin": "B0011EV",
+   "fnsku": "X00011EV",
+   "work_order_id": "WO-EVAL-011",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-011",
+   "seed": 50011,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-011.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-012",
+   "sku": "SKU-EVAL-012",
+   "asin": "B0012EV",
+   "fnsku": "X00012EV",
+   "work_order_id": "WO-EVAL-012",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "this_way_up",
+    "fragile"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-012",
+   "seed": 50012,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "this_way_up",
+    "fragile"
+   ],
+   "optics": "blur",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "compliant",
+  "optics": "blur",
+  "image": "fixtures/eval/EVAL-012.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "PASS"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-013",
+   "sku": "SKU-EVAL-013",
+   "asin": "B0013EV",
+   "fnsku": "X00013EV",
+   "work_order_id": "WO-EVAL-013",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "apparel_textile",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-013",
+   "seed": 50013,
+   "product": "soft",
+   "polybag": "sealed",
+   "warning": "none",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-013.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-014",
+   "sku": "SKU-EVAL-014",
+   "asin": "B0014EV",
+   "fnsku": "X00014EV",
+   "work_order_id": "WO-EVAL-014",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-014",
+   "seed": 50014,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "none",
+   "warning_font_pt": 10,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-014.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-015",
+   "sku": "SKU-EVAL-015",
+   "asin": "B0015EV",
+   "fnsku": "X00015EV",
+   "work_order_id": "WO-EVAL-015",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "plush_toy",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-015",
+   "seed": 50015,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "none",
+   "warning_font_pt": 18,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-015.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-016",
+   "sku": "SKU-EVAL-016",
+   "asin": "B0016EV",
+   "fnsku": "X00016EV",
+   "work_order_id": "WO-EVAL-016",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "apparel_textile",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-016",
+   "seed": 50016,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "none",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-016.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-017",
+   "sku": "SKU-EVAL-017",
+   "asin": "B0017EV",
+   "fnsku": "X00017EV",
+   "work_order_id": "WO-EVAL-017",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "apparel_textile",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-017",
+   "seed": 50017,
+   "product": "soft",
+   "polybag": "sealed",
+   "warning": "folded",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_folded",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-017.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-018",
+   "sku": "SKU-EVAL-018",
+   "asin": "B0018EV",
+   "fnsku": "X00018EV",
+   "work_order_id": "WO-EVAL-018",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "plush_toy",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-018",
+   "seed": 50018,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "folded",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "glare",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_folded",
+  "optics": "glare",
+  "image": "fixtures/eval/EVAL-018.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-019",
+   "sku": "SKU-EVAL-019",
+   "asin": "B0019EV",
+   "fnsku": "X00019EV",
+   "work_order_id": "WO-EVAL-019",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "plush_toy",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-019",
+   "seed": 50019,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "folded",
+   "warning_font_pt": 10,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_folded",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-019.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-020",
+   "sku": "SKU-EVAL-020",
+   "asin": "B0020EV",
+   "fnsku": "X00020EV",
+   "work_order_id": "WO-EVAL-020",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-020",
+   "seed": 50020,
+   "product": "box",
+   "polybag": "sealed",
+   "warning": "folded",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_folded",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-020.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-021",
+   "sku": "SKU-EVAL-021",
+   "asin": "B0021EV",
+   "fnsku": "X00021EV",
+   "work_order_id": "WO-EVAL-021",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "plush_toy",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-021",
+   "seed": 50021,
+   "product": "soft",
+   "polybag": "sealed",
+   "warning": "undersized",
+   "warning_font_pt": 10,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_small",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-021.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-022",
+   "sku": "SKU-EVAL-022",
+   "asin": "B0022EV",
+   "fnsku": "X00022EV",
+   "work_order_id": "WO-EVAL-022",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-022",
+   "seed": 50022,
+   "product": "soft",
+   "polybag": "sealed",
+   "warning": "undersized",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "soft",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "warning_small",
+  "optics": "soft",
+  "image": "fixtures/eval/EVAL-022.jpg",
+  "truth": {
+   "polybag_present_sealed": "PASS",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-023",
+   "sku": "SKU-EVAL-023",
+   "asin": "B0023EV",
+   "fnsku": "X00023EV",
+   "work_order_id": "WO-EVAL-023",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "topical_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-023",
+   "seed": 50023,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "seam",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "dark",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_seam",
+  "optics": "dark",
+  "image": "fixtures/eval/EVAL-023.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-024",
+   "sku": "SKU-EVAL-024",
+   "asin": "B0024EV",
+   "fnsku": "X00024EV",
+   "work_order_id": "WO-EVAL-024",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-024",
+   "seed": 50024,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "seam",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "dark",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_seam",
+  "optics": "dark",
+  "image": "fixtures/eval/EVAL-024.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-025",
+   "sku": "SKU-EVAL-025",
+   "asin": "B0025EV",
+   "fnsku": "X00025EV",
+   "work_order_id": "WO-EVAL-025",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "fragile",
+    "this_way_up"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-025",
+   "seed": 50025,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "seam",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "fragile",
+    "this_way_up"
+   ],
+   "optics": "glare",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_seam",
+  "optics": "glare",
+  "image": "fixtures/eval/EVAL-025.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-026",
+   "sku": "SKU-EVAL-026",
+   "asin": "B0026EV",
+   "fnsku": "X00026EV",
+   "work_order_id": "WO-EVAL-026",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "topical_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-026",
+   "seed": 50026,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "seam",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_seam",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-026.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-027",
+   "sku": "SKU-EVAL-027",
+   "asin": "B0027EV",
+   "fnsku": "X00027EV",
+   "work_order_id": "WO-EVAL-027",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "general",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-027",
+   "seed": 50027,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "edge",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "blur",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_edge",
+  "optics": "blur",
+  "image": "fixtures/eval/EVAL-027.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-028",
+   "sku": "SKU-EVAL-028",
+   "asin": "B0028EV",
+   "fnsku": "X00028EV",
+   "work_order_id": "WO-EVAL-028",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "topical_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-028",
+   "seed": 50028,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "edge",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "glare",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_edge",
+  "optics": "glare",
+  "image": "fixtures/eval/EVAL-028.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-029",
+   "sku": "SKU-EVAL-029",
+   "asin": "B0029EV",
+   "fnsku": "X00029EV",
+   "work_order_id": "WO-EVAL-029",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "team_lift",
+    "fragile"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-029",
+   "seed": 50029,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "edge",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "team_lift",
+    "fragile"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_edge",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-029.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-030",
+   "sku": "SKU-EVAL-030",
+   "asin": "B0030EV",
+   "fnsku": "X00030EV",
+   "work_order_id": "WO-EVAL-030",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "liquid",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-030",
+   "seed": 50030,
+   "product": "bottle",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "curve",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_curve",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-030.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-031",
+   "sku": "SKU-EVAL-031",
+   "asin": "B0031EV",
+   "fnsku": "X00031EV",
+   "work_order_id": "WO-EVAL-031",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "liquid",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-031",
+   "seed": 50031,
+   "product": "bottle",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "curve",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_curve",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-031.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-032",
+   "sku": "SKU-EVAL-032",
+   "asin": "B0032EV",
+   "fnsku": "X00032EV",
+   "work_order_id": "WO-EVAL-032",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "liquid",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-032",
+   "seed": 50032,
+   "product": "bottle",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "curve",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_curve",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-032.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-033",
+   "sku": "SKU-EVAL-033",
+   "asin": "B0033EV",
+   "fnsku": "X00033EV",
+   "work_order_id": "WO-EVAL-033",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "topical_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-033",
+   "seed": 50033,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "missing",
+   "upc": "covered",
+   "expiry": "legible",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "fnsku_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-033.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "FAIL",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "PASS",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-034",
+   "sku": "SKU-EVAL-034",
+   "asin": "B0034EV",
+   "fnsku": "X00034EV",
+   "work_order_id": "WO-EVAL-034",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "this_way_up",
+    "fragile"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-034",
+   "seed": 50034,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "exposed",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "this_way_up",
+    "fragile"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "upc_exposed",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-034.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "FAIL",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-035",
+   "sku": "SKU-EVAL-035",
+   "asin": "B0035EV",
+   "fnsku": "X00035EV",
+   "work_order_id": "WO-EVAL-035",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "team_lift",
+    "fragile"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-035",
+   "seed": 50035,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "exposed",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "team_lift",
+    "fragile"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "upc_exposed",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-035.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "FAIL",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-036",
+   "sku": "SKU-EVAL-036",
+   "asin": "B0036EV",
+   "fnsku": "X00036EV",
+   "work_order_id": "WO-EVAL-036",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "team_lift",
+    "this_way_up"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-036",
+   "seed": 50036,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "partial",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "team_lift",
+    "this_way_up"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "upc_exposed",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-036.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "FAIL",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-037",
+   "sku": "SKU-EVAL-037",
+   "asin": "B0037EV",
+   "fnsku": "X00037EV",
+   "work_order_id": "WO-EVAL-037",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "team_lift",
+    "this_way_up"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-037",
+   "seed": 50037,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "exposed",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "team_lift",
+    "this_way_up"
+   ],
+   "optics": "dark",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "upc_exposed",
+  "optics": "dark",
+  "image": "fixtures/eval/EVAL-037.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "FAIL",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "PASS",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-038",
+   "sku": "SKU-EVAL-038",
+   "asin": "B0038EV",
+   "fnsku": "X00038EV",
+   "work_order_id": "WO-EVAL-038",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-038",
+   "seed": 50038,
+   "product": "box",
+   "polybag": "unsealed",
+   "warning": "ok",
+   "warning_font_pt": 18,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "bag_open",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-038.jpg",
+  "truth": {
+   "polybag_present_sealed": "FAIL",
+   "suffocation_warning": "PASS",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-039",
+   "sku": "SKU-EVAL-039",
+   "asin": "B0039EV",
+   "fnsku": "X00039EV",
+   "work_order_id": "WO-EVAL-039",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-039",
+   "seed": 50039,
+   "product": "box",
+   "polybag": "unsealed",
+   "warning": "ok",
+   "warning_font_pt": 14,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "glare",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "bag_open",
+  "optics": "glare",
+  "image": "fixtures/eval/EVAL-039.jpg",
+  "truth": {
+   "polybag_present_sealed": "FAIL",
+   "suffocation_warning": "PASS",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-040",
+   "sku": "SKU-EVAL-040",
+   "asin": "B0040EV",
+   "fnsku": "X00040EV",
+   "work_order_id": "WO-EVAL-040",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "apparel_textile",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-040",
+   "seed": 50040,
+   "product": "box",
+   "polybag": "unsealed",
+   "warning": "ok",
+   "warning_font_pt": 18,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "bag_open",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-040.jpg",
+  "truth": {
+   "polybag_present_sealed": "FAIL",
+   "suffocation_warning": "PASS",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-041",
+   "sku": "SKU-EVAL-041",
+   "asin": "B0041EV",
+   "fnsku": "X00041EV",
+   "work_order_id": "WO-EVAL-041",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-041",
+   "seed": 50041,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 10,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "bag_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-041.jpg",
+  "truth": {
+   "polybag_present_sealed": "FAIL",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-042",
+   "sku": "SKU-EVAL-042",
+   "asin": "B0042EV",
+   "fnsku": "X00042EV",
+   "work_order_id": "WO-EVAL-042",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "baby_product",
+   "wo_polybag": true,
+   "wo_suffocation_warning": true,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [],
+   "bag_length_in": 14,
+   "bag_width_in": 12,
+   "bag_opening_in": 12,
+   "polybag_spec_mil": 1.5
+  },
+  "spec": {
+   "unit_id": "EVAL-042",
+   "seed": 50042,
+   "product": "soft",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 10,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "bag_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-042.jpg",
+  "truth": {
+   "polybag_present_sealed": "FAIL",
+   "suffocation_warning": "FAIL",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-043",
+   "sku": "SKU-EVAL-043",
+   "asin": "B0043EV",
+   "fnsku": "X00043EV",
+   "work_order_id": "WO-EVAL-043",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "consumable_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-043",
+   "seed": 50043,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "covered",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "soft",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "expiry_covered",
+  "optics": "soft",
+  "image": "fixtures/eval/EVAL-043.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "FAIL",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-044",
+   "sku": "SKU-EVAL-044",
+   "asin": "B0044EV",
+   "fnsku": "X00044EV",
+   "work_order_id": "WO-EVAL-044",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "consumable_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-044",
+   "seed": 50044,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "covered",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "soft",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "expiry_covered",
+  "optics": "soft",
+  "image": "fixtures/eval/EVAL-044.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "FAIL",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-045",
+   "sku": "SKU-EVAL-045",
+   "asin": "B0045EV",
+   "fnsku": "X00045EV",
+   "work_order_id": "WO-EVAL-045",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "topical_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-045",
+   "seed": 50045,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "covered",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "expiry_covered",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-045.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "FAIL",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-046",
+   "sku": "SKU-EVAL-046",
+   "asin": "B0046EV",
+   "fnsku": "X00046EV",
+   "work_order_id": "WO-EVAL-046",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "topical_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-046",
+   "seed": 50046,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "smudged",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "soft",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "expiry_smudged",
+  "optics": "soft",
+  "image": "fixtures/eval/EVAL-046.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "FAIL",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-047",
+   "sku": "SKU-EVAL-047",
+   "asin": "B0047EV",
+   "fnsku": "X00047EV",
+   "work_order_id": "WO-EVAL-047",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "consumable_dated",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": true,
+   "wo_handling_marks": []
+  },
+  "spec": {
+   "unit_id": "EVAL-047",
+   "seed": 50047,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "smudged",
+   "expiry_text": "03-2027",
+   "marks": [],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "expiry_smudged",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-047.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "FAIL",
+   "handling_marks": "NOT_REQUIRED",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-048",
+   "sku": "SKU-EVAL-048",
+   "asin": "B0048EV",
+   "fnsku": "X00048EV",
+   "work_order_id": "WO-EVAL-048",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "this_way_up",
+    "team_lift"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-048",
+   "seed": 50048,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "this_way_up"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "mark_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-048.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "FAIL",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-049",
+   "sku": "SKU-EVAL-049",
+   "asin": "B0049EV",
+   "fnsku": "X00049EV",
+   "work_order_id": "WO-EVAL-049",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "fragile",
+    "team_lift"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-049",
+   "seed": 50049,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "fragile"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "mark_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-049.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "FAIL",
+   "overall": "FAIL"
+  }
+ },
+ {
+  "unit": {
+   "unit_id": "EVAL-050",
+   "sku": "SKU-EVAL-050",
+   "asin": "B0050EV",
+   "fnsku": "X00050EV",
+   "work_order_id": "WO-EVAL-050",
+   "fba_shipment_id": "FBA-EVAL-2610",
+   "category": "fragile_glass",
+   "wo_polybag": false,
+   "wo_suffocation_warning": false,
+   "wo_expiry_date": false,
+   "wo_handling_marks": [
+    "team_lift",
+    "this_way_up"
+   ]
+  },
+  "spec": {
+   "unit_id": "EVAL-050",
+   "seed": 50050,
+   "product": "box",
+   "polybag": "none",
+   "warning": "none",
+   "warning_font_pt": 14.0,
+   "fnsku": "flat",
+   "upc": "covered",
+   "expiry": "none",
+   "expiry_text": "03-2027",
+   "marks": [
+    "team_lift"
+   ],
+   "optics": "normal",
+   "fnsku_text": "X00EVL0001"
+  },
+  "defect": "mark_missing",
+  "optics": "normal",
+  "image": "fixtures/eval/EVAL-050.jpg",
+  "truth": {
+   "polybag_present_sealed": "NOT_REQUIRED",
+   "suffocation_warning": "NOT_REQUIRED",
+   "fnsku_label_placement": "PASS",
+   "original_barcode_covered": "PASS",
+   "expiry_date": "NOT_REQUIRED",
+   "handling_marks": "FAIL",
+   "overall": "FAIL"
+  }
+ }
+]

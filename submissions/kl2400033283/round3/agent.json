@@ -1,0 +1,10 @@
+{
+  "stage": "prep",
+  "agent_id": "prep-manager@2.0.0",
+  "owner": "@kl2400033283",
+  "mode": "inproc",
+  "url": "http://localhost:8765",
+  "module": "agents.prep.app",
+  "implementation": "Round 2 Prep Manager: vision observes (station CV / free OpenRouter :free VLM / offline OCR+barcode), a deterministic rules engine decides and cites rule_ids; operator-recorded work-order values are judged by the same rules when no capture is supplied (model.name='rules'). measurements are not captured (null).",
+  "notes": "HTTP mode: run `uvicorn submissions.kl2400033283.agent.api:app --port 8102` and set mode=http. In-proc: copy round3/app.py to agents/prep/app.py."
+}

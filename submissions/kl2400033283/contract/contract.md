@@ -1,87 +1,40 @@
-# Cross-Pod Evidence Record Contract (Agent 02 · Prep Manager)
+# Evidence contract — Agent 02 (Prep Manager) → Agents 03 / 05
 
-**Protocol:** CUBE Commerce Context v2026.1  
-**Authoring Pod:** Agent 02 · Prep Manager  
-**Direct Upstream Pod:** Agent 01 · Receiving Manager  
-**Direct Downstream Pod:** Agent 03 · Pack Manager  
-**Dispute / Financial Pod:** Agent 05 · Recovery Manager  
+Schema version `2026.2` · JSON Schema: [`evidence_record_schema.json`](evidence_record_schema.json) · Example: [`sample_evidence_record.json`](sample_evidence_record.json) (the "barcode visible" scenario).
 
----
-
-## 1. Context & Purpose
-
-In the five-agent supply chain sequence:
 ```
-  01 Receiving ──▶ 02 Prep ──▶ 03 Pack ──▶ 04 Returns ──▶ 05 Recovery
+01 Receiving ──▶ 02 Prep ──▶ 03 Pack ──▶ 04 Returns ──▶ 05 Recovery
+                    │                                      ▲
+                    └──── evidence record / dispute packet ┘
 ```
-The **Prep Manager** is responsible for establishing **immutable compliance proof** that physical goods have met Amazon Seller Central FBA packaging and labeling rules *prior* to carton packing and outbound freight handover.
 
-The record emitted by Agent 02 serves two primary operational functions:
-1. **Gate to Packaging (Agent 03)**: Pack Manager verifies that `outcome.decision == 'PASS'` before aggregating units into master outbound shipping cartons. If `outcome.decision == 'FAIL'` or `'UNCERTAIN'`, the unit is routed to a rework quarantine lane.
-2. **Dispute Claim Evidence (Agent 05)**: When Amazon issues an automated inbound defect chargeback (e.g. `PREP_DEFECT_NO_POLYBAG_LABEL`, `BARCODE_UNSCANNABLE`, `EXPIRED_PRODUCT`) 30 to 60 days later, Recovery Manager queries this contract, validates `content_hash`, and submits the timestamped photographic proof to Amazon Dispute Operations.
+`unit_id` is the join key across all five agents.
 
----
+## Fixed CUBE fields (always present)
 
-## 2. Shared Join Key & Tenant Isolation
+`record_id`, `schema_version`, `organization_id`, `client_id`, `agent{agent_id, agent_name, version, stage}`, `subject{unit_id, sku, asin, fnsku, work_order_id, fba_shipment_id}`, `captured_at`, `operator_label`, `images[{view, sha256_digest, dimensions, quality}]`, `checks[{check_key, verdict, confidence, detail, model_version, latency_ms}]`, `outcome{decision, decided_by, decided_at}`, `overrides[]`, `status`, `content_hash`.
 
-- **Join Key:** `unit_id` (format: `UNIT-XXXX`). All five buildathon repositories share identical `unit_id` numbering, allowing unified tracking across the lifecycle.
-- **Tenant Scope:** `organization_id` (e.g. `org_demo_alpha`). Agent 05 must provide the tenant context when querying records. Multi-tenant isolation guarantees that no pod can access records from an unauthorized tenant.
+## Prep Manager extensions
 
----
+| Field | Meaning for consumers |
+|---|---|
+| `checks[].rule_ids` | Which authoritative rule the verdict applies (`FBA-LB-02` …) |
+| `checks[].required_by` | `amazon_fba` and/or `work_order`. Only `amazon_fba` failures map to Amazon fees |
+| `checks[].reason_code` | Stable machine code (`ORIGINAL_BARCODE_EXPOSED`, `WARNING_PRINT_TOO_SMALL`, `SYSTEM_TIMEOUT` …) |
+| `checks[].measurements` / `regions` | Physical evidence (inches, counts, fractions) and normalised boxes on the image |
+| `outcome.dispatch` | `GREEN_RELEASE` / `RED_REWORK` / `AMBER_REVIEW` |
+| `attestations[]` | Requirements a photo cannot verify (film gauge, carton date) and their document status |
+| `discrepancies[]` | Where the work order disagreed with Amazon's category rules |
+| `perception` | Provider, model, number of calls, cost, routing reason |
+| `trace[]` | Each agent step with status and latency |
 
-## 3. Verdict Definitions & Ground Rules
+## Semantics
 
-| Verdict | Definition | Downstream Action (Pack / Recovery) |
-|---|---|---|
-| `PASS` | Available visual evidence positively proves compliance with Amazon FBA prep rules. | Unit cleared for packing; solid proof for dispute defense. |
-| `FAIL` | Available visual evidence positively proves non-compliance (e.g., exposed UPC, fold over warning). | Rework triggered; seller chargeback justified. |
-| `UNCERTAIN` | Visual evidence is ambiguous, obstructed by glare, low-light blur, or physically unmeasurable (e.g. plastic film thickness). | Station alarm routed to operator manual inspection; not usable as conclusive dispute proof. |
-| `NOT_REQUIRED` | The work order or catalog rules do not mandate this prep step for the given ASIN. | Ignored in overall score calculation. |
+- `PASS` — evidence shows the requirement is met. `FAIL` — evidence shows it is not. `UNCERTAIN` — evidence insufficient; **not** a low-confidence pass. `NOT_REQUIRED` — the requirement does not apply.
+- Decision policy: any FAIL → FAIL; else any UNCERTAIN → UNCERTAIN; else PASS. `PENDING_REVIEW` means the agent failed open (timeout/outage).
+- `content_hash` = SHA-256 of the canonical JSON (sorted keys, compact separators) of the whole record excluding `content_hash` and each override's `new_content_hash`. Consumers should recompute it before relying on a record.
+- Overrides never replace the agent's verdict history. Each entry stores `original_verdict`, `reason`, `operator_id` and the hash before and after.
 
----
+## For Recovery Manager (Agent 05)
 
-## 4. Check Key Registry
-
-| Check Key | Description | Applicable Amazon FBA Chargeback Code |
-|---|---|---|
-| `polybag_present_sealed` | Transparent polybag applied and fully sealed (heat/tape) | `PREP_DEFECT_BAG_NOT_SEALED` |
-| `suffocation_warning` | Warning present, compliant font size, not obscured by fold | `PREP_DEFECT_NO_SUFFOCATION_LABEL` |
-| `fnsku_label_placement` | FNSKU placed on flat exterior plane, not on seam or curve | `PREP_DEFECT_UNSCANNABLE_BARCODE` |
-| `original_barcode_covered` | Original manufacturer UPC completely masked | `PREP_DEFECT_MULTIPLE_BARCODES` |
-| `expiry_date` | Expiry stamp visible through outer packaging, unoccluded | `PREP_DEFECT_EXPIRED_OR_MISSING_EXPIRY` |
-| `handling_marks` | Fragile / Set / Orientation marks applied per work order | `PREP_DEFECT_MISSING_HANDLING_MARK` |
-
----
-
-## 5. Tamper Evidence & Cryptographic Verification
-
-To prevent accusations of retroactive tampering during fee disputes, each record contains a `content_hash`:
-```python
-import hashlib, json
-
-canonical_representation = json.dumps({
-    "record_id": record["record_id"],
-    "unit_id": record["subject"]["unit_id"],
-    "organization_id": record["organization_id"],
-    "images": [img["sha256_digest"] for img in record["images"]],
-    "checks": [{c["check_key"]: c["verdict"]} for c in record["checks"]],
-    "outcome": record["outcome"]["decision"],
-    "captured_at": record["captured_at"]
-}, sort_keys=True)
-
-content_hash = hashlib.sha256(canonical_representation.encode("utf-8")).hexdigest()
-```
-Recovery Manager MUST verify `content_hash` against the stored images and verdict payload before submitting claims to Amazon.
-
----
-
-## 6. Operator Overrides
-
-If a warehouse operator overrides an agent verdict, the original verdict is NEVER deleted or overwritten. Instead, the modification is recorded in `overrides[]`:
-- `original_verdict`: Agent's automated decision
-- `new_verdict`: Human operator's decision
-- `reason`: Mandatory text justification code (e.g. `MANUALLY_SCANNED_OK`, `REPACKED_ON_LINE`, `GLARE_CLEARED_ON_TILT`)
-- `operator_id`: Badge number of operator
-- `overridden_at`: ISO timestamp
-
-Recovery Manager uses the presence of overrides to calibrate dispute confidence (automated PASS without overrides has the highest dispute win rate).
+`GET /api/v1/records/{id}/dispute-packet` returns per-check statements (verdict, rules, measurements, regions, image digests), `usable_as_defense` (true only for PASS), the overrides, the limitations (unattested items) and `integrity_verified`. It is built only from the sealed record. Recovery should never re-classify images.

@@ -18,3 +18,9 @@ tests/*.db
 # Temporary files
 *.tmp
 .DS_Store
+
+# Runtime data (uploads are tenant data, never commit)
+data_store/
+
+# Local backups (not part of the submission)
+agent/ui_backup_*/

@@ -63,3 +63,29 @@
 - Built FastAPI service in `agent/api.py`.
 - Developed modern web dashboard in `agent/web/index.html` featuring live image inspection, bounding box rendering, check cards, override workflow, and cryptographic evidence verification.
 - Verified end-to-end functionality via headless CLI and API endpoints.
+
+---
+
+## 2026-10-05 — v2.0.0: real perception, honest evaluation, new console (branch `round3/agent-v2`)
+
+**Audit findings on v1**
+- The "vision pipeline" never read pixels for decisions. Verdicts came from `test_mode_features`, which were the ground-truth labels, so the eval (agent kappa 1.0) was circular.
+- "Two human annotators" were simulated in code. That claim is withdrawn.
+- The API trusted a client-supplied `X-Org-Id` header (tenant spoofing). `/api/inspect` accepted arbitrary file paths (arbitrary file read / hashing).
+- `INSERT OR REPLACE` on records: re-inspecting a unit overwrote evidence. The content hash covered only verdicts.
+- Metrics endpoint returned hard-coded latencies. The dispute packet asserted "14pt verified" regardless of evidence.
+- Expiry format rule was wrong (`YYYY-MM-DD`); Amazon accepts `MM-DD-YYYY` / `MM-YYYY`.
+- `/docs` returned 500 on Python 3.9.0 (typing.Literal bug with pydantic 2.13).
+
+**Changes**
+- Perception is now a provider contract (observations only). Two providers: a deterministic station CV engine (pixel analysis) and Claude vision (one forced-tool call). A deterministic rules engine produces verdicts with rule citations.
+- Requirement resolver (category × work order) with discrepancies and attestations.
+- Optical quality gate, cross-check vetoes, routing, skip-on-unusable, bounded fail-open with trace.
+- Evidence: full-record canonical SHA-256, insert-once, trigger-enforced append-only overrides, hash chain, evidence-derived dispute packet.
+- Security: API key → tenant, signed media URLs, upload validation, CSP and headers, rate limiting, no raw paths.
+- Station-capture renderer plus 13 challenge scenarios. A 50-unit held-out eval on pixels only.
+- New operator console. 50 tests (was 18).
+
+**Evaluation history**
+- Run 1: 2 false alarms on slightly defocused frames. Fixed on calibration seeds 8000+ (57/200 → 0/200 errors). Calibration regression is 1000/1000.
+- Run 2: 40/40 clean correct, 10/10 degraded safe, 0 FN, 0 FP. See eval-report.md for caveats.

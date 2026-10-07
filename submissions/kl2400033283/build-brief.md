@@ -1,3 +1,5 @@
+> **v2 note (2026-10-05):** this document was written for the Round 2 (v1) build. Metrics and implementation details here are superseded. Current measured results are in [eval-report.md](eval-report.md) and the current design in [ARCHITECTURE.md](ARCHITECTURE.md). The v1 human-agreement figures came from *simulated* annotators and are withdrawn.
+
 # Prep Manager: Technical Build Brief
 
 **Author:** Autonomous Principal Agent Architect  
@@ -9,7 +11,7 @@
 
 ## 1. System Vision & Architecture
 
-The **Prep Manager** is an autonomous visual compliance inspection agent designed to sit at the end of an Amazon FBA prep line. It acts as an automated quality-control inspector and cryptographic notary: inspecting every unit from high-resolution imagery, enforcing published Amazon Seller Central packaging and labeling guidelines, producing pass/fail/uncertain decisions in under 900ms, and generating an immutable SHA-256 evidence record.
+The **Prep Manager** is an autonomous visual compliance inspection agent designed to sit at the end of an Amazon FBA prep line. It acts as an automated quality-control inspector and cryptographic notary: inspecting every unit from high-resolution imagery, enforcing published Amazon Seller Central packaging and labeling guidelines, producing pass/fail/uncertain decisions in under 900ms, and generating a SHA-256 hashed, HMAC-sealed evidence record.
 
 ### System Topology
 

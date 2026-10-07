@@ -1,211 +1,106 @@
-# Autonomous Prep Manager (Agent 02): Master Architectural Specification
+# Prep Manager — Architecture
 
-**System Classification:** Production Visual Compliance & Cryptographic Evidence Agent  
-**Build Track:** CUBE Buildathon 2026 · Track 02 (Prep Manager)  
-**Parent Framework:** Sydon Symphony Sandbox · Commerce Context Protocol v2026.1  
-**Author / Submitter:** `kl2400033283`  
-**Target Inbound Channel:** Amazon FBA (Fulfillment by Amazon)  
-**Downstream Consumer:** Recovery Manager (Agent 05)  
+## 1. Shape of the problem
 
----
+Input: 1–4 photos of one prepared unit, plus product category, bag dimensions and the work order.
+Output: per-check verdict ∈ {PASS, FAIL, UNCERTAIN, NOT_REQUIRED}, an overall decision, a dispatch signal for the line, and a sealed evidence record.
 
-## 1. Problem Reconstruction
+Constraints that shape the design:
 
-In high-volume e-commerce fulfillment and 3PL preparation networks, products bound for Amazon fulfillment centers must satisfy rigorous packaging, labeling, and handling regulations before arrival. Non-compliant units trigger automated receiving rejections, product quarantine, and punitive Amazon Inbound Defect Fees ($0.20 to $0.70+ per unit, scaling into tens of thousands of dollars per PO).
+| Constraint | Consequence |
+|---|---|
+| Rules are published by Amazon, not learned | Rules live in code (`rules/authoritative_rules.py`) and the model never decides them |
+| Some requirements are not visible (film gauge) | Modelled as *attestations*, separate from visual verdicts |
+| Ambiguous photos are normal (glare on film, blur) | An independent quality gate plus UNCERTAIN as a first-class verdict |
+| A prep line cannot wait | Hard perception budget and fail-open |
+| Fees surface weeks later | Evidence must be self-contained and verifiable: insert-only original, append-only overrides, HMAC seal chain with the key outside the DB |
+| $0.40–1.10 revenue per unit | At most one model call per unit; $0 path for calibrated stations |
+| Multi-tenant prep centers | Tenant derived from credentials; every query org-scoped |
 
-Crucially, an acute asymmetric information gap exists between prep centers and Amazon:
-1. **Asymmetric Verification:** Inbound defect notices arrive 30 to 60 days after prep operations occur.
-2. **Subjective Recollection:** Operators possess paper travelers indicating work order intent, but lack time-stamped visual proof of physical execution.
-3. **Severe Margin Constraints:** 3PL prep fees range between $0.40 and $1.10 per unit, with net margins of $0.07 to $0.11. An inspection system cannot add seconds to cycle time or cost more than pennies in compute.
-4. **Physical Line Invariants:** If a verification model fails or hangs, stopping the physical conveyor incurs $50/hour in idle labor and breaches carrier SLA cut-offs.
+## 2. Architecture choice
 
-**The Actual Problem:** Build an inline, real-time visual compliance agent that inspects packaging and labeling from overhead and operator imagery in under 900ms, evaluates compliance against authoritative Amazon FBA standards, produces pass/fail/uncertain decisions without stalling the conveyor line, and seals every inspection in an immutable, cryptographically verifiable evidence contract consumable by downstream recovery agents for dispute defense.
+| Option | Verdict |
+|---|---|
+| A. Pure LLM: send the photo and ask "is this compliant?" | Rejected. The model would decide rules, verdicts aren't reproducible, prompt injection via label text is possible, and confidence isn't grounded |
+| B. Pure classical CV | Works only for a calibrated station with known label stock |
+| **C. Hybrid (chosen)** | Pluggable perception (classical CV *or* VLM) emits observations only; a deterministic rules engine turns them into verdicts; an independent quality gate can veto |
 
----
-
-## 2. Requirements
-
-### Explicit Requirements
-- **Visual Compliance Checks:** Polybag presence and sealing; suffocation warning presence, font size, and fold clearance; FNSKU label placement and surface planarity; manufacturer barcode 100% occlusion; expiry date visibility after wrapping; required handling marks.
-- **Decision Outcomes:** Tri-state verdicts: `PASS`, `FAIL`, `UNCERTAIN` (not low-confidence pass).
-- **Evidence Contract:** Cryptographic evidence record containing normalized image digests, per-check verdicts, confidence scores, model versions, timestamps, operator badge IDs, and append-only overrides.
-- **Cross-Pod Interoperability:** Emits standard CUBE Commerce Context schema consumed by Agent 05 (Recovery Manager) for automated fee disputes.
-
-### Inferred & Architectural Requirements
-- **Single-Call Batched Multimodal Inference (Rule 2):** Exactly one vision inference call per unit carrying all six checks to preserve warehouse unit economics.
-- **Fail-Open Circuit Breaker (Rule 3):** Any model timeout (>1500ms) or service crash must instantly fail-open, emitting `PENDING_REVIEW` and allowing physical inventory flow.
-- **Authoritative Retrieval (Rule 5):** Hardcoded and retrieved Amazon Seller Central prep manuals; zero LLM rule hallucination.
-- **Tenant Isolation (Rule 1):** Multi-tenant row-level isolation and HMAC-SHA256 image tokens preventing cross-org leakage between `org_demo_alpha` and `org_demo_bravo`.
-- **Honesty Rule:** Acknowledgment that 2D RGB imagery cannot physically measure 1.5 mil plastic thickness.
-
----
-
-## 3. Constraints
-
-- **Latency Budget:** P50 < 650ms, P95 < 1,200ms. Hard timeout cutoff at 1,500ms.
-- **Cost Budget:** < $0.005 per unit evaluated (ceiling $0.020).
-- **Physical Environment:** Polyethylene glare, conveyor motion blur, angle oblique tilts, dim ambient lighting.
-- **Security Boundaries:** Strict isolation between competing fulfillment centers; signed access URLs; zero credential storage in code.
-
----
-
-## 4. Formal Problem Model
-
-Let a prepared product unit $U$ be represented by the tuple:
-$$U = \langle \text{unit\_id}, \text{org\_id}, \mathcal{W}, \mathcal{I} \rangle$$
-where $\mathcal{W}$ is the Work Order constraint set:
-$$\mathcal{W} = \{ w_{\text{polybag}}, w_{\text{warning}}, w_{\text{fnsku}}, w_{\text{upc\_cov}}, w_{\text{expiry}}, w_{\text{handling}} \}$$
-and $\mathcal{I} = \{ I_1, I_2, \dots, I_m \}$ is the set of photographic frames captured at the gantry.
-
-The evaluation agent executes a mapping:
-$$f(U) \to \langle \mathbf{C}, D, \sigma, \mathcal{H} \rangle$$
-where:
-- $\mathbf{C} = [ c_1, c_2, \dots, c_6 ]$ is the vector of check results, with $c_i = \langle v_i, \gamma_i, \tau_i \rangle$ ($v_i \in \{\text{PASS}, \text{FAIL}, \text{UNCERTAIN}, \text{NOT\_REQUIRED}\}$, confidence $\gamma_i \in [0, 1]$, latency $\tau_i$).
-- $D \in \{\text{PASS}, \text{FAIL}, \text{UNCERTAIN}, \text{PENDING\_REVIEW}\}$ is the overall decision:
-$$D = \begin{cases}
-\text{FAIL} & \text{if } \exists i \text{ s.t. } v_i = \text{FAIL} \\
-\text{UNCERTAIN} & \text{if } \nexists i (v_i = \text{FAIL}) \wedge \exists j (v_j = \text{UNCERTAIN} \wedge w_j \text{ is required}) \\
-\text{PASS} & \text{if } \forall i (w_i \text{ is required} \implies v_i = \text{PASS})
-\end{cases}$$
-- $\mathcal{H}$ is the cryptographic content hash:
-$$\mathcal{H} = \text{SHA-256}\left( \text{canonical\_json}(U, \mathbf{C}, D, \text{digest}(\mathcal{I})) \right)$$
-
----
-
-## 5. Architecture Candidates Evaluated
-
-### Architecture A: Naive Sequential LLM Agent
-- Individual model calls per check (6 calls per unit).
-- *Failure Mode:* Latency exceeds 6,000ms. Token cost exceeds $0.12/unit (exceeding prep profit margin). Fails CUBE Engineering Rule 2.
-
-### Architecture B: Edge-Only Lightweight OpenCV Heuristics
-- Pure deterministic edge detection without semantic reasoning.
-- *Failure Mode:* High false positive rate on polybag wrinkles, failure to parse multi-lingual suffocation text, inability to detect complex edge cases.
-
-### Architecture C: Selected Hybrid Batched Multimodal Architecture
-- Edge pre-screening for optical quality (blur, specular glare).
-- Single batched multimodal reasoning payload executing all 6 checks in one pass.
-- Deterministic authoritative rules lookup engine.
-- Fail-open asynchronous circuit breaker with local SQLite tenant database and cryptographic hashing.
-- *Justification:* Meets all 5 engineering rules, respects the $0.005/unit cost boundary, delivers 30-40ms P50 latency, and satisfies legal evidence requirements.
-
----
-
-## 6. Selected Architecture Topology
+## 3. Components
 
 ```
-                     ┌───────────────────────────────────────────────┐
-                     │          Overhead Inspection Gantry           │
-                     └───────────────────────┬───────────────────────┘
-                                             │ RGB Frames + Work Order
+                      ┌────────────── api.py (FastAPI) ───────────────┐
+ operator console ──▶ │ auth (key→tenant) · rate limit · headers ·    │
+ (web/)               │ signed media URLs · upload validation         │
+                      └──────────────────────┬────────────────────────┘
                                              ▼
-                     ┌───────────────────────────────────────────────┐
-                     │          Tenant Context Security Gate         │
-                     │  - Validates org_id (alpha vs bravo)          │
-                     │  - Rejects unauthorized cross-tenant callers  │
-                     └───────────────────────┬───────────────────────┘
-                                             │
-                                             ▼
-                     ┌───────────────────────────────────────────────┐
-                     │     Edge Optical Quality Pre-Screening        │
-                     │  - Laplacian variance sharpness (> 20.0)      │
-                     │  - Specular glare histogram (< 35.0%)         │
-                     └───────────────────────┬───────────────────────┘
-                                             │
-                                             ▼
-                     ┌───────────────────────────────────────────────┐
-                     │    Single-Call Batched Compliance Engine      │
-                     │                                               │
-                     │   Check 1: Polybag Sealing & Aperture         │
-                     │   Check 2: Suffocation Warning & Font Tiers   │
-                     │   Check 3: FNSKU Planar Surface Geometry      │
-                     │   Check 4: 100% Original Barcode Occlusion    │
-                     │   Check 5: Expiration Date OCR Visibility     │
-                     │   Check 6: Mandatory Handling Marks           │
-                     └───────────────────────┬───────────────────────┘
-                                             │
-                        ┌────────────────────┴────────────────────┐
-     Normal (<1500ms)   │                                         │ Timeout / Exception
-                        ▼                                         ▼
-         ┌──────────────────────────────┐          ┌──────────────────────────────┐
-         │     Confidence & Decision    │          │   Fail-Open Circuit Breaker  │
-         │  PASS / FAIL / UNCERTAIN     │          │   Status: PENDING_REVIEW     │
-         │  Beacon: GREEN / RED / AMBER │          │   Beacon: AMBER (DISPATCH)   │
-         └──────────────┬───────────────┘          └──────────────┬───────────────┘
-                        │                                         │
-                        └────────────────────┬────────────────────┘
-                                             │
-                                             ▼
-                     ┌───────────────────────────────────────────────┐
-                     │    Cryptographic Evidence Record Engine       │
-                     │  - Canonical JSON normalization               │
-                     │  - Image SHA-256 digests                      │
-                     │  - Overall content_hash computation           │
-                     │  - Append-only override audit trail           │
-                     └───────────────────────┬───────────────────────┘
-                                             │
-                        ┌────────────────────┴────────────────────┐
-                        ▼                                         ▼
-         ┌──────────────────────────────┐          ┌──────────────────────────────┐
-         │   Tenant-Isolated SQLite     │          │    Downstream Agent 05       │
-         │   Database (Enforced RLS)    │          │    (Recovery Dispute Claims) │
-         └──────────────────────────────┘          └──────────────────────────────┘
+                       core/prep_agent.py  — bounded, traced loop
+ ┌────────────┬───────────┬─────────────┬───────────┬──────────────┬────────────┬──────────┐
+ │ RESOLVE    │ INGEST    │ QUALITY     │ ROUTE     │ PERCEIVE     │ VERIFY &   │ DECIDE → │
+ │ requirements│ sha256    │ GATE        │ cv/claude/│ ≤1 call,     │ JUDGE      │ SEAL →   │
+ │ (rules/)   │ images    │ (vision/    │ skip      │ 5 s budget   │ (core/     │ PERSIST  │
+ │            │           │ quality.py) │           │ (providers/) │ rules_engine)│ (db/)  │
+ └────────────┴───────────┴─────────────┴───────────┴──────────────┴────────────┴──────────┘
+        any exception / timeout in INGEST..DECIDE ──▶ FAIL-OPEN record (PENDING_REVIEW, AMBER)
 ```
 
----
+| Module | Responsibility |
+|---|---|
+| `rules/authoritative_rules.py` | Rule registry (id, source, reference, visually verifiable?, severity); category profiles; `resolve_requirements()` merges category rules × work order into a plan, discrepancies and attestations |
+| `vision/quality.py` | Loads and hashes images; measures edge strength (99.9th pct \|Laplacian\|), sensor-clipped glare %, exposure |
+| `vision/observations.py` | Observation contract: closed per-check state vocabulary, signal 0–1, measurements, normalised regions. **No verdict field.** |
+| `vision/providers/cv_provider.py` | Station CV engine: bar-texture barcodes, label-format FNSKU/UPC split, tape-seam contact, Lambertian curvature, face-edge step, seal-band brightness, keyline warning panels, fold fragments, font size from line height, date-label occlusion, sticker stock |
+| `vision/providers/claude_provider.py` | One Messages API call per unit with all images; a forced tool whose schema only allows observations; schema + vocabulary validation; token cost accounting |
+| `core/rules_engine.py` | Observation → verdict, reason code, rule ids, remediation, grounded confidence; low-signal veto; glare cross-check veto for model claims; overall policy FAIL > UNCERTAIN > PASS |
+| `core/prep_agent.py` | The loop: routing, budget enforcement (thread + timeout), fail-open, trace, record assembly |
+| `schemas/evidence.py` | Evidence contract (CUBE fixed fields + extensions); canonical SHA-256 |
+| `db/database.py` | SQLite, every table keyed by `org_id`; insert-once records; append-only overrides (triggers); hash chain; metrics; assets; leak audit |
+| `security.py` | API-key → tenant, token-bucket limiter, HMAC signed URLs, upload validation, security headers |
+| `sim/` | Station-capture renderer and the 13 challenge scenarios (demo + tests) |
+| `web/` | Operator console (vanilla JS, no build): capture → trace → verdicts with evidence overlays, override, ledger, analytics, rules, how-it-works |
 
-## 7. Component Details & Engineering Decisions
+## 4. The agent loop in detail
 
-### 7.1 Authoritative Amazon Rules Engine (`authoritative_rules.py`)
-Encodes the exact specifications from Amazon Seller Central FBA manual:
-- **Suffocation Warning Table:**
-  - Length + Width $\ge 60'' \to 24\text{pt}$
-  - Length + Width $40'' - 59'' \to 18\text{pt}$
-  - Length + Width $30'' - 39'' \to 14\text{pt}$
-  - Length + Width $< 30'' \to 10\text{pt}$
-- **Barcode Coverage Rule:** 0% exposure tolerated. 100% of the manufacturer UPC must be masked.
-- **FNSKU Geometry:** Planar requirement. Placement across carton seams, tape joints, or bottle curvature is rejected.
+1. **RESOLVE_REQUIREMENTS** — profile(category) ∪ work order. The stricter side wins. A rule the work order omitted becomes `WORK_ORDER_OMITS_REQUIREMENT`. The warning requirement depends on bag opening (≥ 5 in); the required print size comes from L+W. Film gauge becomes `DOCUMENT_REQUIRED` unless a spec is cited.
+2. **INGEST** — SHA-256 of the raw bytes, dimensions.
+3. **QUALITY_GATE** — per frame: BLUR (edge < 8), GLARE (> 1.5 % clipped), UNDER/OVEREXPOSED. Glare alone keeps a frame usable but is used for vetoes.
+4. **ROUTE** — no usable frame → skip perception (no cost), all checks UNCERTAIN, recapture instruction. Calibrated station frame → station CV. Open-world photo with a key configured → Claude vision. The reason is recorded.
+5. **PERCEIVE** — runs in a worker thread with `future.result(timeout)`. A budget violation (> 1 model call) raises.
+6. **VERIFY_AND_JUDGE** — rejects invalid states; signal < 0.35 → UNCERTAIN (`LOW_SIGNAL`); a model "clean" claim on a glare frame → UNCERTAIN (`CROSS_CHECK_GLARE_VETO`). Absence-based FAILs (missing mark, missing warning) become UNCERTAIN when glare could hide the item. Font size has a tolerance band: < 85 % of required → FAIL; 85–100 % → UNCERTAIN.
+7. **DECIDE** — FAIL → `RED_REWORK`, UNCERTAIN → `AMBER_REVIEW`, PASS → `GREEN_RELEASE`. Action items come from remediations and attestations.
+8. **SEAL / PERSIST** — `content_hash = sha256(canonical JSON of the whole record minus the hash)`. INSERT only. A persistence failure is logged and the line still gets its answer.
 
-### 7.2 Database & Tenancy Isolation Layer (`database.py`)
-- Row-level security enforced on every table (`prep_records`, `check_verdicts`, `overrides`, `tenant_image_tokens`).
-- HMAC-SHA256 capability tokens required to access image assets, ensuring a tenant cannot guess image URLs.
-- Automated red-team method `assert_zero_cross_tenant_leakage()` included in CI/CD.
+Confidence is not a model's self-report. For PASS/FAIL it is `0.5 + 0.5·signal` (detector margin), × 0.9 if the frame had glare. For UNCERTAIN it reports the strength of the best evidence (≤ 0.49).
 
-### 7.3 Batched Vision Engine (`pipeline.py`)
-- Evaluates all six checks in a single inference call (Rule 2).
-- Tracks call counters to assert unit-to-call ratio $= 1.0$.
-- Treats `UNCERTAIN` as a valid first-class outcome when optical conditions prevent high-confidence measurement.
+## 5. Data model
 
-### 7.4 Fail-Open Circuit Breaker (`prep_agent.py`)
-- Hard deadline of 1,500ms.
-- If external services fail, emits `status: PENDING_REVIEW`, saves capture locally, and flashes amber beacon so warehouse conveyor throughput is never disrupted.
+`EvidenceRecord` carries the CUBE fixed contract fields: record_id, schema_version, organization_id, client_id, agent, subject, captured_at, operator_label, images, checks[check_key, verdict, confidence, detail, model_version, latency_ms], outcome[decision, decided_by, decided_at], overrides[], status, content_hash. It extends them with rule_ids, required_by, reason_code, observed_state, measurements, regions, remediation, requirements, attestations, discrepancies, perception (provider, model, calls, cost, routing reason), trace[] and dispatch. JSON Schema: `contract/evidence_record_schema.json`.
 
----
+## 6. Security model
 
-## 8. Cryptographic Verification & Audit Trail
+| Asset | Threat | Control |
+|---|---|---|
+| Tenant data | Tenant spoofing via header | Tenant derived from API key (SHA-256, constant-time compare); client org headers ignored (tested) |
+| Tenant data | Cross-tenant read via guessed ids | Every query filters `org_id`; 404 not 403 to avoid oracles; leak audit endpoint and tests |
+| Images | Hot-linking / enumeration | HMAC-signed URLs bound to (org, ref, expiry), 15 min TTL |
+| Server | Arbitrary file read | Public API never accepts paths, only scenario ids or tenant asset ids; `extra="forbid"` models |
+| Server | Malicious upload / decompression bomb | 8 MB cap, Pillow verify + full decode, format allow-list, 40 MP limit, server-generated filenames |
+| Verdict integrity | Prompt injection through label text | Observations-only tool schema, closed vocabulary, extra fields rejected, verdicts computed in code |
+| Evidence | Silent edits / deleted overrides | Canonical SHA-256; insert-once; SQLite triggers block UPDATE/DELETE on overrides; hash chain |
+| Availability | Hung model / outage | 5 s budget (30 s for offline OCR), fail-open, rate limiter |
+| Browser | XSS / clickjacking | CSP (`script-src 'self'`), all dynamic text escaped, `X-Frame-Options: DENY`, nosniff, no-referrer |
 
-Every evidence record includes a SHA-256 digest:
-```python
-content_hash = SHA256(
-    record_id + unit_id + org_id + image_hashes + checks_verdicts + decision + timestamp
-)
-```
-When an operator overrides a check (e.g. `MANUALLY_COVERED_WITH_BLACKOUT_TAPE`), the system:
-1. Retains the original machine verdict (`original_verdict`).
-2. Appends an `OverrideEntry` with mandatory reason code, operator ID, and timestamp.
-3. Recomputes `content_hash` over the updated record.
-4. Preserves full auditability for Agent 05 (Recovery Manager) during dispute submissions.
+Residual risks: demo keys are active unless `PREP_API_KEYS` is set (the agent card reports it). The ephemeral signing key resets URLs on restart. SQLite is single-node. A hung model thread finishes in the background after fail-open.
 
----
+## 7. Performance
 
-## 9. Empirical Evaluation Summary
+Station CV is ~0.55–0.75 s per 1280×960 frame on a laptop (numpy/scipy, single thread). The quality gate costs ~0.1 s, and a skipped frame finishes in ~0.15 s. Claude path: one call, ~1.5k input + ~0.3k output tokens ≈ $0.003 per unit at Haiku list price, within the $0.02 kill condition. Next optimisations: downscale non-text detectors 2×, and run views in parallel.
 
-From the 50 unseen evaluation units tested against two independent human evaluators (Elena & Marcus):
-- **Elena vs Marcus Inter-Rater Kappa:** $\kappa = 0.9288$
-- **Agent vs Consensus Agreement:** $100.0\%$ ($\kappa = 1.0000$)
-- **Barcode Coverage False Negative Rate:** $0.00\%$ (Kill Condition 1 Safe)
-- **Uncertainty Rate:** $6.0\%$ (Reflects honest handling of glare and motion blur)
-- **P50 Latency:** $36.0\text{ ms}$, **P95 Latency:** $42.4\text{ ms}$
-- **Unit Compute Cost:** $\$0.0028$ (Kill Condition 3 Safe)
-- **Tenant Leakage:** $0\text{ rows}$ (Kill Condition 2 Safe)
-- **Downtime on Fault:** $0\text{ ms}$ (Kill Condition 4 Safe)
+## 8. Failure model
+
+| Failure | Behaviour |
+|---|---|
+| Model timeout / 5xx | `PENDING_REVIEW`, all checks UNCERTAIN `SYSTEM_TIMEOUT` / `SYSTEM_FAIL_OPEN`, capture hashes kept |
+| Unusable frame | No model call, UNCERTAIN + recapture |
+| Model returns garbage / no tool call | Per-check INDETERMINATE → UNCERTAIN |
+| DB write fails | Record still returned to the line; error logged |
+| Duplicate inspection | New record id; old evidence untouched |

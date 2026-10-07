@@ -1,0 +1,686 @@
+{
+ "generated_at": "2026-10-07T14:47:18.926064+00:00",
+ "agent_version": "2.0.0",
+ "perception": "station-cv-1.0",
+ "rules_version": "fba-prep-rules-2026.10",
+ "units": 50,
+ "label_source": "scene-spec ground truth (what was physically rendered)",
+ "human_annotation": "pending - fill eval/labels/annotator_a.csv and annotator_b.csv, then re-run",
+ "overall": {
+  "correct": 41,
+  "abstained": 9
+ },
+ "unit_accuracy": 0.82,
+ "clean_accuracy": 0.975,
+ "degraded_safe_rate": 1.0,
+ "missed_defects": 0,
+ "false_alarms": 0,
+ "uncertain_rate": 0.18,
+ "by_condition": {
+  "soft": {
+   "correct": 5,
+   "abstained": 1
+  },
+  "normal": {
+   "correct": 34
+  },
+  "blur": {
+   "abstained": 3
+  },
+  "glare": {
+   "correct": 2,
+   "abstained": 2
+  },
+  "dark": {
+   "abstained": 3
+  }
+ },
+ "latency_ms": {
+  "p50": 586.2,
+  "p95": 605.3,
+  "max": 628.5
+ },
+ "cost_per_unit_usd": 0.0,
+ "kill_conditions": {
+  "KC1_barcode_fn_rate": 0.0,
+  "KC1_pass": true
+ },
+ "per_check": {
+  "polybag_present_sealed": {
+   "title": "Polybag present & sealed",
+   "applicable": 16,
+   "tp": 5,
+   "tn": 11,
+   "fp": 0,
+   "fn": 0,
+   "uncertain": 0,
+   "accuracy_on_decided": 1.0,
+   "fn_rate": 0.0,
+   "fp_rate": 0.0,
+   "uncertain_rate": 0.0,
+   "requirement_mismatch": 0
+  },
+  "suffocation_warning": {
+   "title": "Suffocation warning",
+   "applicable": 16,
+   "tp": 12,
+   "tn": 4,
+   "fp": 0,
+   "fn": 0,
+   "uncertain": 0,
+   "accuracy_on_decided": 1.0,
+   "fn_rate": 0.0,
+   "fp_rate": 0.0,
+   "uncertain_rate": 0.0,
+   "requirement_mismatch": 0
+  },
+  "fnsku_label_placement": {
+   "title": "FNSKU label placement",
+   "applicable": 50,
+   "tp": 6,
+   "tn": 34,
+   "fp": 0,
+   "fn": 0,
+   "uncertain": 10,
+   "accuracy_on_decided": 1.0,
+   "fn_rate": 0.0,
+   "fp_rate": 0.0,
+   "uncertain_rate": 0.2,
+   "requirement_mismatch": 0
+  },
+  "original_barcode_covered": {
+   "title": "Original barcode covered",
+   "applicable": 50,
+   "tp": 3,
+   "tn": 37,
+   "fp": 0,
+   "fn": 0,
+   "uncertain": 10,
+   "accuracy_on_decided": 1.0,
+   "fn_rate": 0.0,
+   "fp_rate": 0.0,
+   "uncertain_rate": 0.2,
+   "requirement_mismatch": 0
+  },
+  "expiry_date": {
+   "title": "Expiry date visible",
+   "applicable": 12,
+   "tp": 5,
+   "tn": 6,
+   "fp": 0,
+   "fn": 0,
+   "uncertain": 1,
+   "accuracy_on_decided": 1.0,
+   "fn_rate": 0.0,
+   "fp_rate": 0.0,
+   "uncertain_rate": 0.0833,
+   "requirement_mismatch": 0
+  },
+  "handling_marks": {
+   "title": "Handling marks",
+   "applicable": 11,
+   "tp": 3,
+   "tn": 6,
+   "fp": 0,
+   "fn": 0,
+   "uncertain": 2,
+   "accuracy_on_decided": 1.0,
+   "fn_rate": 0.0,
+   "fp_rate": 0.0,
+   "uncertain_rate": 0.1818,
+   "requirement_mismatch": 0
+  }
+ },
+ "units_table": [
+  {
+   "unit_id": "EVAL-001",
+   "image": "fixtures/eval/EVAL-001.jpg",
+   "condition": "soft",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 628.5,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-002",
+   "image": "fixtures/eval/EVAL-002.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 616.7,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-003",
+   "image": "fixtures/eval/EVAL-003.jpg",
+   "condition": "soft",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 605.3,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-004",
+   "image": "fixtures/eval/EVAL-004.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 586.3,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-005",
+   "image": "fixtures/eval/EVAL-005.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 582.4,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-006",
+   "image": "fixtures/eval/EVAL-006.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 603.3,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-007",
+   "image": "fixtures/eval/EVAL-007.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 568.7,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-008",
+   "image": "fixtures/eval/EVAL-008.jpg",
+   "condition": "blur",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 128.5,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-009",
+   "image": "fixtures/eval/EVAL-009.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 601.6,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-010",
+   "image": "fixtures/eval/EVAL-010.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 573.6,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-011",
+   "image": "fixtures/eval/EVAL-011.jpg",
+   "condition": "normal",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "PASS",
+   "outcome": "correct",
+   "latency_ms": 594.3,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-012",
+   "image": "fixtures/eval/EVAL-012.jpg",
+   "condition": "blur",
+   "defect": "compliant",
+   "truth": "PASS",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 121.4,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT); handling_marks: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-013",
+   "image": "fixtures/eval/EVAL-013.jpg",
+   "condition": "normal",
+   "defect": "warning_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 610.2,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-014",
+   "image": "fixtures/eval/EVAL-014.jpg",
+   "condition": "normal",
+   "defect": "warning_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 586.1,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-015",
+   "image": "fixtures/eval/EVAL-015.jpg",
+   "condition": "normal",
+   "defect": "warning_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 589.5,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-016",
+   "image": "fixtures/eval/EVAL-016.jpg",
+   "condition": "normal",
+   "defect": "warning_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 572.2,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-017",
+   "image": "fixtures/eval/EVAL-017.jpg",
+   "condition": "normal",
+   "defect": "warning_folded",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 592.0,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-018",
+   "image": "fixtures/eval/EVAL-018.jpg",
+   "condition": "glare",
+   "defect": "warning_folded",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 569.2,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-019",
+   "image": "fixtures/eval/EVAL-019.jpg",
+   "condition": "normal",
+   "defect": "warning_folded",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 586.8,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-020",
+   "image": "fixtures/eval/EVAL-020.jpg",
+   "condition": "normal",
+   "defect": "warning_folded",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 602.0,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-021",
+   "image": "fixtures/eval/EVAL-021.jpg",
+   "condition": "normal",
+   "defect": "warning_small",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 565.8,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-022",
+   "image": "fixtures/eval/EVAL-022.jpg",
+   "condition": "soft",
+   "defect": "warning_small",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 567.2,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-023",
+   "image": "fixtures/eval/EVAL-023.jpg",
+   "condition": "dark",
+   "defect": "fnsku_seam",
+   "truth": "FAIL",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 117.5,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT); expiry_date: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-024",
+   "image": "fixtures/eval/EVAL-024.jpg",
+   "condition": "dark",
+   "defect": "fnsku_seam",
+   "truth": "FAIL",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 119.4,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-025",
+   "image": "fixtures/eval/EVAL-025.jpg",
+   "condition": "glare",
+   "defect": "fnsku_seam",
+   "truth": "FAIL",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 531.5,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-026",
+   "image": "fixtures/eval/EVAL-026.jpg",
+   "condition": "normal",
+   "defect": "fnsku_seam",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 578.7,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-027",
+   "image": "fixtures/eval/EVAL-027.jpg",
+   "condition": "blur",
+   "defect": "fnsku_edge",
+   "truth": "FAIL",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 117.9,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-028",
+   "image": "fixtures/eval/EVAL-028.jpg",
+   "condition": "glare",
+   "defect": "fnsku_edge",
+   "truth": "FAIL",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 549.5,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-029",
+   "image": "fixtures/eval/EVAL-029.jpg",
+   "condition": "normal",
+   "defect": "fnsku_edge",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 581.9,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-030",
+   "image": "fixtures/eval/EVAL-030.jpg",
+   "condition": "normal",
+   "defect": "fnsku_curve",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 584.4,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-031",
+   "image": "fixtures/eval/EVAL-031.jpg",
+   "condition": "normal",
+   "defect": "fnsku_curve",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 588.1,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-032",
+   "image": "fixtures/eval/EVAL-032.jpg",
+   "condition": "normal",
+   "defect": "fnsku_curve",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 581.7,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-033",
+   "image": "fixtures/eval/EVAL-033.jpg",
+   "condition": "normal",
+   "defect": "fnsku_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 528.6,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-034",
+   "image": "fixtures/eval/EVAL-034.jpg",
+   "condition": "normal",
+   "defect": "upc_exposed",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 595.0,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-035",
+   "image": "fixtures/eval/EVAL-035.jpg",
+   "condition": "normal",
+   "defect": "upc_exposed",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 603.0,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-036",
+   "image": "fixtures/eval/EVAL-036.jpg",
+   "condition": "normal",
+   "defect": "upc_exposed",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 593.8,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-037",
+   "image": "fixtures/eval/EVAL-037.jpg",
+   "condition": "dark",
+   "defect": "upc_exposed",
+   "truth": "FAIL",
+   "agent": "UNCERTAIN",
+   "outcome": "abstained",
+   "latency_ms": 115.1,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT); handling_marks: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-038",
+   "image": "fixtures/eval/EVAL-038.jpg",
+   "condition": "normal",
+   "defect": "bag_open",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 594.7,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-039",
+   "image": "fixtures/eval/EVAL-039.jpg",
+   "condition": "glare",
+   "defect": "bag_open",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 543.4,
+   "notes": "fnsku_label_placement: UNCERTAIN (EVIDENCE_INSUFFICIENT); original_barcode_covered: UNCERTAIN (EVIDENCE_INSUFFICIENT)"
+  },
+  {
+   "unit_id": "EVAL-040",
+   "image": "fixtures/eval/EVAL-040.jpg",
+   "condition": "normal",
+   "defect": "bag_open",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 595.0,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-041",
+   "image": "fixtures/eval/EVAL-041.jpg",
+   "condition": "normal",
+   "defect": "bag_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 572.8,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-042",
+   "image": "fixtures/eval/EVAL-042.jpg",
+   "condition": "normal",
+   "defect": "bag_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 588.0,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-043",
+   "image": "fixtures/eval/EVAL-043.jpg",
+   "condition": "soft",
+   "defect": "expiry_covered",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 564.9,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-044",
+   "image": "fixtures/eval/EVAL-044.jpg",
+   "condition": "soft",
+   "defect": "expiry_covered",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 578.9,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-045",
+   "image": "fixtures/eval/EVAL-045.jpg",
+   "condition": "normal",
+   "defect": "expiry_covered",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 588.1,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-046",
+   "image": "fixtures/eval/EVAL-046.jpg",
+   "condition": "soft",
+   "defect": "expiry_smudged",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 596.2,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-047",
+   "image": "fixtures/eval/EVAL-047.jpg",
+   "condition": "normal",
+   "defect": "expiry_smudged",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 591.2,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-048",
+   "image": "fixtures/eval/EVAL-048.jpg",
+   "condition": "normal",
+   "defect": "mark_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 592.7,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-049",
+   "image": "fixtures/eval/EVAL-049.jpg",
+   "condition": "normal",
+   "defect": "mark_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 591.8,
+   "notes": ""
+  },
+  {
+   "unit_id": "EVAL-050",
+   "image": "fixtures/eval/EVAL-050.jpg",
+   "condition": "normal",
+   "defect": "mark_missing",
+   "truth": "FAIL",
+   "agent": "FAIL",
+   "outcome": "correct",
+   "latency_ms": 603.9,
+   "notes": ""
+  }
+ ]
+}

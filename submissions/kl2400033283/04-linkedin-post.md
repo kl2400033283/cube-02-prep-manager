@@ -20,7 +20,7 @@ The prep center has a paper work order saying what they intended to do, but zero
 
 🤖 WHAT PREP MANAGER DOES:
 I engineered an autonomous, real-time visual compliance agent directly at the prep station:
-✅ Inspects overhead and operator imagery in < 40ms.
+✅ Inspects a calibrated station frame in about 0.5 s on a laptop (real phone photos take longer: they go to free vision models).
 ✅ Evaluates all 6 authoritative Amazon Seller Central prep checks:
    1. Polybag presence and perimeter heat sealing
    2. Suffocation warning font sizing (<30" -> 10pt up to >=60" -> 24pt) & fold clearance
@@ -28,7 +28,7 @@ I engineered an autonomous, real-time visual compliance agent directly at the pr
    4. 100% manufacturer UPC barcode occlusion (preventing dual-read scan errors)
    5. Expiry date visibility after secondary wrapping
    6. Mandatory handling marks (Fragile, This Way Up, Sold as Set)
-✅ Binds photographic evidence into an immutable SHA-256 evidence record consumed directly by Agent 05 (Recovery Manager) for automated fee dispute defense.
+✅ Binds photographic evidence into a sealed record (insert-only original, append-only overrides, HMAC seal chain) that Agent 05 (Recovery Manager) can verify for fee disputes.
 
 ⚙️ 4 KEY ENGINEERING & ARCHITECTURAL HIGHLIGHTS:
 1. Tenancy Isolation: Row-level security strictly isolates competing fulfillment centers (zero cross-tenant database leakage verified between org_demo_alpha and org_demo_bravo).
@@ -37,11 +37,10 @@ I engineered an autonomous, real-time visual compliance agent directly at the pr
 4. UNCERTAIN as a First-Class Verdict: Optical glare or blur triggers UNCERTAIN rather than hallucinating confidence. A model that admits what it cannot see is far more credible than one that guesses.
 
 📊 MEASURED RESULTS (50 Unseen Units Benchmark):
-• Dual Human Annotators: Inter-rater agreement Cohen’s Kappa κ = 0.9288
-• Agent vs Human Consensus: 100% agreement (κ = 1.0000)
-• Barcode False Negative Rate: 0.00% (Kill condition safely preserved)
-• Uncertainty Calibration Rate: 6.0% (honest handling of glare and motion blur)
-• P50 Latency: 36.0 ms | P95 Latency: 42.4 ms | Cost/Unit: $0.0028
+• 50 held-out SYNTHETIC units: 41 correct, 9 UNCERTAIN, 0 missed defects, 0 false alarms
+• Barcode false-negative rate 0.0% on that set (kill condition KC-1 is 1.5%)
+• Real-photo accuracy: not measured yet; human labelling not done yet (an earlier version of this post quoted simulated annotators, which I have withdrawn)
+• Station CV: p50 ~0.5 s, $0 per unit
 
 Check out the full repository, evaluation report, and architecture:
 🔗 https://github.com/kl2400033283/cube-02-prep-manager

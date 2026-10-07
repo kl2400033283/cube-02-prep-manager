@@ -1,3 +1,5 @@
+> **v2 note (2026-10-05):** this document was written for the Round 2 (v1) build. Metrics and implementation details here are superseded. Current measured results are in [eval-report.md](eval-report.md) and the current design in [ARCHITECTURE.md](ARCHITECTURE.md). The v1 human-agreement figures came from *simulated* annotators and are withdrawn.
+
 # 5-Minute Demo Video Script & Walkthrough
 
 **Format:** 5 Minutes, strict sequence as specified by CUBE Buildathon Day 14 guidelines.  
@@ -10,7 +12,7 @@
 - **Visual:** Open `01-customer-letter.md` or warehouse terminal dashboard.
 - **Narrative:** 
   > "Meet Marcus Vance, owner of Apex Inbound Prep Solutions in Columbus, Ohio. His facility preps 14,000 units a day for Amazon FBA at a contract price of $0.45 to $0.95 per unit. After labor, materials, and facility overhead, his net margin is just 7 to 11 cents per item.
-  > Six weeks later, Amazon debits a $1,400 defect chargeback for missing suffocation warnings and exposed barcodes. Marcus has a paper work order saying his operator did the prep, but no photographic proof. He eats the loss. That’s why we built Prep Manager: inline visual compliance that creates an immutable evidence record before freight leaves the dock."
+  > Six weeks later, Amazon debits a $1,400 defect chargeback for missing suffocation warnings and exposed barcodes. Marcus has a paper work order saying his operator did the prep, but no photographic proof. He eats the loss. That’s why we built Prep Manager: inline visual compliance that creates a sealed evidence record (insert-only original, HMAC seal chain) before freight leaves the dock."
 
 ---
 
@@ -18,8 +20,7 @@
 - **Visual:** Switch to `eval-report.md` on screen.
 - **Narrative:**
   > "Instead of claiming 99% accuracy on cherry-picked samples, we evaluated 50 unseen physical units across complex optical conditions: good and poor lighting, polyethylene specular glare, conveyor motion blur, and borderline carton seams.
-  > We had two independent human inspectors—Senior QC Lead Elena and Station Supervisor Marcus—label all 50 units before the agent ran. Their inter-rater agreement was a Cohen’s Kappa of 0.9288.
-  > Against their consensus, Prep Manager achieved 100% agreement with an Agent-Human Kappa of 1.0000. Crucially, our Barcode Coverage False Negative Rate was 0.00%—meaning zero exposed barcodes passed unnoticed. When severe glare or motion blur occurred on units 48 and 49, the agent honestly yielded an UNCERTAIN verdict (6.0% uncertainty rate) rather than hallucinating confidence."
+  > On 50 held-out synthetic units, the agent got 41 right, said UNCERTAIN on 9, and made 0 missed defects and 0 false alarms. The images come from our own renderer, so this proves the pipeline and the uncertainty behaviour, not real-photo accuracy. Human labelling has not been done yet. We do not quote an annotator agreement figure."
 
 ---
 
@@ -27,7 +28,7 @@
 - **Visual:** Open Web Dashboard at `http://localhost:8000`, show the Evidence Contract Payload viewer and click "Verify Digest".
 - **Narrative:**
   > "Here is the CUBE Commerce Context Evidence Record. For every unit, we record high-resolution image digests, normalized bounding boxes, per-check verdicts, confidence scores, and operator badges.
-  > At the bottom is the SHA-256 content hash. When I click 'Verify Digest', the client recalculates the hash over the canonical JSON fields and image digests—proving cryptographic tamper evidence.
+  > At the bottom is the seal. When I click 'Re-verify', the server replays the original record through every override and checks each SHA-256 hash and each HMAC seal, whose key is not in the database. Editing the database row is detected; someone holding both the database and the key could still forge, which is why production keeps the key in a KMS.
   > This contract is built specifically for Agent 05—Recovery Manager. When Amazon issues a defect claim 45 days later, Recovery Manager retrieves this record, attaches the timestamped photo and verified check, and auto-files the reimbursement dispute."
 
 ---

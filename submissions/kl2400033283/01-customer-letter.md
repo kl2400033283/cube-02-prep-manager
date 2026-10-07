@@ -1,3 +1,5 @@
+> **v2 note (2026-10-05):** this document was written for the Round 2 (v1) build. Metrics and implementation details here are superseded. Current measured results are in [eval-report.md](eval-report.md) and the current design in [ARCHITECTURE.md](ARCHITECTURE.md). The v1 human-agreement figures came from *simulated* annotators and are withdrawn.
+
 # Customer Letter: The Voice of the Prep Center Owner
 
 **To:** The Founders & Engineering Team, Sydon Symphony  
@@ -49,7 +51,7 @@ And if your software costs me $0.15 a unit in cloud AI API tokens, you are takin
 1. **A camera trigger that takes less than one second**: The operator places the unit under the gantry camera or scans it with a fixed overhead trigger. One snap. One batched evaluation.
 2. **Authoritative rules, not AI guesses**: If Amazon requires suffocation warnings in 14-point type for bags with a 30-inch opening, don't guess. Check the work order specs against Amazon's published rules.
 3. **An honest UNCERTAIN verdict**: If the barcode is wrapped around the back where the camera can't see, or if the light glare prevents reading the expiry date, say `UNCERTAIN`. Prompt the operator: *"Flip unit to confirm UPC is covered"*. Do not give me a fake green checkmark.
-4. **An unshakeable tamper-evident evidence record**: When Amazon issues a defect claim 45 days later, I want my downstream dispute team (or your Recovery Agent) to pull up `UNIT-0042`, complete with a timestamped photograph, verified barcode bounding box, font legibility proof, operator ID, and a cryptographic content hash that proves the image wasn't generated or doctored after the fact.
+4. **A verifiable evidence record**: When Amazon issues a defect claim 45 days later, I want my downstream dispute team (or your Recovery Agent) to pull up `UNIT-0042`, complete with a timestamped photograph, verified barcode bounding box, font legibility proof, operator ID, and a cryptographic content hash that proves the image wasn't generated or doctored after the fact.
 5. **Fail-open reliability**: If AWS has an outage or your model takes more than 1.5 seconds, save the photo locally, flag the unit as `PENDING_REVIEW`, and let the conveyer keep rolling. We can audit pending units in the evening, but the physical freight cannot miss the 5:00 PM carrier pickup.
 
 If you can deliver that, you aren't just giving me an AI gimmick. You are giving me the armor to defend my margins, protect my client relationships, and hold Amazon accountable.

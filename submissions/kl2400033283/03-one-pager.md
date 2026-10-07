@@ -1,3 +1,5 @@
+> **v2 note (2026-10-05):** this document was written for the Round 2 (v1) build. Metrics and implementation details here are superseded. Current measured results are in [eval-report.md](eval-report.md) and the current design in [ARCHITECTURE.md](ARCHITECTURE.md). The v1 human-agreement figures came from *simulated* annotators and are withdrawn.
+
 # Prep Manager: System One-Pager & Kill Conditions
 
 **Agent:** 02 · Prep Manager  
@@ -9,7 +11,7 @@
 
 ## 1. Executive Summary
 
-Prep Manager is a high-throughput, edge-and-cloud visual compliance agent that inspects prepared e-commerce inventory prior to inbound shipment to Amazon fulfillment centers. By validating polybag seals, suffocation warnings, FNSKU labeling geometry, manufacturer barcode occlusion, expiry date visibility, and handling marks in under 900ms, it prevents upstream Amazon defect fees and provides immutable, cryptographically verifiable evidence for chargeback recovery.
+Prep Manager is a high-throughput, edge-and-cloud visual compliance agent that inspects prepared e-commerce inventory prior to inbound shipment to Amazon fulfillment centers. By validating polybag seals, suffocation warnings, FNSKU labeling geometry, manufacturer barcode occlusion, expiry date visibility, and handling marks in under 900ms, it prevents upstream Amazon defect fees and provides sealed, verifiable evidence (insert-only original, HMAC seal chain) for chargeback recovery.
 
 ---
 
@@ -57,8 +59,14 @@ A kill condition is a non-negotiable metric threshold that triggers an immediate
 | consumes over 25% of operating profit.                                            |
 |                                                                                   |
 | KC-4: BLOCKING DOWNTIME ON FAILURE (FAIL-CLOSED INCIDENT > 0)                      |
-| If an API timeout, network drop, or model exception halts the conveyor or blocks  |
-| the operator from moving physical inventory for > 2 seconds, the system is KILLED.|
+| If an API timeout, network drop, or model exception ever stops the line instead   |
+| of failing open (budgets: station CV 5 s, OCR 30 s, free vision 120 s - the unit  |
+| moves on to PENDING_REVIEW at the budget), the system is KILLED.                  |
+|                                                                                   |
+| KC-5: REAL-PHOTO MISSED DEFECTS > 1.5% (per check, Wilson 95% upper bound)        |
+| Measured on a labelled real-photo set (>= 30 positives and 30 negatives per       |
+| check, two annotators). Until that set exists, real photos are never auto-PASSed  |
+| by station CV: they are routed to vision models or UNCERTAIN.                     |
 | Reason: Physical throughput takes precedence over inspection. All failures MUST   |
 | fail-open with status PENDING_REVIEW.                                             |
 +-----------------------------------------------------------------------------------+
@@ -83,7 +91,7 @@ Prep Manager resolves the fundamental discrepancy between what a paper work orde
 
 ## 5. Downstream Integration (Recovery Manager Agent 05)
 
-Prep Manager produces an immutable JSON evidence contract for each unit. Each record contains:
+Prep Manager produces a sealed JSON evidence record for each unit (insert-only original, append-only overrides). Each record contains:
 - `record_id`: Prefixed identifier (e.g. `PRP-0042`)
 - `unit_id`: Shared universal tracking identifier (e.g. `UNIT-0042`)
 - `org_id`: Tenant identifier

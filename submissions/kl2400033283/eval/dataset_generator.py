@@ -1,197 +1,141 @@
-"""Generates the 50 unseen evaluation units with realistic optical conditions.
+"""Held-out evaluation set: 50 units the detectors were never tuned on.
 
-Covers:
-- Good/poor lighting, specular glare on polybags, motion blur, oblique angles
-- Exposed UPC barcodes, seam crossings, unsealed polybags, fold creases over warnings
-- Clear expiration stamps vs illegible ink jet after wrapping
+Seeds 50000+ are reserved for evaluation. Detector thresholds were calibrated
+on seeds 1000-9999 and the demo scenarios (101-113) only.
+
+Composition (stratified so every challenge test scenario appears >= 2 times):
+  12 fully compliant | 4 missing warning | 4 folded warning | 2 undersized warning
+  4 FNSKU on seam | 3 FNSKU across edge | 3 FNSKU on curve | 1 FNSKU missing
+  4 retail UPC exposed | 3 polybag unsealed | 2 polybag missing
+  3 expiry covered | 2 expiry smudged | 3 handling mark missing
+Optics, assigned by seeded shuffle: 34 normal, 6 slight defocus, 4 glare,
+3 heavy blur, 3 under-exposed.
 """
 
-import os
 import json
 import random
 import sys
 from pathlib import Path
+from typing import Dict, List
+
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
-from typing import Dict, List, Any
-from PIL import Image, ImageDraw, ImageFont
 
 from submissions.kl2400033283.agent.config import SUBMISSION_DIR
+from submissions.kl2400033283.agent.sim.scene_renderer import SceneSpec, render_scene
 
-EVAL_FIXTURES_DIR = SUBMISSION_DIR / "fixtures" / "eval"
-EVAL_FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
+EVAL_DIR = SUBMISSION_DIR / "fixtures" / "eval"
+DATASET_PATH = SUBMISSION_DIR / "eval" / "eval_dataset.json"
+SEED_BASE = 50_000
 
-CATEGORIES = [
-    {"sku": "EVAL-PLUSH-BEAR", "asin": "B0EVL001", "fnsku": "X00EVL001", "name": "Plush Toy Bear", "polybag": True, "warning": True, "expiry": False, "marks": None},
-    {"sku": "EVAL-GLASS-MUG", "asin": "B0EVL002", "fnsku": "X00EVL002", "name": "Ceramic Coffee Mug", "polybag": False, "warning": False, "expiry": False, "marks": "fragile"},
-    {"sku": "EVAL-PROT-WHEY", "asin": "B0EVL003", "fnsku": "X00EVL003", "name": "Whey Protein 2lb", "polybag": False, "warning": False, "expiry": True, "marks": None},
-    {"sku": "EVAL-LIQ-SHAMP", "asin": "B0EVL004", "fnsku": "X00EVL004", "name": "Organic Shampoo 16oz", "polybag": True, "warning": True, "expiry": False, "marks": "this_way_up"},
-    {"sku": "EVAL-USB-CABLE", "asin": "B0EVL005", "fnsku": "X00EVL005", "name": "Braided USB-C Cable", "polybag": True, "warning": True, "expiry": False, "marks": None},
-]
+DEFECT_PLAN = (["compliant"] * 12 + ["warning_missing"] * 4 + ["warning_folded"] * 4 + ["warning_small"] * 2
+               + ["fnsku_seam"] * 4 + ["fnsku_edge"] * 3 + ["fnsku_curve"] * 3 + ["fnsku_missing"]
+               + ["upc_exposed"] * 4 + ["bag_open"] * 3 + ["bag_missing"] * 2
+               + ["expiry_covered"] * 3 + ["expiry_smudged"] * 2 + ["mark_missing"] * 3)
+OPTICS_PLAN = ["normal"] * 34 + ["soft"] * 6 + ["glare"] * 4 + ["blur"] * 3 + ["dark"] * 3
+assert len(DEFECT_PLAN) == 50 and len(OPTICS_PLAN) == 50
 
-def create_synthetic_image(file_path: Path, unit_id: str, label_text: str, condition: str = "normal"):
-    """Draws a synthetic inspection photograph with visual attributes matching the condition."""
-    width, height = 640, 480
-    bg_color = (25, 30, 42)
-    if condition == "poor_lighting":
-        bg_color = (12, 14, 20)
-    elif condition == "glare":
-        bg_color = (35, 45, 60)
 
-    img = Image.new("RGB", (width, height), bg_color)
-    draw = ImageDraw.Draw(img)
+def _build(i: int, defect: str, optics: str) -> Dict:
+    r = random.Random(SEED_BASE + i)
+    uid = f"EVAL-{i:03d}"
+    # Decide product family from the defect, then randomise the rest.
+    if defect == "fnsku_curve":
+        family = "bottle"
+    elif defect.startswith(("warning", "bag")):
+        family = r.choice(["bagged_box", "bagged_soft"])
+    elif defect.startswith("expiry"):
+        family = "dated"
+    elif defect == "mark_missing":
+        family = "marked"
+    else:
+        family = r.choice(["plain", "bagged_box", "bagged_soft", "dated", "marked", "bottle"]) \
+            if defect == "compliant" else r.choice(["plain", "dated", "marked"])
 
-    # Box outline
-    draw.rectangle([80, 60, 560, 420], fill=(45, 55, 72), outline=(100, 116, 139), width=3)
+    spec = SceneSpec(uid, SEED_BASE + i, optics=optics)
+    unit = {"unit_id": uid, "sku": f"SKU-{uid}", "asin": f"B0{uid[-3:]}EV", "fnsku": f"X00{uid[-3:]}EV",
+            "work_order_id": f"WO-{uid}", "fba_shipment_id": "FBA-EVAL-2610", "category": "general",
+            "wo_polybag": False, "wo_suffocation_warning": False, "wo_expiry_date": False, "wo_handling_marks": []}
 
-    # Text identifiers
-    draw.text((100, 80), f"UNIT: {unit_id}", fill=(241, 245, 249))
-    draw.text((100, 105), f"CONDITION: {condition.upper()}", fill=(148, 163, 184))
-    draw.text((100, 130), f"LABEL: {label_text}", fill=(148, 163, 184))
+    if family == "bottle":
+        spec.product, spec.fnsku = "bottle", "curve"
+        unit["category"] = "liquid"
+    elif family in ("bagged_box", "bagged_soft"):
+        spec.product = "box" if family == "bagged_box" else "soft"
+        spec.polybag, spec.warning, spec.warning_font_pt = "sealed", "ok", r.choice([10, 14, 18])
+        unit.update(category=r.choice(["apparel_textile", "plush_toy", "baby_product"]), wo_polybag=True,
+                    wo_suffocation_warning=True, bag_length_in=14, bag_width_in=12, bag_opening_in=12,
+                    polybag_spec_mil=1.5)
+    elif family == "dated":
+        spec.expiry = "legible"
+        unit.update(category=r.choice(["consumable_dated", "topical_dated"]), wo_expiry_date=True)
+    elif family == "marked":
+        marks = r.sample(["fragile", "this_way_up", "team_lift"], 2)
+        spec.marks = list(marks)
+        unit.update(category="fragile_glass", wo_handling_marks=list(marks))
 
-    # Barcode representation
-    draw.rectangle([320, 260, 520, 380], fill=(255, 255, 255), outline=(0, 0, 0), width=2)
-    draw.text((330, 270), "FNSKU BARCODE", fill=(0, 0, 0))
-    for x in range(330, 510, 8):
-        draw.line([(x, 290), (x, 360)], fill=(0, 0, 0), width=random.choice([2, 3, 5]))
+    if family == "bottle" and defect == "compliant":
+        # A bottle label on the curve is itself a defect, so compliant bottles become plain boxes.
+        spec.product, spec.fnsku = "box", "flat"
+        unit["category"] = "general"
 
-    # If glare condition, draw specular highlight over barcode
-    if condition == "glare":
-        draw.polygon([(300, 240), (450, 220), (550, 360), (400, 400)], fill=(240, 245, 255))
-        draw.text((340, 310), "[SEVERE GLARE]", fill=(220, 38, 38))
+    defect_map = {
+        "warning_missing": ("warning", "none"), "warning_folded": ("warning", "folded"),
+        "warning_small": ("warning", "undersized"), "fnsku_seam": ("fnsku", "seam"),
+        "fnsku_edge": ("fnsku", "edge"), "fnsku_missing": ("fnsku", "missing"),
+        "upc_exposed": ("upc", r.choice(["exposed", "partial"])), "bag_open": ("polybag", "unsealed"),
+        "expiry_covered": ("expiry", "covered"), "expiry_smudged": ("expiry", "smudged"),
+    }
+    if defect in defect_map:
+        attr, val = defect_map[defect]
+        setattr(spec, attr, val)
+    if defect == "bag_missing":
+        spec.polybag, spec.warning = "none", "none"
+    if defect == "mark_missing":
+        spec.marks = spec.marks[:1]
+    if spec.fnsku in ("seam", "edge", "missing") and spec.upc == "partial":
+        spec.upc = "exposed"
+    if spec.product != "box" and spec.fnsku in ("seam", "edge"):
+        spec.product = "box"
+    return {"unit": unit, "spec": spec.to_dict(), "defect": defect, "optics": optics}
 
-    # If blur, draw unfocused marker
-    if condition == "blur":
-        draw.text((100, 200), "[SIMULATED MOTION BLUR / DEFOCUS]", fill=(234, 179, 8))
 
-    img.save(file_path)
+def ground_truth(item: Dict) -> Dict[str, str]:
+    """Physical truth per check from the scene spec (what was actually built)."""
+    s, u = item["spec"], item["unit"]
+    from submissions.kl2400033283.agent.rules.authoritative_rules import resolve_requirements
+    plan = resolve_requirements(u["category"], u["wo_polybag"], u["wo_suffocation_warning"], u["wo_expiry_date"],
+                                u["wo_handling_marks"], u.get("bag_length_in"), u.get("bag_width_in"),
+                                u.get("bag_opening_in"), u.get("polybag_spec_mil"))
+    req = {k: r.required for k, r in plan.requirements.items()}
+    truth = {
+        "polybag_present_sealed": "PASS" if s["polybag"] == "sealed" else "FAIL",
+        "suffocation_warning": "PASS" if s["warning"] == "ok" else "FAIL",
+        "fnsku_label_placement": "PASS" if s["fnsku"] == "flat" else "FAIL",
+        "original_barcode_covered": "PASS" if s["upc"] == "covered" else "FAIL",
+        "expiry_date": "PASS" if s["expiry"] == "legible" else "FAIL",
+        "handling_marks": "PASS" if set(u["wo_handling_marks"]) <= set(s["marks"]) else "FAIL",
+    }
+    truth = {k: (v if req[k] else "NOT_REQUIRED") for k, v in truth.items()}
+    truth["overall"] = "FAIL" if "FAIL" in truth.values() else "PASS"
+    return truth
 
-def generate_50_eval_units() -> List[Dict[str, Any]]:
-    """Synthesizes 50 diverse evaluation units with precise ground-truth labels."""
-    units = []
 
-    # Distribution of 50 units:
-    # 01 - 20: Fully compliant units (PASS)
-    # 21 - 28: Exposed original barcode (FAIL)
-    # 29 - 34: FNSKU label across seam/curve (FAIL)
-    # 35 - 39: Unsealed/missing polybag (FAIL)
-    # 40 - 43: Suffocation warning obscured by fold (FAIL)
-    # 44 - 47: Expiration date illegible or covered (FAIL)
-    # 48 - 50: Ambiguous optical conditions (UNCERTAIN)
+def generate() -> List[Dict]:
+    optics = OPTICS_PLAN[:]
+    random.Random(SEED_BASE).shuffle(optics)
+    EVAL_DIR.mkdir(parents=True, exist_ok=True)
+    items = []
+    for i, (defect, opt) in enumerate(zip(DEFECT_PLAN, optics), start=1):
+        item = _build(i, defect, opt)
+        path = EVAL_DIR / f"{item['unit']['unit_id']}.jpg"
+        render_scene(SceneSpec(**item["spec"]), path)
+        item["image"] = str(path.relative_to(SUBMISSION_DIR)).replace("\\", "/")
+        item["truth"] = ground_truth(item)
+        items.append(item)
+    DATASET_PATH.write_text(json.dumps(items, indent=1), encoding="utf-8")
+    return items
 
-    for i in range(1, 51):
-        unit_id = f"EVAL-{i:04d}"
-        cat = CATEGORIES[(i - 1) % len(CATEGORIES)]
-        img_name = f"{unit_id}_front.jpg"
-        img_path = EVAL_FIXTURES_DIR / img_name
-
-        # Default ground-truth state
-        polybag_sealed = "yes" if cat["polybag"] else "not_required"
-        suffocation = "legible" if cat["warning"] else "not_required"
-        fnsku_geom = "flat"
-        barcode_cov = "yes"
-        expiry_vis = "legible" if cat["expiry"] else "not_required"
-        handling = "all_present" if cat["marks"] else "not_required"
-        condition = "normal"
-        expected_overall = "PASS"
-        defect_note = "Fully compliant preparation"
-
-        if 21 <= i <= 28:
-            # Barcode exposed
-            barcode_cov = "no"
-            expected_overall = "FAIL"
-            defect_note = "Original manufacturer UPC is uncovered or partially visible"
-        elif 29 <= i <= 32:
-            # FNSKU on seam
-            fnsku_geom = "on_seam"
-            expected_overall = "FAIL"
-            defect_note = "FNSKU applied directly across box flap opening seam"
-        elif 33 <= i <= 34:
-            # FNSKU on curve
-            fnsku_geom = "on_curve"
-            expected_overall = "FAIL"
-            defect_note = "FNSKU wrapped across curved bottle perimeter"
-        elif 35 <= i <= 37:
-            # Unsealed polybag
-            if cat["polybag"]:
-                polybag_sealed = "not_sealed"
-                expected_overall = "FAIL"
-                defect_note = "Polybag flap is unsealed; open edge allows dust and tampering"
-        elif 38 <= i <= 39:
-            # Missing polybag
-            if cat["polybag"]:
-                polybag_sealed = "missing"
-                expected_overall = "FAIL"
-                defect_note = "Work order mandates polybagging; unit is unwrapped"
-        elif 40 <= i <= 43:
-            # Warning obscured by fold
-            if cat["warning"]:
-                suffocation = "obscured_by_fold"
-                expected_overall = "FAIL"
-                defect_note = "Suffocation warning text folded into rear seam"
-        elif 44 <= i <= 46:
-            # Expiry obscured
-            cat = dict(cat)
-            cat["expiry"] = True
-            expiry_vis = "illegible_after_wrap"
-            expected_overall = "FAIL"
-            defect_note = "Expiry stamp hidden beneath opaque fold or obscured by label"
-        elif i == 47:
-            # Missing handling marks
-            cat = dict(cat)
-            cat["marks"] = "fragile"
-            handling = "some_missing"
-            expected_overall = "FAIL"
-            defect_note = "Work order specifies FRAGILE mark; stamp is missing"
-        elif i == 48:
-            condition = "glare"
-            barcode_cov = "uncertain"
-            expected_overall = "UNCERTAIN"
-            defect_note = "Severe specular reflection prevents barcode verification"
-        elif i == 49:
-            condition = "blur"
-            fnsku_geom = "uncertain"
-            expected_overall = "UNCERTAIN"
-            defect_note = "Conveyor motion blur degrades barcode contrast"
-        elif i == 50:
-            condition = "poor_lighting"
-            polybag_sealed = "uncertain"
-            expected_overall = "UNCERTAIN"
-            defect_note = "Insufficient ambient lighting to determine heat seal crimp"
-
-        # Create physical image fixture
-        create_synthetic_image(img_path, unit_id, label_text=defect_note, condition=condition)
-
-        units.append({
-            "unit_id": unit_id,
-            "sku": cat["sku"],
-            "asin": cat["asin"],
-            "fnsku": cat["fnsku"],
-            "work_order_id": f"WO-EVAL-{4000 + i}",
-            "fba_shipment_id": "FBA-EVAL-500",
-            "wo_polybag": cat["polybag"],
-            "wo_suffocation_warning": cat["warning"],
-            "wo_expiry_date": cat["expiry"],
-            "wo_handling_marks": cat["marks"],
-            "image_path": str(img_path),
-            "condition": condition,
-            "ground_truth": {
-                "polybag_present_sealed": polybag_sealed,
-                "suffocation_warning": suffocation,
-                "fnsku_label_placement": fnsku_geom,
-                "original_barcode_covered": barcode_cov,
-                "expiry_date": expiry_vis,
-                "handling_marks": handling,
-                "expected_overall": expected_overall,
-                "defect_note": defect_note
-            }
-        })
-
-    dataset_json = SUBMISSION_DIR / "eval" / "eval_dataset_50.json"
-    with open(dataset_json, "w", encoding="utf-8") as f:
-        json.dump(units, f, indent=2)
-
-    return units
 
 if __name__ == "__main__":
-    generated = generate_50_eval_units()
-    print(f"Generated {len(generated)} unseen evaluation test fixtures in {EVAL_FIXTURES_DIR}")
+    data = generate()
+    print(f"Generated {len(data)} held-out units in {EVAL_DIR}")

@@ -1,3 +1,5 @@
+> **v2 note (2026-10-05):** this document was written for the Round 2 (v1) build. Metrics and implementation details here are superseded. Current measured results are in [eval-report.md](eval-report.md) and the current design in [ARCHITECTURE.md](ARCHITECTURE.md). The v1 human-agreement figures came from *simulated* annotators and are withdrawn.
+
 # PR/FAQ: Autonomous Prep Manager (Agent 02)
 
 ## FOR IMMEDIATE RELEASE: October 1, 2026
@@ -15,7 +17,7 @@ Prep Manager solves this through an inline, single-call visual reasoning engine.
 5. **Expiry Date Visibility**: Verifies that human-readable expiry timestamps remain visible through secondary packaging.
 6. **Mandatory Handling Marks**: Inspects required freight designations ("Fragile", "Sold as Set - Do Not Separate", "This Way Up", "Ready to Ship").
 
-Crucially, Prep Manager treats `UNCERTAIN` as a first-class operational verdict rather than forcing hallucinated confidence. When glare, optical occlusion, or physically unmeasurable attributes (such as 1.5 mil plastic thickness) prevent reliable automated judgment, the system flags the unit for operator verification rather than generating false compliances. All checks, camera frames, operator IDs, and timestamps are compiled into an immutable, SHA-256 hashed evidence record, consumable by downstream dispute and recovery agents.
+Crucially, Prep Manager treats `UNCERTAIN` as a first-class operational verdict rather than forcing hallucinated confidence. When glare, optical occlusion, or physically unmeasurable attributes (such as 1.5 mil plastic thickness) prevent reliable automated judgment, the system flags the unit for operator verification rather than generating false compliances. All checks, camera frames, operator IDs, and timestamps are compiled into an insert-only, SHA-256 hashed and HMAC-sealed evidence record, consumable by downstream dispute and recovery agents.
 
 "In a warehouse where prep fees are under a dollar, margin is measured in pennies," said the Lead Systems Architect at Sydon Symphony. "A compliance system cannot cost fifteen cents in API calls, nor can it hold up a packing line for three seconds while a cloud model spins. Prep Manager operates at less than one-half cent per unit, fails open on network drops, and arms operators with irrefutable proof."
 
@@ -48,7 +50,7 @@ Crucially, Prep Manager treats `UNCERTAIN` as a first-class operational verdict 
 **Answer:** Polyethylene film creates specular reflections that blind standard OCR engines. Prep Manager uses multi-spectrum reflection filtering and contrast normalization. When glare completely covers a critical region (like the FNSKU barcode or expiry date), the agent refuses to guess and yields an `UNCERTAIN` verdict with reason `GLARE_OCCLUSION`. It prompts the operator for a quick tilt or manual scan rather than guessing.
 
 #### Q7: What stops an operator from just overriding every failing check to keep their pick rate up?
-**Answer:** Every override requires an explicit reason code (e.g. `MANUALLY_SCANNED_OK`, `REPACKED_ON_LINE`, `FALSE_GLARE_DETECTION`) and logs the operator’s badge ID and timestamp. Overrides do not erase the agent's original `FAIL` or `UNCERTAIN` evaluation—they append an `OverrideRecord` to the immutable evidence log. Warehouse supervisors receive a real-time anomaly dashboard showing operator override rates. An operator with an 85% override rate is immediately flagged for retraining or audit.
+**Answer:** Every override requires an explicit reason code (e.g. `MANUALLY_SCANNED_OK`, `REPACKED_ON_LINE`, `FALSE_GLARE_DETECTION`) and logs the operator’s badge ID and timestamp. Overrides do not erase the agent's original `FAIL` or `UNCERTAIN` evaluation—they append an `OverrideRecord` to the append-only evidence log. Warehouse supervisors receive a real-time anomaly dashboard showing operator override rates. An operator with an 85% override rate is immediately flagged for retraining or audit.
 
 #### Q8: How can this possibly operate within a $0.40 - $1.10 unit prep price point?
 **Answer:** We enforce **strict batching (Engineering Rule 2)**. We never invoke individual API calls for polybag, warning, barcode, and expiry separately. All checks are compiled into a single structured inference prompt executed against an optimized multimodal vision pipeline (costing under $0.003 per unit). Combined with local edge pre-processing (detecting blur and bounding boxes before cloud invocation), the compute footprint is well within warehouse economics.
