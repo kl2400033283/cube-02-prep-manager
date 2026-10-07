@@ -115,6 +115,20 @@ class TestRobustness(unittest.TestCase):
         msg = _safe_message(OSError("cannot open /srv/app/data/x.png"))
         self.assertNotIn("/srv/app", msg)
 
+    def test_old_database_gets_new_columns_and_uploads_work(self):
+        import sqlite3
+        from submissions.kl2400033283.agent.db.database import TenantDatabase
+        d = Path(tempfile.mkdtemp())
+        conn = sqlite3.connect(str(d / "old.db"))
+        conn.execute("CREATE TABLE assets (org_id TEXT NOT NULL, asset_id TEXT NOT NULL, sha256 TEXT NOT NULL,"
+                     " storage_path TEXT NOT NULL, content_type TEXT NOT NULL, size_bytes INTEGER NOT NULL,"
+                     " created_at TEXT NOT NULL, PRIMARY KEY (org_id, asset_id))")
+        conn.commit()
+        conn.close()
+        db = TenantDatabase(d / "old.db", d / "uploads")
+        aid = db.save_asset("org_demo_alpha", b"x" * 200, "ab" * 32, "image/jpeg", ".jpg", original_sha256="cd" * 32)
+        self.assertEqual(db.get_asset("org_demo_alpha", aid)["original_sha256"], "cd" * 32)
+
     def test_tenants_get_separate_perception_pools(self):
         from submissions.kl2400033283.agent.core.prep_agent import _pool_for
         self.assertIsNot(_pool_for("org_demo_alpha"), _pool_for("org_demo_bravo"))

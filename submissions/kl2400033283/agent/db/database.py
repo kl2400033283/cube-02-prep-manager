@@ -179,10 +179,24 @@ class TenantDatabase:
         try:
             legacy = self._archive_legacy_schema(conn)
             conn.executescript(SCHEMA)  # executescript manages its own transaction
+            self._add_missing_columns(conn)
         finally:
             conn.close()
         if legacy:
             self._import_legacy(legacy)
+
+    # Columns added after a table first shipped: CREATE TABLE IF NOT EXISTS does not add them to an
+    # existing database, so add them here (nullable, so old rows stay valid).
+    _ADDED_COLUMNS = {"assets": [("original_sha256", "TEXT")]}
+
+    @classmethod
+    def _add_missing_columns(cls, conn) -> None:
+        for table, cols in cls._ADDED_COLUMNS.items():
+            have = {r[1] for r in conn.execute(f'PRAGMA table_info("{table}")')}
+            for name, kind in cols:
+                if name not in have:
+                    conn.execute(f'ALTER TABLE "{table}" ADD COLUMN {name} {kind}')
+        conn.commit()
 
     # ------------------------------------------------------------------ migration from the v2.0 layout
     _LEGACY_TABLES = ("prep_records", "check_verdicts", "overrides", "original_seals")
