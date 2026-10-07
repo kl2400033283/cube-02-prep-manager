@@ -31,6 +31,8 @@ def scenario_input(scenario_id: str, org: str = "org_demo_alpha", **overrides) -
     s = BY_ID[scenario_id]
     unit = dict(s.unit)
     calibrated = overrides.pop("station_calibrated", True)
+    paths = overrides.pop("image_paths", [str(s.ensure_rendered())])
+    refs = overrides.pop("image_asset_ids", [f"scenario:{scenario_id}"])
     unit.update(overrides)
-    return PrepInspectionInput(org_id=org, image_paths=[str(s.ensure_rendered())],
-                               image_asset_ids=[f"scenario:{scenario_id}"], station_calibrated=calibrated, **unit)
+    return PrepInspectionInput(org_id=org, image_paths=paths, image_asset_ids=refs,
+                               station_calibrated=calibrated, **unit)

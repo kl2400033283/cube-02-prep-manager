@@ -86,12 +86,15 @@ CLI:
 python -m submissions.kl2400033283.agent.cli inspect --scenario fnsku-on-seam
 ```
 
-**Real photos (uploads that aren't from the calibrated station):**
-- **`OPENROUTER_API_KEY` set → free AI vision ($0).** One call per unit to OpenRouter `:free` vision models, tried in order (Gemma 4 31B → Gemma 4 26B → Nemotron Omni). Only ids ending in `:free` are accepted, so a paid model can never be called. The offline OCR engine runs in parallel and its text evidence is fused in. If every free model is busy, the OCR result is returned. Expect 30 s to 3 min per unit on the free tier.
-- **Ollama LLaVA running locally → `PREP_PERCEPTION=ollama` or `PREP_OLLAMA_BASE_URL` / `PREP_OLLAMA_MODEL`**. This uses your local `llava` endpoint without sending images to the cloud.
-- **No API key → local OCR engine (offline, free).** RapidOCR reads warning wording, expiry dates (format checked), FNSKU codes (compared with the work order → `FNSKU_MISMATCH`) and handling-sticker text; zxing-cpp decodes barcodes (a decoded retail UPC/EAN → `ORIGINAL_BARCODE_EXPOSED`). Bag sealing and label geometry can't be proven from text, so they stay UNCERTAIN.
-- **`ANTHROPIC_API_KEY` set *and* `PREP_ALLOW_PAID_MODELS=1` → Claude vision** for all six checks (paid; off by default) (`PREP_CLAUDE_MODEL`, default `claude-haiku-4-5-20251001`).
-- If neither is available, the station CV engine runs but its findings are downgraded to UNCERTAIN (`OUT_OF_DOMAIN_CAPTURE`).
+**Real photos: one engine.** In the default `auto` mode, every uploaded photo goes to the **offline engine**: free, no internet, about 2-5 s per unit. Only the server's own station frames use the station camera engine.
+- It reads text with RapidOCR: warning wording, expiry dates (format checked), the FNSKU code (exact match with the work order) and handling stickers.
+- It decodes barcodes with zxing-cpp. A retail UPC/EAN that is either decoded *or* printed as a number under bar stripes counts as `ORIGINAL_BARCODE_EXPOSED`.
+- FNSKU placement is PASS only when the label is one clean, evenly lit rectangle with no seam or edge running under it. It was calibrated on 58 images: 0 of 10 seam/curve/edge labels were called flat. On real photos with uneven light it usually stays UNCERTAIN.
+- Bag sealing can't be proven by this engine, so it stays UNCERTAIN.
+
+Why only this engine: on a real test photo (7 Oct 2026), local Ollama llava took 85 s with no usable answer, llama3.2-vision crashed, and the free OpenRouter model didn't answer within 78 s. Those engines are still available but only run when chosen explicitly: `PREP_PERCEPTION=ollama`, `free`, or `claude` (Claude also needs `PREP_ALLOW_PAID_MODELS=1`).
+
+Older records in History keep the engine name they were made with. Evidence records are never rewritten.
 
 ### Configuration
 

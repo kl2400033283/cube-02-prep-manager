@@ -141,20 +141,15 @@ class PrepManagerAgent:
             if self.ocr.available:
                 return self.ocr, "Forced local OCR (PREP_PERCEPTION=ocr)."
             return self.cv, "Local OCR forced but not installed; fell back to station CV."
+        # Automatic mode: ONE engine for photos. The offline engine (text reading, barcode decoding and
+        # label geometry) is fast (~3 s), free, deterministic and needs no network. Ollama / free cloud
+        # models / Claude were slow or unreliable on real photos (Oct 2026 test: 78-85 s, no usable
+        # answer) and only run when explicitly selected with PREP_PERCEPTION.
         if calibrated:
             return self.cv, "Calibrated station frame: deterministic station CV (no model cost)."
-        if self.ollama.available:
-            return self.ollama, (f"Open-world photo: routed to local Ollama vision model {self.ollama.model} "
-                                 "(offline, no external API).")
-        if self._claude_usable():
-            return self.claude, "Open-world photo (uncalibrated): routed to Claude vision (paid models enabled)."
-        if self.free_vision.available:
-            return self.free_vision, (f"Open-world photo: free vision model {self.free_vision.model} "
-                                      "($0, OpenRouter free tier).")
         if self.ocr.available:
-            return self.ocr, ("Open-world photo, free-only mode: offline local OCR + barcode decoding "
-                              "(text-provable checks only).")
-        return self.cv, "No vision model configured: station CV engine (best-effort on uncalibrated photo)."
+            return self.ocr, "Photo: offline engine (text reading, barcode decoding, label geometry; $0, ~3 s)."
+        return self.cv, "Offline engine not installed: station CV engine (best-effort on an uncalibrated photo)."
 
     # ------------------------------------------------------------------ main loop
     def inspect(self, inp: PrepInspectionInput, fault: Optional[str] = None,

@@ -67,6 +67,126 @@ def _norm(s: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", s.upper())
 
 
+def _px(img: LoadedImage, bbox) -> Tuple[int, int, int, int]:
+    h, w = img.gray.shape
+    return int(bbox[0] * w), int(bbox[1] * h), int(bbox[2] * w), int(bbox[3] * h)
+
+
+def bars_above(img: LoadedImage, bbox) -> float:
+    """Bar-stripe strength just above a text line: mean |d/dx| over mean |d/dy|.
+
+    Barcode bars are vertical stripes: strong horizontal change, little vertical change (ratio >> 1).
+    Plain print or cardboard gives a ratio around 1. Measured: barcode ~6-9, plain text ~0.7."""
+    x0, y0, x1, y1 = _px(img, bbox)
+    th = max(4, y1 - y0)
+    p = img.gray[max(0, y0 - 4 * th):max(0, y0 - 2), max(0, x0):x1]
+    if p.shape[0] < 6 or p.shape[1] < 20:
+        return 0.0
+    gx = float(np.abs(np.diff(p, axis=1)).mean())
+    gy = float(np.abs(np.diff(p, axis=0)).mean())
+    return gx / max(gy, 1.0) if gx > 10 else 0.0
+
+
+def label_is_flat(img: LoadedImage, bbox) -> Tuple[bool, Dict]:
+    """Is the white label around a text line one clean, evenly lit rectangle?
+
+    A label over an edge shows a brightness step between its halves, a label on a curve a smooth
+    fall-off, a label over a seam a dark line across it. Any of these -> not flat (stays UNCERTAIN;
+    this test never claims a defect, it only decides whether FLAT can be claimed)."""
+    from scipy import ndimage
+    g = img.gray
+    h, w = g.shape
+    x0, y0, x1, y1 = _px(img, bbox)
+    tw, th = x1 - x0, y1 - y0
+    # generous window so the whole label fits (text can sit anywhere on it)
+    X0, Y0 = max(0, x0 - 2 * tw), max(0, y0 - 10 * th)
+    X1, Y1 = min(w, x1 + 2 * tw), min(h, y1 + 5 * th)
+    win = g[Y0:Y1, X0:X1]
+    if win.size < 400:
+        return False, {}
+    white = win > max(150.0, float(np.percentile(win, 90)) - 35)
+    lab, n = ndimage.label(white)
+    if n == 0:
+        return False, {}
+    # the component that surrounds the text line
+    cy, cx = (y0 + y1) // 2 - Y0, min(x1 + 3, X1 - 1) - X0
+    ring = lab[max(0, cy - th):cy + th, max(0, (x0 - X0) - 6):cx + 6]
+    ids, counts = np.unique(ring[ring > 0], return_counts=True)
+    if not len(ids):
+        return False, {}
+    comp = lab == ids[np.argmax(counts)]
+    ys, xs = np.nonzero(comp)
+    by0, by1, bx0, bx1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    box = comp[by0:by1, bx0:bx1]
+    vals = win[by0:by1, bx0:bx1]
+    fill = float(box.mean())  # holes = printed bars/text; a clean label is still mostly white
+    filled = ndimage.binary_fill_holes(box)
+    rect = float(filled.mean())  # how rectangular the outline is
+    # brightness of the white paper per column / row: a step or a steady slope means not flat
+    col = np.array([vals[:, i][box[:, i]].mean() if box[:, i].any() else np.nan for i in range(box.shape[1])])
+    row = np.array([vals[j][box[j]].mean() if box[j].any() else np.nan for j in range(box.shape[0])])
+    col, row = col[~np.isnan(col)], row[~np.isnan(row)]
+    if len(col) < 20 or len(row) < 10:
+        return False, {}
+    third = len(col) // 3
+    lr = abs(float(np.median(col[:third]) - np.median(col[-third:])))
+    tb = abs(float(np.median(row[: len(row) // 3]) - np.median(row[-(len(row) // 3):])))
+    step = float(np.max(np.abs(np.diff(ndimage.uniform_filter1d(col, 5))))) if len(col) > 6 else 0.0
+    seam = _seam_through(g, X0 + bx0, Y0 + by0, X0 + bx1, Y0 + by1, th)
+    seam = seam or _continues_past_edge(g, X0 + bx0, Y0 + by0, X0 + bx1, Y0 + by1, th)
+    m = {"label_rectangularity": round(rect, 3), "label_white_fill": round(fill, 3),
+         "label_lr_brightness_diff": round(lr, 1), "label_tb_brightness_diff": round(tb, 1),
+         "label_max_step": round(step, 1), "seam_through_label": seam,
+         "label_size_px": [int(bx1 - bx0), int(by1 - by0)]}
+    big_enough = (bx1 - bx0) >= 1.1 * tw and (by1 - by0) >= 2 * th
+    # Calibrated on the demo scenes + 50 eval renders: flat labels lr/tb <= 0.4, curved labels tb 2.3-3.3
+    # (or lr ~9 when the shaded part drops out), labels over an edge/seam caught by the seam tests.
+    flat = big_enough and rect >= 0.93 and lr <= 1.5 and tb <= 1.5 and step <= 6 and not seam
+    return flat, m
+
+
+def _band_cols(strip: np.ndarray) -> set:
+    """Columns of a strip that differ strongly from the strip's typical surface (tape, seam, flap edge)."""
+    if strip.size == 0:
+        return set()
+    prof = strip.mean(axis=0)
+    dev = np.abs(prof - np.median(prof))
+    return set(np.nonzero(dev > 25)[0].tolist())
+
+
+def _continues_past_edge(g: np.ndarray, x0: int, y0: int, x1: int, y1: int, th: int) -> bool:
+    """Label bent over a box edge: the part on the other face is shaded, so the bright 'label' stops
+    early and the strip beside it does not look like the surface around it. For a label on one flat
+    face, the strip just left/right of the label matches the surface above/below at the same columns."""
+    h, w = g.shape
+    d = max(4, int(1.5 * th))
+    for xa, xb in ((max(0, x0 - d - 2), max(0, x0 - 2)), (min(w, x1 + 2), min(w, x1 + 2 + d))):
+        if xb - xa < 3:
+            continue
+        side = g[y0:y1, xa:xb]
+        ref = np.concatenate([g[max(0, y0 - d - 2):max(0, y0 - 2), xa:xb].ravel(),
+                              g[min(h, y1 + 2):min(h, y1 + 2 + d), xa:xb].ravel()])
+        if side.size and ref.size and abs(float(side.mean()) - float(ref.mean())) > 30:
+            return True
+    return False
+
+
+def _seam_through(g: np.ndarray, x0: int, y0: int, x1: int, y1: int, th: int) -> bool:
+    """A tape band / seam / flap edge that shows directly above AND below the label at the same x runs
+    under it. Also checked left/right for horizontal seams."""
+    h, w = g.shape
+    d = max(4, int(1.5 * th))
+    above = g[max(0, y0 - d - 2):max(0, y0 - 2), x0:x1]
+    below = g[min(h, y1 + 2):min(h, y1 + 2 + d), x0:x1]
+    left = g[y0:y1, max(0, x0 - d - 2):max(0, x0 - 2)].T
+    right = g[y0:y1, min(w, x1 + 2):min(w, x1 + 2 + d)].T
+    for a, b in ((above, below), (left, right)):
+        both = _band_cols(a) & _band_cols(b)
+        if len(both) >= 3:
+            return True
+    return False
+
+
 class LocalOCRProvider:
     name = "local_ocr"
     timeout_ms = OCR_TIMEOUT_MS
@@ -173,7 +293,21 @@ class LocalOCRProvider:
             if m:
                 fnsku_text = m.group(0)
                 break
-        if fn_codes or fn_lines:
+        flat_label = None
+        for l in fn_lines:
+            ok, geo = label_is_flat(images[l["view"]], l["bbox"])
+            if ok:
+                flat_label = (l, geo)
+                break
+        if flat_label:
+            l, geo = flat_label
+            out["fnsku_label_placement"] = CheckObservation(
+                check_key="fnsku_label_placement", state="FLAT", signal=round(min(0.7, l["conf"]), 3),
+                measurements={"fnsku_text": fnsku_text or "", **geo},
+                regions=region([l], "FNSKU label"),
+                notes=[f"FNSKU label ({fnsku_text or 'code read'}) is one clean, evenly lit rectangle with no seam "
+                       "or edge running under it."])
+        elif fn_codes or fn_lines:
             # Signal = how reliably the code was *read* (decoded barcode ~ certain; else OCR confidence).
             read_conf = 0.97 if fn_codes else float(np.mean([l["conf"] for l in fn_lines]))
             out["fnsku_label_placement"] = CheckObservation(
@@ -190,12 +324,28 @@ class LocalOCRProvider:
 
         # Original barcode: a decoded retail symbology is positive proof of exposure.
         retail = [c for c in codes if c["format"] in RETAIL_FORMATS]
+        # Printed UPC/EAN number (11-14 digits, OCR may add or drop one) with bar stripes right above it.
+        printed_retail = []
+        for l in lines:
+            if l["norm"].isdigit() and 11 <= len(l["norm"]) <= 14 and l["conf"] >= 0.6:
+                l["_bars"] = bars_above(images[l["view"]], l["bbox"])
+                if l["_bars"] >= 3.0:
+                    printed_retail.append(l)
         if retail:
             out["original_barcode_covered"] = CheckObservation(
                 check_key="original_barcode_covered", state="EXPOSED", signal=0.97,
                 measurements={"visible_barcodes": len(codes), "exposed_barcode_type": retail[0]["format"]},
                 regions=region(retail, "retail barcode"),
                 notes=[f"Decoded a scannable {retail[0]['format']} retail barcode ({retail[0]['text']})."])
+        elif printed_retail:
+            l = printed_retail[0]
+            out["original_barcode_covered"] = CheckObservation(
+                check_key="original_barcode_covered", state="EXPOSED", signal=0.75,
+                measurements={"visible_barcodes": len(codes) + len(printed_retail), "retail_number_read": l["text"],
+                              "bar_stripe_ratio": round(l["_bars"], 1)},
+                regions=region([l], "retail barcode (printed number)"),
+                notes=[f"A retail barcode is visible: bars with the printed number '{l['text']}' under them. "
+                       "It did not decode, but it is not covered."])
         else:
             out["original_barcode_covered"] = CheckObservation(
                 check_key="original_barcode_covered", state="INDETERMINATE", signal=0.3,

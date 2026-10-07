@@ -106,9 +106,11 @@ class TestFreeVision(unittest.TestCase):
         self.assertIn("no free model answered", rec.perception.routing_reason)
         self.assertLess(took, 12.0)
 
-    def test_routing_prefers_free_vision_for_phone_photos(self):
+    def test_free_vision_only_when_selected(self):
         agent = make_agent(mode="auto", free_vision=FreeVisionProvider(api_key="k"))
-        self.assertEqual(agent.route(calibrated=False)[0].name, "free_vision")
+        self.assertNotEqual(agent.route(calibrated=False)[0].name, "free_vision")  # one engine in auto mode
+        self.assertEqual(make_agent(mode="free", free_vision=FreeVisionProvider(api_key="k"))
+                         .route(calibrated=False)[0].name, "free_vision")
         self.assertEqual(agent.route(calibrated=True)[0].name, "station_cv")
 
 

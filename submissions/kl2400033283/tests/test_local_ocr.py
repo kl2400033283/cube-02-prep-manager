@@ -25,12 +25,44 @@ class TestLocalOCR(unittest.TestCase):
     def verdicts(self, rec):
         return {c.check_key: (c.verdict.value, c.reason_code) for c in rec.checks}
 
-    def test_reads_warning_but_never_guesses_bag_or_geometry(self):
+    def test_reads_warning_never_guesses_bag_and_flat_only_when_clean(self):
         rec = self.agent.inspect(scenario_input("sealed-polybag", station_calibrated=False))
         v = self.verdicts(rec)
         self.assertEqual(v["suffocation_warning"][0], "PASS")
         self.assertEqual(v["polybag_present_sealed"][0], "UNCERTAIN")
-        self.assertEqual(v["fnsku_label_placement"][0], "UNCERTAIN")
+        self.assertEqual(v["fnsku_label_placement"][0], "PASS")  # clean, evenly lit rectangle
+
+    def test_seam_and_curve_labels_are_never_called_flat(self):
+        for sid in ("fnsku-on-seam", "fnsku-on-curve"):
+            v = self.verdicts(self.agent.inspect(scenario_input(sid, station_calibrated=False)))
+            self.assertNotEqual(v["fnsku_label_placement"][0], "PASS", sid)
+
+    def test_printed_retail_number_under_bars_is_exposed(self):
+        from submissions.kl2400033283.agent.vision.providers.ocr_provider import bars_above
+        from submissions.kl2400033283.agent.vision.quality import load_image
+        import numpy as np, tempfile
+        from pathlib import Path
+        from PIL import Image, ImageDraw, ImageFont
+        im = Image.new("RGB", (900, 600), (190, 150, 100))
+        d = ImageDraw.Draw(im)
+        d.rectangle([250, 200, 650, 420], fill=(250, 250, 250))
+        rng = np.random.default_rng(1)
+        x = 280
+        while x < 620:
+            wbar = int(rng.integers(2, 7))
+            d.rectangle([x, 220, x + wbar, 350], fill=(10, 10, 10))
+            x += wbar + int(rng.integers(2, 6))
+        try:
+            font = ImageFont.truetype("arial.ttf", 40)
+        except OSError:
+            font = ImageFont.load_default()
+        d.text((300, 360), "0 12345 67890 5", fill=(0, 0, 0), font=font)
+        p = Path(tempfile.mkdtemp()) / "upc.png"
+        im.save(p)
+        self.assertGreater(bars_above(load_image(p), [300 / 900, 360 / 600, 600 / 900, 400 / 600]), 3.0)
+        rec = self.agent.inspect(scenario_input("correct-prep", station_calibrated=False,
+                                                image_paths=[str(p)], image_asset_ids=["test"]))
+        self.assertEqual(self.verdicts(rec)["original_barcode_covered"][0], "FAIL")
         self.assertEqual(rec.perception.provider, "local_ocr")
         self.assertEqual(rec.perception.cost_usd, 0.0)
 

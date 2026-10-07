@@ -75,7 +75,10 @@ class TestClaudeProvider(unittest.TestCase):
     def test_routing_prefers_cv_for_calibrated_station_frames(self):
         agent = make_agent(claude=ClaudeVisionProvider(api_key="k"), mode="auto", allow_paid=True)
         self.assertEqual(agent.route(calibrated=True)[0].name, "station_cv")
-        self.assertEqual(agent.route(calibrated=False)[0].name, "claude_vision")
+        # Automatic mode uses ONE engine for photos (offline); Claude runs only when explicitly selected.
+        self.assertIn(agent.route(calibrated=False)[0].name, ("local_ocr", "station_cv"))
+        self.assertEqual(make_agent(claude=ClaudeVisionProvider(api_key="k"), mode="claude",
+                                    allow_paid=True).route(calibrated=False)[0].name, "claude_vision")
         agent_nokey = make_agent(claude=ClaudeVisionProvider(api_key=""), mode="auto")
         self.assertIn(agent_nokey.route(calibrated=False)[0].name, ("local_ocr", "station_cv"))
 
