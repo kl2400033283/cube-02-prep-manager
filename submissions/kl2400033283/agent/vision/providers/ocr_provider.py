@@ -87,6 +87,30 @@ def bars_above(img: LoadedImage, bbox) -> float:
     return gx / max(gy, 1.0) if gx > 10 else 0.0
 
 
+def stray_bar_tiles(img: LoadedImage, allowed_boxes) -> bool:
+    """Any barcode-like stripe texture outside the allowed boxes (the FNSKU label)? Scans 40 px tiles;
+    two or more striped tiles outside the label means another barcode may be showing."""
+    g = img.gray
+    h, w = g.shape
+    t = 40
+    gx = np.abs(np.diff(g, axis=1))[:-1, :]
+    gy = np.abs(np.diff(g, axis=0))[:, :-1]
+    hits = 0
+    for y in range(0, h - t, t):
+        for x in range(0, w - t, t):
+            cx, cy = (x + t / 2) / w, (y + t / 2) / h
+            near_label = any(b[0] - 0.08 <= cx <= b[2] + 0.08 and b[1] - 0.25 <= cy <= b[3] + 0.12
+                             for b in allowed_boxes)
+            if near_label:
+                continue
+            ax, ay = float(gx[y:y + t, x:x + t].mean()), float(gy[y:y + t, x:x + t].mean())
+            if ax > 12 and ax > 3 * max(ay, 1.0):
+                hits += 1
+                if hits >= 2:
+                    return True
+    return False
+
+
 def label_is_flat(img: LoadedImage, bbox) -> Tuple[bool, Dict]:
     """Is the white label around a text line one clean, evenly lit rectangle?
 
@@ -125,7 +149,8 @@ def label_is_flat(img: LoadedImage, bbox) -> Tuple[bool, Dict]:
     # brightness of the white paper per column / row: a step or a steady slope means not flat
     col = np.array([vals[:, i][box[:, i]].mean() if box[:, i].any() else np.nan for i in range(box.shape[1])])
     row = np.array([vals[j][box[j]].mean() if box[j].any() else np.nan for j in range(box.shape[0])])
-    col, row = col[~np.isnan(col)], row[~np.isnan(row)]
+    # drop the 3 border columns/rows: the label's own soft (anti-aliased / slightly blurred) edge is not a bend
+    col, row = col[~np.isnan(col)][3:-3], row[~np.isnan(row)][3:-3]
     if len(col) < 20 or len(row) < 10:
         return False, {}
     third = len(col) // 3
@@ -346,6 +371,19 @@ class LocalOCRProvider:
                 regions=region([l], "retail barcode (printed number)"),
                 notes=[f"A retail barcode is visible: bars with the printed number '{l['text']}' under them. "
                        "It did not decode, but it is not covered."])
+        elif (may_claim_absence and (fn_codes or fn_lines)
+              and all(c["text"].upper().startswith("X0") for c in codes)
+              and not any(stray_bar_tiles(images[v], [l["bbox"] for l in fn_lines if l["view"] == v]
+                                          + [c["bbox"] for c in codes if c["view"] == v])
+                          for v in {l["view"] for l in lines})):
+            # Covered is an absence claim, so it needs everything: >= 2 views, text demonstrably readable,
+            # the FNSKU found, no retail code decoded or printed, and no bar stripes anywhere else.
+            out["original_barcode_covered"] = CheckObservation(
+                check_key="original_barcode_covered", state="COVERED", signal=0.6,
+                measurements={"visible_barcodes": len(codes), "views_checked": n_views},
+                regions=region(fn_codes or fn_lines, "only scannable barcode (FNSKU)"),
+                notes=[f"Across {n_views} views the FNSKU is the only barcode: no retail code decoded or printed, "
+                       "and no other bar stripes found."])
         else:
             out["original_barcode_covered"] = CheckObservation(
                 check_key="original_barcode_covered", state="INDETERMINATE", signal=0.3,

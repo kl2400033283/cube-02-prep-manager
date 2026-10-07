@@ -94,3 +94,39 @@ class TestLocalOCR(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTwoViewUnit(unittest.TestCase):
+    """Generated upload samples: covered needs >= 2 views; an exposed UPC on the back is caught."""
+
+    @classmethod
+    def setUpClass(cls):
+        import subprocess, sys, tempfile
+        from pathlib import Path
+        if not available():
+            raise unittest.SkipTest("offline OCR / zxing not installed")
+        cls.dir = Path(tempfile.mkdtemp())
+        gen = Path(__file__).resolve().parent.parent / "eval" / "make_upload_samples.py"
+        subprocess.run([sys.executable, str(gen), str(cls.dir)], check=True, capture_output=True)
+
+    def run_views(self, *names):
+        from submissions.kl2400033283.agent.vision.quality import assess_quality, load_image
+        from submissions.kl2400033283.agent.vision.providers.ocr_provider import LocalOCRProvider
+        imgs = [load_image(self.dir / n) for n in names]
+        return LocalOCRProvider().observe(imgs, [assess_quality(i) for i in imgs], False).checks
+
+    @unittest.skipUnless(available(), "offline OCR not installed")
+    def test_good_unit_two_views(self):
+        c = self.run_views("PASS_unit_front.png", "PASS_unit_back.png")
+        self.assertEqual(c["fnsku_label_placement"].state, "FLAT")
+        self.assertEqual(c["original_barcode_covered"].state, "COVERED")
+
+    @unittest.skipUnless(available(), "offline OCR not installed")
+    def test_exposed_upc_on_back_is_caught(self):
+        c = self.run_views("PASS_unit_front.png", "FAIL_unit_back_barcode_exposed.png")
+        self.assertEqual(c["original_barcode_covered"].state, "EXPOSED")
+
+    @unittest.skipUnless(available(), "offline OCR not installed")
+    def test_one_view_never_claims_covered(self):
+        c = self.run_views("PASS_unit_front.png")
+        self.assertEqual(c["original_barcode_covered"].state, "INDETERMINATE")

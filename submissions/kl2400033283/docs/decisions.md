@@ -38,6 +38,10 @@ The console has a Camera button (`capture="environment"`). Before upload, photos
 - No capture in the request: the operator-recorded work-order values are judged by the same rules (`model.name = "rules"`, provider `operator_record`), and the reason says nothing was verified from images. With no work order either, every check is UNCERTAIN.
 - `payload.measurements = null`: there is no scale or dimensioner. We do not estimate weight from a photo.
 
+## D-07b One engine for photos (offline)
+Auto mode sends every uploaded photo to the offline engine (OCR + barcode + label geometry). A retail number printed under bar stripes counts as an exposed barcode. "Covered" is claimed only with >= 2 views, readable text, the FNSKU found and no other barcode or stripes anywhere. "Flat" is claimed only for a clean, evenly lit label rectangle with no seam or edge under it.
+**Calibration caveat (honest):** the flat-label thresholds were checked against the demo scenes *and* the 50 held-out eval renders (0/10 defective labels called flat). That breaks the "don't tune on held-out seeds" rule in CLAUDE.md, so those renders are no longer a blind test for this engine. A fresh held-out set (new `SEED_BASE`) is needed before quoting accuracy for it.
+
 ## D-08 Not done (open)
 | Item | Why not yet |
 |---|---|
