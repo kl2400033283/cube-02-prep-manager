@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/styles.css?v=3.4.0">
+  <link rel="stylesheet" href="/static/styles.css?v=3.5.0">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%235b5bf6'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' stroke='white' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 </head>
 <body>
@@ -168,7 +168,7 @@
   <section class="view" id="view-insights">
     <div class="page-head">
       <div><p class="eyebrow">Insights</p><h1>How the agent is performing</h1>
-        <p class="lead">Live numbers for this prep center, and the measured results on 50 units the agent had never seen.</p></div>
+        <p class="lead">Live numbers for this prep center and held-out evaluation results.</p></div>
     </div>
     <h2 class="section-title">This prep center</h2>
     <div class="kpis" id="liveKpis"></div>
@@ -176,7 +176,7 @@
       <section class="card"><h3 class="card-title">Results mix</h3><div id="decisionChart"></div></section>
       <section class="card"><h3 class="card-title">Results by check</h3><div id="perCheckChart"></div></section>
     </div>
-    <h2 class="section-title">Held-out evaluation · 50 unseen units</h2>
+    <h2 class="section-title">Held-out evaluation</h2>
     <div class="kpis" id="evalKpis"></div>
     <div class="grid-2 gap">
       <section class="card"><h3 class="card-title">Accuracy by check</h3><div class="table-wrap"><table class="table compact" id="evalChecks"></table></div></section>
@@ -225,6 +225,6 @@
 </dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="/static/app.js?v=3.4.0"></script>
+<script src="/static/app.js?v=3.5.0"></script>
 </body>
 </html>

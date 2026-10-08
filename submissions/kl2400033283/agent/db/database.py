@@ -463,33 +463,55 @@ class TenantDatabase:
             rows = [dict(r) for r in c.execute(
                 "SELECT decision, status, provider, cost_usd, total_latency_ms FROM record_state WHERE org_id = ?",
                 (org_id,)).fetchall()]
-            checks = [dict(r) for r in c.execute(
+            originals = [EvidenceRecord.model_validate_json(r["payload_json"]) for r in c.execute(
+                "SELECT payload_json FROM prep_records WHERE org_id = ?", (org_id,)).fetchall()]
+            effective_checks = [dict(r) for r in c.execute(
                 "SELECT check_key, verdict, COUNT(*) AS n FROM check_verdicts WHERE org_id = ? GROUP BY check_key, verdict",
                 (org_id,)).fetchall()]
-            reasons = [dict(r) for r in c.execute(
-                "SELECT reason_code, COUNT(*) AS n FROM check_verdicts WHERE org_id = ? AND verdict IN ('FAIL','UNCERTAIN')"
-                " GROUP BY reason_code ORDER BY n DESC LIMIT 8", (org_id,)).fetchall()]
-            n_over = c.execute("SELECT COUNT(*) FROM overrides WHERE org_id = ?", (org_id,)).fetchone()[0]
+            override_count = c.execute("SELECT COUNT(*) FROM overrides WHERE org_id = ?", (org_id,)).fetchone()[0]
         total = len(rows)
-        by_dec = {d.value: sum(1 for r in rows if r["decision"] == d.value) for d in OverallDecisionEnum}
+        by_dec = {
+            d.value: sum(1 for record in originals if record.outcome.decision.value == d.value)
+            for d in OverallDecisionEnum
+        }
+        effective_by_dec = {d.value: sum(1 for r in rows if r["decision"] == d.value) for d in OverallDecisionEnum}
         lat = [r["total_latency_ms"] for r in rows if r["status"] != "failed_open"]
         per_check: Dict[str, Dict[str, int]] = {}
-        for r in checks:
-            per_check.setdefault(r["check_key"], {})[r["verdict"]] = r["n"]
+        effective_per_check: Dict[str, Dict[str, int]] = {}
+        reason_counts: Dict[str, int] = {}
+        for record in originals:
+            for check in record.checks:
+                verdict = check.verdict.value
+                check_counts = per_check.setdefault(check.check_key, {})
+                check_counts[verdict] = check_counts.get(verdict, 0) + 1
+                if verdict in ("FAIL", "UNCERTAIN") and check.reason_code:
+                    reason_counts[check.reason_code] = reason_counts.get(check.reason_code, 0) + 1
+        for r in effective_checks:
+            effective_per_check.setdefault(r["check_key"], {})[r["verdict"]] = r["n"]
         providers: Dict[str, int] = {}
         for r in rows:
             providers[r["provider"] or "none"] = providers.get(r["provider"] or "none", 0) + 1
+        reasons = [
+            {"reason_code": reason, "n": count}
+            for reason, count in sorted(reason_counts.items(), key=lambda item: item[1], reverse=True)[:8]
+        ]
         return {
             "total_units": total,
             "decisions": by_dec,
+            "effective_decisions": effective_by_dec,
             "pass_rate": round(by_dec["PASS"] / total, 3) if total else 0.0,
+            "effective_pass_rate": round(effective_by_dec["PASS"] / total, 3) if total else 0.0,
             "uncertain_rate": round((by_dec["UNCERTAIN"] + by_dec["PENDING_REVIEW"]) / total, 3) if total else 0.0,
+            "effective_uncertain_rate": round(
+                (effective_by_dec["UNCERTAIN"] + effective_by_dec["PENDING_REVIEW"]) / total, 3
+            ) if total else 0.0,
             "fail_open_count": sum(1 for r in rows if r["status"] == "failed_open"),
-            "override_count": n_over,
+            "override_count": override_count,
             "latency_ms": {"p50": _percentile(lat, 50), "p95": _percentile(lat, 95), "max": round(max(lat), 1) if lat else 0.0},
             "avg_cost_usd": round(sum(r["cost_usd"] or 0 for r in rows) / total, 6) if total else 0.0,
             "providers": providers,
             "per_check": per_check,
+            "effective_per_check": effective_per_check,
             "top_reason_codes": reasons,
         }
 

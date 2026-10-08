@@ -24,9 +24,9 @@ from submissions.kl2400033283.agent.vision.quality import LoadedImage
 def _encode(img: LoadedImage) -> str:
     with Image.open(img.path) as im:
         im = im.convert("RGB")
-        im.thumbnail((1024, 1024))
+        im.thumbnail((768, 768))
         buf = io.BytesIO()
-        im.save(buf, format="JPEG", quality=85)
+        im.save(buf, format="JPEG", quality=82)
     return base64.b64encode(buf.getvalue()).decode("ascii")
 
 

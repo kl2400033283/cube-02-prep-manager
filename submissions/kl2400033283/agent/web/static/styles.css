@@ -157,7 +157,11 @@ main { max-width: 1360px; margin: 0 auto; padding: 28px 28px 80px; }
 @keyframes scan { from { transform: translateY(-100%); } to { transform: translateY(340%); } }
 .thumbs { display: flex; gap: 8px; margin-top: 10px; }
 .thumbs:empty { display: none; }
-.thumbs img { width: 64px; height: 48px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+.thumbs .thumb { position: relative; padding: 0; border: 2px solid var(--border); border-radius: 10px; background: none; cursor: pointer; overflow: hidden; line-height: 0; transition: border-color .15s, transform .15s; }
+.thumbs .thumb:hover { transform: translateY(-1px); border-color: var(--brand); }
+.thumbs .thumb.active { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.thumbs .thumb img { width: 64px; height: 48px; object-fit: cover; display: block; }
+.thumbs .thumb span { position: absolute; left: 4px; top: 4px; min-width: 16px; padding: 1px 4px; border-radius: 6px; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; line-height: 14px; text-align: center; }
 
 .samples-head { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; font-weight: 700; font-size: 14px; }
 .upload-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 10px; background: var(--brand-soft); color: var(--brand); font-weight: 700; font-size: 13px; cursor: pointer; transition: filter .15s; }

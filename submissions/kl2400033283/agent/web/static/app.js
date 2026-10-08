@@ -7,7 +7,7 @@ const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const pct = (x) => (x == null ? "n/a" : `${(x * 100).toFixed(x >= 0.995 || x === 0 ? 0 : 1)}%`);
 
-const state = { key: "alpha-demo-key", scenarios: [], scenario: null, uploads: [], record: null, records: [] };
+const state = { key: "alpha-demo-key", scenarios: [], scenario: null, uploads: [], record: null, records: [], views: [], view: 0, evaluation: null };
 
 const LABEL = { PASS: "Pass", FAIL: "Fail", UNCERTAIN: "Needs review", NOT_REQUIRED: "Not required", PENDING_REVIEW: "Pending review" };
 const HEADLINE = {
@@ -98,6 +98,10 @@ async function init() {
   $("#unitForm").onsubmit = (e) => { e.preventDefault(); runInspection(); };
   $("#fileInput").onchange = (e) => handleFiles(e.target.files);
   $("#cameraInput").onchange = (e) => handleFiles(e.target.files);
+  $("#uploadThumbs").addEventListener("click", (e) => {
+    const b = e.target.closest(".thumb");
+    if (b) selectView(Number(b.dataset.i));
+  });
   $("#viewer").addEventListener("dragover", (e) => e.preventDefault());
   $("#viewer").addEventListener("drop", (e) => { e.preventDefault(); handleFiles(e.dataTransfer.files); });
   $("#decisionFilter").onchange = loadRecords;
@@ -137,7 +141,7 @@ async function refreshStats() {
     const m = await api("/api/v1/metrics");
     $("#statStrip").innerHTML = [
       [m.total_units, "Units inspected"],
-      [pct(m.pass_rate), "Ready to ship"],
+      [pct(m.effective_pass_rate), "Ready to ship"],
       [`${(m.latency_ms.p50 / 1000).toFixed(1)}s`, "Typical time"],
     ].map(([v, k]) => `<div class="stat"><b>${esc(v)}</b><span>${esc(k)}</span></div>`).join("");
   } catch { /* decorative */ }
@@ -158,7 +162,7 @@ function selectScenario(s) {
   if (!s) return;
   state.scenario = s;
   state.uploads = [];
-  $("#uploadThumbs").innerHTML = "";
+  renderThumbs([]);
   $$(".sample").forEach((b) => b.classList.toggle("active", b.dataset.id === s.scenario_id));
   fillForm(s.unit);
   showImage(s.image_url);
@@ -171,6 +175,23 @@ function fillForm(u) {
   for (const n of ["wo_polybag", "wo_suffocation_warning", "wo_expiry_date"]) f[n].checked = !!u[n];
   $$('input[name="mark"]').forEach((c) => (c.checked = (u.wo_handling_marks || []).includes(c.value)));
   $(".more-fields").open = !!(u.bag_length_in || u.bag_opening_in);
+}
+
+/* Thumbnails of the unit's photos: click one to show it (and its evidence boxes) in the viewer. */
+function renderThumbs(urls) {
+  state.views = urls;
+  state.view = 0;
+  $("#uploadThumbs").innerHTML = urls.length > 1 ? urls.map((u, i) =>
+    `<button type="button" class="thumb${i === 0 ? " active" : ""}" data-i="${i}" aria-label="Show photo ${i + 1}" title="Photo ${i + 1}">
+       <img src="${esc(u)}" alt=""><span>${i + 1}</span></button>`).join("") : "";
+}
+
+function selectView(i) {
+  if (!state.views[i]) return;
+  state.view = i;
+  showImage(state.views[i]);
+  $$("#uploadThumbs .thumb").forEach((b) => b.classList.toggle("active", Number(b.dataset.i) === i));
+  if (state.record) drawOverlay(state.record.record);
 }
 
 function showImage(src) {
@@ -215,7 +236,7 @@ async function handleFiles(files) {
   state.scenario = null;
   state.uploads = [];
   $$(".sample").forEach((b) => b.classList.remove("active"));
-  $("#uploadThumbs").innerHTML = "";
+  renderThumbs([]);
   for (const file of list) {
     try {
       const blob = await shrinkForUpload(file);
@@ -225,12 +246,12 @@ async function handleFiles(files) {
         return api("/api/v1/assets", { method: "POST", body: fd });
       });
       state.uploads.push(r);
-      $("#uploadThumbs").insertAdjacentHTML("beforeend", `<img src="${esc(r.preview_url)}" alt="" title="${esc(file.name)}">`);
     } catch (e) { toast(`${file.name}: ${e.message}`, true); }
   }
   $("#fileInput").value = "";
   if ($("#cameraInput")) $("#cameraInput").value = "";
   if (state.uploads.length) {
+    renderThumbs(state.uploads.map((u) => u.preview_url));
     showImage(state.uploads[0].preview_url);
     $("#unitForm").elements.unit_id.value = `UNIT-${Date.now().toString().slice(-6)}`;
     resetResult();
@@ -337,7 +358,7 @@ function renderRecord(resp) {
 
   const notices = [];
   if (p.provider === "local_ocr" && required.some((c) => c.verdict === "UNCERTAIN")) {
-    notices.push(`<div class="notice info"><b>Phone-photo mode.</b> The offline text engine proves what it can <i>read</i> — warning wording, FNSKU, expiry date, sticker text — but it can't see whether a bag is sealed or a label is flat, so those are marked <b>Needs review</b>. If this frame is from the prep-station camera, choose <b>Station camera</b> in step 1 and inspect again.</div>`);
+    notices.push(`<div class="notice info"><b>Phone-photo mode.</b> The offline text engine proves what it can <i>read</i> — warning wording, FNSKU, expiry date, sticker text — but it can't see whether a bag is sealed, and only calls a label flat when that is clear, so the rest is marked <b>Needs review</b>. Upload the front <b>and</b> back of the unit so it can also confirm the old barcode is covered.</div>`);
   }
   if ((p.routing_reason || "").includes("OUT OF DOMAIN")) {
     notices.push(`<div class="notice"><b>Real-world photo, no vision model available.</b> The station camera engine is only reliable on calibrated station frames, so its findings are shown as <b>Needs review</b> instead of guessed.</div>`);
@@ -461,7 +482,7 @@ function drawOverlay(rec) {
     const cls = VC[c.verdict];
     if (!cls) continue;
     for (const r of c.regions || []) {
-      if (r.view_index !== 0) continue;
+      if (r.view_index !== state.view) continue;
       const [x0, y0, x1, y1] = r.bbox.map((v) => v * 1000);
       boxes.push(`<rect class="box ${cls}" data-key="${esc(c.check_key)}" x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}"/>`);
       if (c.verdict !== "PASS") tags.push(`<span class="ov-tag ${cls}" data-key="${esc(c.check_key)}" style="left:${x0 / 10}%;top:${y0 / 10}%">${esc(c.title)}</span>`);
@@ -553,8 +574,9 @@ async function openRecord(id) {
     state.scenario = null;
     $$(".sample").forEach((b) => b.classList.remove("active"));
     showTab("inspect");
-    const url = (r.image_urls || []).find(Boolean);
-    if (url) showImage(url);
+    const urls = (r.image_urls || []).filter(Boolean);
+    renderThumbs(urls);
+    if (urls.length) showImage(urls[0]);
     renderRecord(r);
   } catch (e) { toast(e.message, true); }
 }
@@ -570,26 +592,34 @@ async function runAudit() {
 const COLOR = { PASS: "var(--pass)", FAIL: "var(--fail)", UNCERTAIN: "var(--unc)", PENDING_REVIEW: "#f97316", NOT_REQUIRED: "var(--na)" };
 
 async function loadInsights() {
-  try {
-    const m = await api("/api/v1/metrics");
+  const metricsTask = api("/api/v1/metrics").then((m) => {
     $("#liveKpis").innerHTML = [
       ["Units inspected", m.total_units, ""],
-      ["Ready to ship", pct(m.pass_rate), "passed every check"],
-      ["Sent to a human", pct(m.uncertain_rate), "honest “needs review”"],
+      ["Ready to ship", pct(m.effective_pass_rate), "passed every check"],
+      ["Sent to a human", pct(m.effective_uncertain_rate), "honest “needs review”"],
       ["Typical time", `${(m.latency_ms.p50 / 1000).toFixed(1)} s`, `slowest 5%: ${(m.latency_ms.p95 / 1000).toFixed(1)} s`],
       ["Model cost", `$${m.avg_cost_usd.toFixed(3)}`, "average per unit"],
       ["Line stoppages", 0, `${m.fail_open_count} fail-open event(s), none blocked`],
     ].map(([k, v, s]) => `<div class="kpi"><span>${esc(k)}</span><b>${esc(v)}</b><small>${esc(s)}</small></div>`).join("");
-    $("#decisionChart").innerHTML = donut(m.decisions);
-    $("#perCheckChart").innerHTML = stacked(m.per_check);
-  } catch (e) { toast(e.message, true); }
-  try {
-    const r = await fetch("/api/v1/evaluation");
+    $("#decisionChart").innerHTML = donut(m.effective_decisions);
+    $("#perCheckChart").innerHTML = stacked(m.effective_per_check);
+  }).catch((e) => toast(e.message, true));
+
+  const evaluationTask = (state.evaluation
+    ? Promise.resolve(state.evaluation)
+    : fetch("/api/v1/evaluation").then((r) => {
     if (!r.ok) throw new Error();
-    renderEval(await r.json());
-  } catch {
-    $("#evalKpis").innerHTML = `<div class="kpi"><span>Evaluation</span><b>—</b><small>run eval/run_eval.py</small></div>`;
-  }
+      return r.json();
+    }))
+    .then((evaluation) => {
+      state.evaluation = evaluation;
+      renderEval(evaluation);
+    })
+    .catch(() => {
+      $("#evalKpis").innerHTML = `<div class="kpi"><span>Evaluation</span><b>—</b><small>run eval/run_eval.py</small></div>`;
+    });
+
+  await Promise.all([metricsTask, evaluationTask]);
 }
 
 function donut(dec) {

@@ -97,6 +97,20 @@ class TestProviders(unittest.TestCase):
         self.assertFalse(OllamaVisionProvider(disabled=True).available)
         self.assertFalse(OllamaVisionProvider(base_url="http://127.0.0.1:9").available)  # nothing listening
 
+    def test_ollama_request_uses_bounded_image_and_structured_output(self):
+        import base64
+        import io
+
+        from PIL import Image
+        from submissions.kl2400033283.agent.vision.providers.claude_provider import TOOL
+
+        image = load_image(BY_ID["correct-prep"].ensure_rendered())
+        request = OllamaVisionProvider().build_request([image], {"category": "general", "fnsku": "UNKNOWN"})
+        with Image.open(io.BytesIO(base64.b64decode(request["images"][0]))) as encoded:
+            self.assertLessEqual(max(encoded.size), 768)
+        self.assertEqual(request["format"], TOOL["input_schema"])
+        self.assertEqual(request["options"]["num_predict"], 500)
+
 
 class TestRobustness(unittest.TestCase):
     def test_native_resolution_blur_is_caught(self):

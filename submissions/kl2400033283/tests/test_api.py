@@ -151,7 +151,8 @@ class TestAPI(unittest.TestCase):
     def test_metrics_shape(self):
         self.inspect()
         m = self.c.get("/api/v1/metrics", headers=A).json()
-        for k in ("total_units", "decisions", "latency_ms", "per_check", "avg_cost_usd"):
+        for k in ("total_units", "decisions", "effective_decisions", "latency_ms", "per_check",
+                  "effective_per_check", "avg_cost_usd"):
             self.assertIn(k, m)
 
 

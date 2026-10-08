@@ -40,6 +40,18 @@ class TestEvidence(unittest.TestCase):
         self.assertEqual(original.content_hash, self.rec.content_hash)  # original untouched
         self.assertTrue(self.agent.db.verify("org_demo_alpha", self.rec.record_id)["integrity_verified"])
 
+    def test_metrics_separate_agent_decisions_from_overrides(self):
+        self.agent.apply_override("org_demo_alpha", self.rec.record_id, "fnsku_label_placement", "PASS",
+                                  "Relabelled on flat panel", "sup_dana", role="supervisor")
+
+        metrics = self.agent.db.metrics("org_demo_alpha")
+        self.assertEqual(metrics["decisions"]["FAIL"], 1)
+        self.assertEqual(metrics["effective_decisions"]["PASS"], 1)
+        self.assertEqual(metrics["pass_rate"], 0.0)
+        self.assertEqual(metrics["effective_pass_rate"], 1.0)
+        self.assertEqual(metrics["per_check"]["fnsku_label_placement"]["FAIL"], 1)
+        self.assertEqual(metrics["effective_per_check"]["fnsku_label_placement"]["PASS"], 1)
+
     def test_operator_cannot_relax_a_fail(self):
         from submissions.kl2400033283.agent.core.prep_agent import OverridePermissionError
         with self.assertRaises(OverridePermissionError):
